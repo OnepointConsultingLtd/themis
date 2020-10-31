@@ -301,6 +301,7 @@ eventDel = (ruleId, rowIndex) => {
       expandableRows: true,
       fixedHeader: true,
       expandableRowsHeader: false,
+      expandableRowsOnClick: true,
       isRowExpandable: (dataIndex, expandedRows) => {
         if (lockedRows.includes(dataIndex)) return false; // prevent locked rules from expanding
         return true;

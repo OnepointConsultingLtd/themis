@@ -26,14 +26,14 @@ function generateDSLRFile(text, filename) {
 /** Receive rules dslr text */
 app.post('/api/deploy/dev', (req, res) => {
   console.log(req.body);
-  generateDSLRFile(req.body, './rules.dslr');
+  generateDSLRFile(req.body, 'rules.dslr');
   res.status(200).send({ message: 'DSLR file has been deployed succesfully to DEV' });
 });
 
 /** Receive rules dslr text */
 app.post('/api/deploy/prod', (req, res) => {
   console.log(req.body);
-  generateDSLRFile(req.body, './rules.dslr');
+  generateDSLRFile(req.body, 'rules.dslr');
   res.status(200).send({ message: 'DSLR file has been deployed succesfully to PROD' });
 });
 

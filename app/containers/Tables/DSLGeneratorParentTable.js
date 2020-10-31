@@ -124,7 +124,7 @@ getMuiTheme = () => createMuiTheme({
  */
 onPopUpClose = () => {
   this.setState({ popUpStatus: false });
-  console.log(this.state);
+  // console.log(this.state);
 };
 
 /**
@@ -132,7 +132,7 @@ onPopUpClose = () => {
  * HTTP POST TEXT TO SERVER
  */
 onSubmitDeployRules = async () => {
-  console.log(`Ready to deploy to ${idsToUrls(this.props.allServers.toJS())[this.state.selectedServerId]} CONTENT: ${this.state.popUp.text}`);
+  console.log(`Ready to deploy to ${idsToUrls(this.props.allServers.toJS())[this.state.selectedServerId]} CONTENT: ${this.state.popUpText}`);
   const serverURL = idsToUrls(this.props.allServers.toJS())[this.state.selectedServerId];
   const deploymentResponse = await fetch(serverURL, {
     method: 'POST',
@@ -177,7 +177,7 @@ downloadDSLR = (filename, text) => {
  */
 onSubmitDownloadRules = () => {
   const serverLabel = idsToLabels(this.props.allServers.toJS())[this.state.selectedServerId];
-  this.downloadDSLR(`${timestamp.utc('YYYYMMDDHHmm')}_${serverLabel}.dslr`, this.state.popUp.text);
+  this.downloadDSLR(`${timestamp.utc('YYYYMMDDHHmm')}_${serverLabel}.dslr`, this.state.popUpText);
 }
 
 handleDownloadClick = () => {

@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs'); // node local file-system access
+const timestamp = require('time-stamp');
 // parse simple text
 app.use(bodyParser.text({ type: 'text/plain' }));
 
@@ -13,7 +14,7 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 function generateDSLRFile(text, filename) {
   try {
     if (text.length > 0) {
-      fs.writeFile(`${process.cwd()}/${filename}`, text, (err) => { console.log(err); });
+      fs.writeFile(`${process.cwd()}/${timestamp.utc('YYYYMMDDHHmm')}_${filename}`, text, (err) => { console.log(err); });
       console.log(text);
       console.log('DSLR file has been generated succesfully');
     } else console.log('No files created');

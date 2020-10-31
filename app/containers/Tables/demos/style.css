@@ -1,0 +1,136 @@
+.App {
+    font-family: sans-serif;
+  }
+  
+  /** ---------------------------- */
+  /** --- General ---------------- */
+  /** ---------------------------- */
+  textarea {
+    border: 1px solid #999;
+    width: 100%;
+    height: 100% /* 20em; */
+  }
+  
+  /** ---------------------------- */
+  /** --- Code editor ------------ */
+  /** ---------------------------- */
+  .code-edit-container {
+    position: relative;
+    height: 100%;
+    border: 1px solid hsl(0, 0%, 60%);
+    background-color: hsl(212, 35%, 95%);
+    margin: 1em 0;
+  }
+  
+  .code-input,
+  .code-output {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    border: none;
+    /* font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+    font-size: 0.8rem; */
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif!important;
+    font-size: 16px;
+    background: transparent;
+    white-space: pre-wrap;
+    line-height: 1.5em;
+    word-wrap: break-word;
+    font-size: 1rem;
+    letter-spacing: 0.01071em;
+    opacity: 1;
+    /* overflow: auto;
+    overflow-wrap: break-word;
+    overflow-x: auto;
+    overflow-y: auto */
+  }
+  
+  .code-input {
+    opacity: 1;
+    margin: 0;
+    color: hsl(0, 0%, 40%);
+    resize: none;
+  }
+  
+  .code-output {
+    pointer-events: none;
+    z-index: 3;
+    margin: 0;
+    /* overflow-y: auto; */
+  }
+  code {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 1rem;
+    display: block;
+    color: hsl(0, 0%, 40%);
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif!important;
+    font-size: 16px;
+    /* overflow: auto;
+    overflow-wrap: break-word;
+    overflow-x: auto;
+    overflow-y: auto */
+  }
+  
+  .tag:not(body) {
+    align-items: center;
+    background-color: transparent;
+    border-radius: 0;
+    display: initial;
+    font-size: 1em;
+    height: 2em;
+    justify-content: center;
+    line-height: inherit;
+    padding-left: 0;
+    padding-right: 0;
+    white-space: nowrap;
+  }
+  
+  .number {
+    align-items: initial;
+    background-color: initial;
+    border-radius: initial;
+    display: initial;
+    font-size: 1rem;
+    height: initial;
+    justify-content: initial;
+    margin-right: initial;
+    min-width: initial;
+    padding: initial;
+    text-align: initial;
+    vertical-align: inherit;
+  }
+  
+  /* overrides */
+  .code-edit-container :not(pre) > code[class*="language-"],
+  .code-edit-container pre[class*="language-"] {
+    background: transparent;
+    margin: 0;
+  }
+
+  .dropzone {
+    height: 200px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #eeeeee;
+    border-style: dashed;
+    background-color: #fafafa;
+    color: #bdbdbd;
+    outline: none;
+    transition: border .24s ease-in-out;
+  }
+
+  .dropzone:focus, .dropzone:hover {
+    /* border-color: #2196f3; */
+    border-color: #EC407A; /* That's the secondary material color - needs to be set as variable */
+}

@@ -1,0 +1,138 @@
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable object-curly-newline */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
+// import Box from '@material-ui/core/Box';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+// import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import IconButton from '@material-ui/core/IconButton';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+// import SyntaxHighlighter, { github } from 'react-syntax-highlighter';
+// import { docco } from 'react-syntax-highlighter';
+// import FormControl from "@material-ui/core/FormControl";
+// import CodeEditor from './codeEditor';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {
+  cloneAction,
+  // addAction
+} from 'ba-actions/RulesTableActions';
+
+import RulesManagerVersionRow from './RulesManagerVersionRow';
+
+const useRowStyles = makeStyles({
+  root: {
+    '& > *': {
+      borderBottom: 'unset'
+    },
+  },
+});
+
+/**
+ * Renders a rule's versions panel
+ * @param {any} props
+ */
+function RulesManagerNestedVersionsPanel(props) {
+  const classes = useRowStyles();
+  const {
+    ruleData,
+    branch,
+    maxVersion,
+    // availableServers,
+    // addEmptyRow,
+    cloneRow,
+    // allServers
+  } = props;
+  const ruleID = props.ruleData.get('_id');
+
+  // const onAddEmptyRow = () => {
+  //   addEmptyRow(ruleID, branch);
+  // };
+
+  /** Clone top (max) version */
+  const onCloneVersion = () => cloneRow(ruleID, ruleData.get('versions').first(), branch);
+
+  return (
+    <Table aria-label="collapsible table" size="small" style={{ margin: 0 }}>
+      <TableHead>
+        <TableRow className={classes.root} style={{ borderBottom: 'none' }}>
+          <TableCell style={{ width: '3%' }} />
+          <TableCell align="center" component="th" scope="row" style={{ width: '10%' }}>Ver.</TableCell>
+          <TableCell align="left" style={{ width: '15%' }}>Submitted On</TableCell>
+          <TableCell align="left" style={{ width: '15%' }}>Submitted By</TableCell>
+          <TableCell align="left" style={{ width: '10%' }}>Servers</TableCell>
+          <TableCell align="left" style={{ width: '10%' }}>Tags</TableCell>
+          <TableCell align="right" style={{ width: '20%' }}>
+            <IconButton
+              onClick={onCloneVersion}
+              className={classes.button}
+              aria-label="Add version"
+            >
+              <AddCircleOutlineIcon style={{ fontSize: '35px' }} />
+            </IconButton>
+          </TableCell>
+          {/* <TableCell align="left" style={{ width: '10%' }} /> */}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {ruleData.get('versions').map((versionData) => {
+          const key = ruleID + 'version' + versionData.get('version').toString();
+          return (
+            <RulesManagerVersionRow
+              ruleId={ruleID}
+              branch={branch}
+              versionData={versionData}
+              maxVersion={maxVersion}
+              // availableServers={availableServers}
+              key={key}
+            />
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
+}
+
+RulesManagerNestedVersionsPanel.propTypes = {
+  ruleData: PropTypes.object.isRequired,
+  branch: PropTypes.string.isRequired,
+  // availableServers: PropTypes.array.isRequired,
+  // addEmptyRow: PropTypes.func.isRequired,
+  cloneRow: PropTypes.func.isRequired,
+  maxVersion: PropTypes.number.isRequired,
+  // allServers: PropTypes.array.isRequired
+};
+
+/**
+ * Incoming state (data)
+ * @param {Object} state
+ */
+const mapStateToProps = state => ({
+  force: state, // force state from reducer
+  // allServers: state.getIn(['ServersConfig', 'dataTable']), // injecting servers config here in this component
+});
+
+/**
+ * Outgoing events (actions) w/ or w/out payload
+ * @param {*} dispatch
+ */
+const mapDispatchToProps = dispatch => ({
+  // addEmptyRow: bindActionCreators(addAction, dispatch),
+  cloneRow: bindActionCreators(cloneAction, dispatch),
+});
+
+/**
+ * Connecting state w/ props
+ */
+const RulesManagerNestedVersionsPanelMapped = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RulesManagerNestedVersionsPanel);
+
+export default RulesManagerNestedVersionsPanelMapped;
+

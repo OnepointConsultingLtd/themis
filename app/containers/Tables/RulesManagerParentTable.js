@@ -266,7 +266,9 @@ eventDel = (ruleId, rowIndex) => {
                       value={value ? 'Yes' : 'No'}
                     />
                   }
-                  onChange={event => {
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(event) => {
+                    event.stopPropagation();
                     // console.log('Value changed!');
                     updateValue(event.target.value !== 'Yes');
                     this.props.updateRuleStatus(tableMeta.rowData[0], tableMeta.rowData[5], branch);
@@ -274,7 +276,7 @@ eventDel = (ruleId, rowIndex) => {
                   }}
                 />
                 <IconButton
-                  onClick={() => this.eventDel(tableMeta.rowData[0], tableMeta.rowIndex)}
+                  onClick={(e) => { e.stopPropagation(); this.eventDel(tableMeta.rowData[0], tableMeta.rowIndex); }}
                   disabled={disabled}
                   aria-label="Delete"
                 >

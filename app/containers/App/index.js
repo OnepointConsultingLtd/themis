@@ -8,6 +8,7 @@ import Auth from './Auth';
 import Application from './Application';
 import ThemeWrapper from './ThemeWrapper';
 import history from '../../utils/history';
+import LoginDedicated from '../Pages/Standalone/LoginDedicated';
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 class App extends React.Component {
@@ -15,8 +16,10 @@ class App extends React.Component {
     return (
       <ThemeWrapper>
         <Switch>
+          <Route path="/" exact component={LoginDedicated} />
           <Route
-            path="/app" // We try to route to "/app" tree
+            // exact // mandatory since /notfound has same root
+            path="/app" // NEW: "/" with exact!   OLD: We try to route to "/app" tree
             render={({ location }) =>
               (Object.keys(this.props.login.toJS()).length !== 0 ? // USER AUTH CHECK
                 <Application history={history} />

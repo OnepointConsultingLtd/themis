@@ -12,7 +12,7 @@ module.exports = [
       // {
       //   key: 'dashboard_v1',
       //   name: 'Dashboard',
-      //   link: '/app'
+      //   link: '/app/dashboard'
       // },
       // {
       //   key: 'basic_table',

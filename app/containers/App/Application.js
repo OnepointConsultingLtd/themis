@@ -8,7 +8,7 @@ import * as crudActions from 'ba-actions/CrudTbActions';
 
 import Dashboard from '../Templates/Dashboard';
 import {
-  // DashboardV1, Parent,
+  DashboardV1, // Parent,
   /* SimpleTable, CrudTable, */ DSLGeneratorParentTable, RulesManagerParentTable, /* ReduxForm, */
   NotFound, Configuration, /* Error, */
 } from '../pageListAsync';
@@ -43,12 +43,12 @@ class Application extends React.Component {
     return (
       <Dashboard history={this.props.history}>
         <Switch>
-          <Route exact path="/app/configuration" component={Configuration} />
-          <Route exact path="/app/tables/dsl-generator" component={DSLGeneratorParentTable} />
-          <Route exact path="/app/tables/rules-manager" component={RulesManagerParentTable} />
+          <Route path="/app/configuration" component={Configuration} />
+          <Route path="/app/tables/dsl-generator" component={DSLGeneratorParentTable} />
+          <Route path="/app/tables/rules-manager" component={RulesManagerParentTable} />
           <Route component={NotFound} />
 
-          {/* <Route exact path="/app" component={DashboardV1} /> */}
+          <Route path="/app/dashboard" component={DashboardV1} />
           {/* <Route exact path="/app/pages/error" component={Error} /> */}
           { /* Table */ }
           {/* <Route exact path="/app/tables" component={Parent} /> */}

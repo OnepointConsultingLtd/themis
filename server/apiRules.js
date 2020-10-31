@@ -6,7 +6,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 const dedupQuery = require('./aggregations');
 // const rules = require('./rulesList'); // Serving a static json file. (Our first attempt)
 // Mongo Connection URL
-const dbUrl = 'mongodb://localhost:27017/';
+const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 
 const app = express();
 

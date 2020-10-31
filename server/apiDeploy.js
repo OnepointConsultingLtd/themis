@@ -13,7 +13,7 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 function generateDSLRFile(text, filename) {
   try {
     if (text.length > 0) {
-      fs.writeFile(filename, text, (err) => { console.log(err); });
+      fs.writeFile(`${process.cwd()}/${filename}`, text, (err) => { console.log(err); });
       console.log(text);
       console.log('DSLR file has been generated succesfully');
     } else console.log('No files created');

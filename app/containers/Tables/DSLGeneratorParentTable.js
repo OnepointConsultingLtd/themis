@@ -45,11 +45,9 @@ class DSLGeneratorParentTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      popUp: {
-        status: false,
-        type: '',
-        text: ''
-      },
+      popUpStatus: false,
+      popUpType: '',
+      popUpText: '',
       selectedServerId: '',
       isServerSelected: false
     };
@@ -125,7 +123,8 @@ getMuiTheme = () => createMuiTheme({
  * Action to perform when user clicks CANCEL in the popup
  */
 onPopUpClose = () => {
-  this.setState({ popUp: { status: false } });
+  this.setState({ popUpStatus: false });
+  console.log(this.state);
 };
 
 /**
@@ -141,9 +140,9 @@ onSubmitDeployRules = async () => {
       'Content-Type': 'text/plain',
       Accept: 'text/html'
     },
-    body: this.state.popUp.text
+    body: this.state.popUpText
   });
-  this.setState({ popUp: { status: false } });
+  this.setState({ popUpStatus: false });
   console.log(deploymentResponse);
   // this.props.showNotif(deploymentResponse, 'success', branch);
   if (deploymentResponse.status !== 200) { // Error handling
@@ -183,10 +182,10 @@ onSubmitDownloadRules = () => {
 
 handleDownloadClick = () => {
   if (this.state.isServerSelected) { // check if user has selected a target server
-    const fullText = this.state.popUp.text;
+    // const fullText = this.state.popUp.text;
     // console.log(fullText);
-    this.setState({ popUp: { status: true, type: 'rules list', text: fullText } });
-  } else this.setState({ popUp: { status: true, type: 'error', text: 'Please select a target server' } });
+    this.setState({ popUpStatus: true, popUpType: 'rules list' });
+  } else this.setState({ popUpStatus: true, popUpType: 'error', popUpText: 'Please select a target server' });
 }
 
 render() {
@@ -280,7 +279,7 @@ render() {
       console.log('SELECTION FILTER DETAILS: ', changedColumn, filterList, type);
       if (filterList[3].length > 0) { // if user has filtered a server
         this.setState({ selectedServerId: filterList[3], isServerSelected: true });
-        this.setState({ popUp: { text: displayedData.map(x => x.data[5]).join('\n\n') } });
+        this.setState({ popUpText: displayedData.map(x => x.data[5]).join('\n\n') });
       } else this.setState({ selectedServerId: '', isServerSelected: false });
     },
     renderExpandableRow: this.renderCollapseVersionsPanel,
@@ -304,10 +303,10 @@ render() {
           options={options}
         />
       </MuiThemeProvider>
-      {this.state.popUp.status ?
+      {this.state.popUpStatus ?
         <PopUp
-          dialogType={this.state.popUp.type}
-          dialogText={this.state.popUp.text}
+          dialogType={this.state.popUpType}
+          dialogText={this.state.popUpText}
           onClose={this.onPopUpClose}
           onSubmitDownloadRules={this.onSubmitDownloadRules}
           onSubmitDeployRules={this.onSubmitDeployRules}

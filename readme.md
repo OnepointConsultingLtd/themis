@@ -50,6 +50,6 @@ Thus, RulesMS is a fullstack **MERN** app!
 
 
 #### Notes
-- <sup>1</sup>: https://github.com/ilhammeidi/boss-starter
-- <sup>2</sup>: https://github.com/react-boilerplate/react-boilerplate
-- <sup>3</sup>: https://medium.com/swlh/what-is-dx-developer-experience-401a0e44a9d9 
+- <sup>1</sup> : https://github.com/ilhammeidi/boss-starter
+- <sup>2</sup> : https://github.com/react-boilerplate/react-boilerplate
+- <sup>3</sup> : https://medium.com/swlh/what-is-dx-developer-experience-401a0e44a9d9 

@@ -1,11 +1,12 @@
-### Rules MS
+# Rules MS
 ----------
 **Rules MS** is a Business rules versioning and deployment manager. A MERN fullstack web app
+For a live demo check-out [here](https://rules-ms.herokuapp.com/)
 
 Based on: 
-**Boss Starter** Boss Pro is admin dashboard template based on **React Boilerplate**. It provides you clean modern design and high performance react app with various color theme. This template has been built to makes the development process easy and fast for you, which is supported by material-ui v3.x, jss (css in js), immutable js, webpack, npm modern workflow and flexible layout with flexbox.
+**Boss Starter**, an admin dashboard template, and on **React Boilerplate**, the second official react boilplate! It provides you clean modern design and high performance react app with various color theme. This template has been built to makes the development process easy and fast for you, which is supported by material-ui v3.x, jss (css in js), immutable js, webpack, npm modern workflow and flexible layout with flexbox.
 
-# Template Feature
+## Template & Boilplate Feature
 
 -   Built with one of most popular javascript library React.JS and Redux
 -   Use Google Material Design and Icons
@@ -16,7 +17,7 @@ Based on:
 -   Clean code maintained by eslint
 
 
-# Installation
+## Installation
 
  - Clone this project
  - Install module dependencies by run this script in terminal
@@ -27,7 +28,7 @@ Based on:
 	 `npm start`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
 
-# Deployment
+## Deployment
 
  - First you need to build the production assets first
     `npm run build`

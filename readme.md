@@ -1,12 +1,21 @@
-# Rules MS
+# RulesMS
 ----------
-**Rules MS** is a Business rules versioning and deployment manager. A MERN fullstack web app
+**RulesMS** is a Business rules versioning and deployment manager. A MERN fullstack web app
 For a live demo check-out [here](https://rules-ms.herokuapp.com/)
 
-Based on: 
-**Boss Starter**, an admin dashboard template, and on **React Boilerplate**, the second official react boilplate! It provides you clean modern design and high performance react app with various color theme. This template has been built to makes the development process easy and fast for you, which is supported by material-ui v3.x, jss (css in js), immutable js, webpack, npm modern workflow and flexible layout with flexbox.
+### Based on: 
+**Boss Starter**, an admin dashboard template, and **React Boilerplate**, the second official react boilerplate! It provides you clean modern design and high performance react app with various color theme. This template has been built to makes the development process easy and fast for you, which is supported by material-ui v3.x, jss (css in js), immutable js, webpack, npm modern workflow and flexible layout with flexbox.
 
-## Template & Boilplate Feature
+### Extended!
+The above boilerplate setup has been extended with:
+
+-   async state functionality, at the frontEnd, by using **Redux-Thunk** 
+-   a backend API which is connected directly with the frontend state and written in **node.js** and **Express.js**
+-   connecting backend API with **MongoDB Atlas**
+
+Thus, RulesMS is a fullstack **MERN** app! 
+
+## Template & Boilerplate Features
 
 -   Built with one of most popular javascript library React.JS and Redux
 -   Use Google Material Design and Icons

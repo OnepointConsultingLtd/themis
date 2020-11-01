@@ -1,10 +1,10 @@
 # RulesMS
 ----------
-**RulesMS** is a Business rules versioning and deployment manager. A MERN fullstack web app
+**RulesMS** is a Business rules versioning and deployment manager. A **MERN** fullstack web app.
 For a live demo check-out [here](https://rules-ms.herokuapp.com/)
 
 ### Based on: 
-**Boss Starter**, an admin dashboard template, and **React Boilerplate**, the second official react boilerplate! It provides you clean modern design and high performance react app with various color theme. This template has been built to makes the development process easy and fast for you, which is supported by material-ui v3.x, jss (css in js), immutable js, webpack, npm modern workflow and flexible layout with flexbox.
+**Boss Starter**, an admin dashboard template<sup>1</sup>, and **React Boilerplate**, the second official react boilerplate<sup>2</sup>, a highly scalable, offline-first foundation with the best developer experience and a focus on performance and best practices.
 
 ## Extended!
 The above boilerplate setup has been extended with:
@@ -17,14 +17,14 @@ Thus, RulesMS is a fullstack **MERN** app!
 
 ### Template & Boilerplate Features
 
--   Built with one of most popular javascript library React.JS and Redux
+-   Built with developers experience in mind too! High **DX factor**<sup>3</sup>: Hot reloading, npm modern workflow, dll dependency bundling offer a guaranteed developer experience!
+-   Built with one of most popular javascript library React.JS and Redux + immutable.js!
 -   Use Google Material Design and Icons
--   Easy to manage data collection with immutable.js
+-   Easy to manage data and state-managment with immutable.js
 -   Written in ES6 / ES 2015
--   Responsive design
+-   Responsive design, flexible layout with flexbox
 -   JSS (CSS in JS)
 -   Clean code maintained by eslint
-
 
 ### Installation
 
@@ -47,8 +47,8 @@ Thus, RulesMS is a fullstack **MERN** app!
     `node node_modules/.bin/cross-env NODE_ENV=production pm2 start server`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
 
-### License
-This project is licensed under the terms of the [MIT license](https://github.com/ilhammeidi/boss-lite/blob/master/LICENSE.txt).
 
-
- 
+#### Notes
+<sup>1</sup>: https://github.com/ilhammeidi/boss-starter
+<sup>2</sup>: https://github.com/react-boilerplate/react-boilerplate
+<sup>3</sup>: https://medium.com/swlh/what-is-dx-developer-experience-401a0e44a9d9 

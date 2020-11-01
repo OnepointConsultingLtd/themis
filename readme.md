@@ -6,7 +6,7 @@ For a live demo check-out [here](https://rules-ms.herokuapp.com/)
 ### Based on: 
 **Boss Starter**, an admin dashboard template, and **React Boilerplate**, the second official react boilerplate! It provides you clean modern design and high performance react app with various color theme. This template has been built to makes the development process easy and fast for you, which is supported by material-ui v3.x, jss (css in js), immutable js, webpack, npm modern workflow and flexible layout with flexbox.
 
-### Extended!
+## Extended!
 The above boilerplate setup has been extended with:
 
 -   async state functionality, at the frontEnd, by using **Redux-Thunk** 
@@ -15,7 +15,7 @@ The above boilerplate setup has been extended with:
 
 Thus, RulesMS is a fullstack **MERN** app! 
 
-## Template & Boilerplate Features
+### Template & Boilerplate Features
 
 -   Built with one of most popular javascript library React.JS and Redux
 -   Use Google Material Design and Icons
@@ -26,7 +26,7 @@ Thus, RulesMS is a fullstack **MERN** app!
 -   Clean code maintained by eslint
 
 
-## Installation
+### Installation
 
  - Clone this project
  - Install module dependencies by run this script in terminal
@@ -37,7 +37,7 @@ Thus, RulesMS is a fullstack **MERN** app!
 	 `npm start`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
 
-## Deployment
+### Deployment
 
  - First you need to build the production assets first
     `npm run build`
@@ -47,7 +47,7 @@ Thus, RulesMS is a fullstack **MERN** app!
     `node node_modules/.bin/cross-env NODE_ENV=production pm2 start server`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
 
-## License
+### License
 This project is licensed under the terms of the [MIT license](https://github.com/ilhammeidi/boss-lite/blob/master/LICENSE.txt).
 
 

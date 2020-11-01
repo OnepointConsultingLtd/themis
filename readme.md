@@ -11,6 +11,7 @@ The above boilerplate setup has been extended with:
 
 -   async state functionality, at the frontEnd, by using **Redux-Thunk** 
 -   a backend API which is connected directly with the frontend state and written in **node.js** and **Express.js**
+-   the backend setup serves both the static and the API under the same server instance 
 -   connecting backend API with **MongoDB Atlas**
 
 Thus, RulesMS is a fullstack **MERN** app! 

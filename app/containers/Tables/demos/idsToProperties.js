@@ -13,3 +13,5 @@ export const idsToUrls = (dataArray) =>
 export const idsToAny = (dataArray, field) =>
   dataArray.reduce((final, curr) => ({ ...final, [curr._id]: curr[field] }), {}); // <----- id 2 any field !!!!
 
+export const idsToArray = (dataArray) =>
+  [...dataArray].map(item => item._id);

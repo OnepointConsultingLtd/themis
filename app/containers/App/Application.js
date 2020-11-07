@@ -54,7 +54,7 @@ class Application extends React.Component {
               (<Route
                 path={item.link}
                 component={() => (
-                  <DSLGeneratorParentTable tags={item.tags} />
+                  <DSLGeneratorParentTable tags={item.tags} filterLogic={item.filterLogic} />
                 )}
               />)
             )

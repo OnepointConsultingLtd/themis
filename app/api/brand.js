@@ -1,8 +1,8 @@
 module.exports = {
-  name: 'RuleMS',
-  desc: 'RuleMS - Material Admin Dashboard',
+  name: 'RulesMS',
+  desc: 'RulesMS - Business Rules Manager',
   prefix: 'rules',
-  footerText: 'RuleMS All Rights Reserved 2020',
-  logoText: 'RuleMS',
+  footerText: 'RulesMS All Rights Reserved 2020',
+  logoText: 'RulesMS',
   needLogin: false
 };

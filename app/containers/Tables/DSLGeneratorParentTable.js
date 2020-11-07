@@ -34,7 +34,7 @@ import timestamp from 'time-stamp';
 import { closeNotifAction, showNotification } from 'ba-actions/RulesTableActions';
 import { aggregateAllActiveDeployedVersions, aggregateServerReturnContent } from './demos/data';
 import PopUp from './demos/PopUp';
-import { idsToLabels, idsToUrls } from './demos/idsToProperties';
+import { idsToLabels, idsToUrls, idsToArray } from './demos/idsToProperties';
 import { renderServersChips, renderTagsChips } from './demos/renderChipLabelsFromIds';
 // import filterOptions from './demos/filterLogic';
 
@@ -216,11 +216,12 @@ render() {
     messageNotif,
     allServers,
     allTags,
-    tags
+    tags,
+    filterLogic
   } = this.props;
   // console.log('>>>> PREFILTERED TAGS: ', tags);
   // console.log('This is our data! : ', dataTable);
-  const data = aggregateAllActiveDeployedVersions(dataTable.toJS(), tags);
+  const data = aggregateAllActiveDeployedVersions(dataTable.toJS(), tags, filterLogic, idsToArray(allTags.toJS()));
   // console.log('This is our aggregated data! : ', data);
   // const customBodyRender = (value) =>
   //   value.map((val) => <Chip label={val} key={(+new Date() + Math.floor(Math.random() * 999999)).toString(36)} />);
@@ -374,6 +375,7 @@ DSLGeneratorParentTable.propTypes = {
   allTags: PropTypes.array.isRequired,
   severityNotif: PropTypes.string.isRequired,
   tags: PropTypes.array.isRequired,
+  filterLogic: PropTypes.string.isRequired,
 };
 
 /**

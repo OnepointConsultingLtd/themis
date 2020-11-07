@@ -35,6 +35,7 @@ export const fetchAction = (branch) => async (dispatch) => {
               key: item.label,
               label: item.label,
               tags: item.tags,
+              filterLogic: item.filterLogic,
               link: `/app/tables/generator/${item.label}`
             })));
       // console.log('>>>>>> About to dispatch MENU >>>>:', menu);

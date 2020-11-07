@@ -10,6 +10,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import css from 'ba-styles/Table.scss';
 import EditableCell from './EditableCell';
 import SelectableCell from './SelectableCell';
+import MultiSelectConfigWired from './MultiSelectConfigWired';
 import ToggleCell from './ToggleCell';
 import DatePickerCell from './DatePickerCell';
 import TimePickerCell from './TimePickerCell';
@@ -24,7 +25,7 @@ class Row extends React.Component {
   render() {
     const {
       classes,
-      anchor,
+      schema,
       item,
       removeRow,
       updateRow,
@@ -32,6 +33,7 @@ class Row extends React.Component {
       finishEditRow,
       branch
     } = this.props;
+    // console.log('>>>> ITEM DATA ARRIVED FROM PARENT: ', item);
     const eventDel = () => {
       removeRow(item, branch);
     };
@@ -41,24 +43,40 @@ class Row extends React.Component {
     const eventDone = () => {
       finishEditRow(item, branch);
     };
-    const renderCell = dataArray => dataArray.map((itemCell, index) => {
-      if (itemCell.name !== 'action' && !itemCell.hidden) {
-        const inputType = anchor[index].type;
+    const renderAllCellsFromSchema = schemaArray => schemaArray.map((schemaItem, index) => {
+      if (schemaItem.name !== 'action' && !schemaItem.hidden) {
+        const inputType = schemaItem.type;
         switch (inputType) {
           case 'selection':
             return (
               <SelectableCell
                 updateRow={(event) => updateRow(event, branch)}
-                cellData={{
-                  type: itemCell.name,
-                  value: item.get(itemCell.name),
+                cellData={{ // schema data
+                  name: schemaItem.name,
+                  value: item.get(schemaItem.name),
                   id: item.get('_id'),
                 }}
                 edited={item.get('edited')}
                 key={index.toString()}
-                options={anchor[index].options}
+                options={schemaItem.options}
                 branch={branch}
                 multiple={false}
+              />
+            );
+          case 'redux-multiselection':
+            return (
+              <MultiSelectConfigWired
+                updateRow={(event) => updateRow(event, branch)}
+                cellData={{
+                  name: schemaItem.name,
+                  value: item.get(schemaItem.name), // immutable
+                  id: item.get('_id'), // immutable
+                }}
+                edited={item.get('edited')}
+                key={index.toString()}
+                branch={schemaItem.reduxBranch} // tapping into a specific redux branch
+                dataTable={schemaItem.reduxDataTable} // tapping into a specific redux branch
+                optionsField={schemaItem.reduxField} // specific field to aggregate values from
               />
             );
           case 'toggle':
@@ -66,8 +84,8 @@ class Row extends React.Component {
               <ToggleCell
                 updateRow={(event) => updateRow(event, branch)}
                 cellData={{
-                  type: itemCell.name,
-                  value: item.get(itemCell.name),
+                  type: schemaItem.name,
+                  value: item.get(schemaItem.name),
                   id: item.get('_id'),
                 }}
                 edited={item.get('edited')}
@@ -80,8 +98,8 @@ class Row extends React.Component {
               <DatePickerCell
                 updateRow={(event) => updateRow(event, branch)}
                 cellData={{
-                  type: itemCell.name,
-                  value: item.get(itemCell.name),
+                  type: schemaItem.name,
+                  value: item.get(schemaItem.name),
                   id: item.get('_id'),
                 }}
                 edited={item.get('edited')}
@@ -94,8 +112,8 @@ class Row extends React.Component {
               <TimePickerCell
                 updateRow={(event) => updateRow(event, branch)}
                 cellData={{
-                  type: itemCell.name,
-                  value: item.get(itemCell.name),
+                  type: schemaItem.name,
+                  value: item.get(schemaItem.name),
                   id: item.get('_id'),
                 }}
                 edited={item.get('edited')}
@@ -108,8 +126,8 @@ class Row extends React.Component {
               <EditableCell
                 updateRow={(event) => updateRow(event, branch)}
                 cellData={{
-                  type: itemCell.name,
-                  value: item.get(itemCell.name),
+                  type: schemaItem.name,
+                  value: item.get(schemaItem.name),
                   id: item.get('_id'),
                 }}
                 edited={item.get('edited')}
@@ -124,7 +142,7 @@ class Row extends React.Component {
     });
     return (
       <tr className={item.get('edited') ? css.editing : ''}>
-        {renderCell(anchor)}
+        {renderAllCellsFromSchema(schema)}
         <TableCell padding="none">
           <IconButton
             onClick={() => eventEdit(this)}
@@ -156,7 +174,7 @@ class Row extends React.Component {
 
 Row.propTypes = {
   classes: PropTypes.object.isRequired,
-  anchor: PropTypes.array.isRequired,
+  schema: PropTypes.array.isRequired,
   item: PropTypes.object.isRequired,
   removeRow: PropTypes.func.isRequired,
   updateRow: PropTypes.func.isRequired,

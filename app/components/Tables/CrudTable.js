@@ -12,10 +12,10 @@ class CrudTable extends React.Component {
       updateRow,
       editRow,
       finishEditRow,
-      anchor,
+      schema,
       branch
     } = this.props;
-    // console.log('dataTable:', dataTable, 'anchor?: ', anchor);
+    // console.log('dataTable:', dataTable, 'schema?: ', schema);
     return (
       <MainTable
         title={title}
@@ -25,7 +25,7 @@ class CrudTable extends React.Component {
         updateRow={updateRow}
         editRow={editRow}
         finishEditRow={finishEditRow}
-        anchor={anchor}
+        schema={schema}
         branch={branch}
       />
     );
@@ -34,7 +34,7 @@ class CrudTable extends React.Component {
 
 CrudTable.propTypes = {
   title: PropTypes.string.isRequired,
-  anchor: PropTypes.array.isRequired,
+  schema: PropTypes.array.isRequired,
   dataTable: PropTypes.object.isRequired,
   addEmptyRow: PropTypes.func.isRequired,
   removeRow: PropTypes.func.isRequired,

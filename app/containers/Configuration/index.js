@@ -13,6 +13,7 @@ import Box from '@material-ui/core/Box';
 // import TextField from '@material-ui/core/TextField';
 import ServersConfig from './servers/ServersConfig';
 import TagsConfig from './tags/TagsConfig';
+import GeneratorsConfig from './generators/GeneratorsConfig';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -70,6 +71,7 @@ export function SimpleTabs() {
             {/* <Tab label="Rule ID" {...a11yProps(0)} /> */}
             <Tab label="Target Servers" {...a11yProps(0)} />
             <Tab label="Tags" {...a11yProps(1)} />
+            <Tab label="Generators" {...a11yProps(2)} />
           </Tabs>
         </AppBar>
         {/* <TabPanel value={value} index={0}>
@@ -80,6 +82,9 @@ export function SimpleTabs() {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <TagsConfig />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <GeneratorsConfig />
         </TabPanel>
 
 

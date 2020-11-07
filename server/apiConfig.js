@@ -44,6 +44,7 @@ app.post('/api/:branch/create', (req, res) => {
           message: 'Record could not be imported'
         });
       }
+      console.log('Successfully inserted record: ', req.body, ' ', result.ops, ' with _id=', result.insertedId);
       client.close();
       res.status(200).send({ message: 'Record has been imported succesfully: ', insertedId: result.insertedId });
     });

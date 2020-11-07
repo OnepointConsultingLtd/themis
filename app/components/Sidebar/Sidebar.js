@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+// import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
 import classNames from 'classnames';
 import brand from 'ba-api/brand';
 import dummy from 'ba-api/dummyContents';
@@ -13,6 +15,7 @@ import {
 } from '@material-ui/core';
 import MainMenu from './MainMenu';
 import styles from './sidebar-jss';
+// import { uploadMenuAction } from '../../actions/UiActions';
 
 
 const MenuContent = props => {
@@ -73,6 +76,11 @@ class Sidebar extends React.Component {
     anchor: 'left'
   };
 
+  // componentDidMount() {
+  //   // Load menu content in redux
+  //   this.props.loadMenu();
+  // }
+
   render() {
     const { anchor } = this.state;
     const {
@@ -120,6 +128,20 @@ Sidebar.propTypes = {
   loadTransition: PropTypes.func.isRequired,
   turnDarker: PropTypes.bool.isRequired,
   open: PropTypes.bool.isRequired,
+  // loadMenu: PropTypes.func.isRequired
 };
+
+/**
+ * Outgoing events (actions) w/ or w/out payload
+ * @param {*} dispatch
+ */
+// const mapDispatchToProps = dispatch => ({
+//   loadMenu: bindActionCreators(uploadMenuAction, dispatch)
+// });
+
+// const SidebarMapped = connect(
+//   null,
+//   mapDispatchToProps
+// )(Sidebar);
 
 export default withStyles(styles)(Sidebar);

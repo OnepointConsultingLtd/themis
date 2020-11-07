@@ -16,7 +16,10 @@ const styles = ({
 
 const branch = 'crudTableDemo';
 
-class crudTable extends Component { // TODO: class name is tricky,should rename
+/**
+ * DECOMMISSIONED / bypassed by individual CRUD parent-components
+ */
+class crudTable extends Component { // DECOMMISSIONED TODO: class name is tricky,should rename
   componentDidMount() {
     this.props.fetchData(dataApi, branch); // TODO: remove this after connection w/ server
   }

@@ -26,14 +26,14 @@ class MainTable extends React.Component {
       updateRow,
       editRow,
       finishEditRow,
-      anchor,
+      schema,
       branch,
       // title
     } = this.props;
     const getItems = dataArray => dataArray.map(item =>
       (
         <Row
-          anchor={anchor}
+          schema={schema}
           updateRow={(event) => updateRow(event, item, branch)}
           item={item}
           removeRow={() => removeRow(item, branch)}
@@ -63,7 +63,7 @@ class MainTable extends React.Component {
           <div className={classes.spacer} />
           <div className={classes.actions}>
             <Tooltip title="Add Item">
-              <Button variant="text" onClick={() => addEmptyRow(anchor, branch)} color="secondary" className={classes.button}>
+              <Button variant="text" onClick={() => addEmptyRow(schema, branch)} color="secondary" className={classes.button}>
                 <AddCircleOutlineIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
                 Add New
               </Button>
@@ -73,7 +73,7 @@ class MainTable extends React.Component {
         {/* <div /> */}
         <div style={{ float: 'right' }}>
           <Tooltip title="Add item">
-            <Button variant="text" onClick={() => addEmptyRow(anchor, branch)} color="secondary" className={classes.button}>
+            <Button variant="text" onClick={() => addEmptyRow(schema, branch)} color="secondary" className={classes.button}>
               <AddCircleOutlineIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
                 Add New
             </Button>
@@ -83,7 +83,7 @@ class MainTable extends React.Component {
           <Table className={classNames(css.tableCrud, classes.table, css.stripped)}>
             <TableHead>
               <TableRow>
-                { getHead(anchor) }
+                { getHead(schema) }
               </TableRow>
             </TableHead>
             <TableBody>
@@ -100,7 +100,7 @@ MainTable.propTypes = {
   // title: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   items: PropTypes.object.isRequired,
-  anchor: PropTypes.array.isRequired,
+  schema: PropTypes.array.isRequired,
   addEmptyRow: PropTypes.func.isRequired,
   removeRow: PropTypes.func.isRequired,
   updateRow: PropTypes.func.isRequired,

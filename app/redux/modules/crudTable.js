@@ -1,4 +1,4 @@
-import { fromJS, List, Map } from 'immutable';
+import { fromJS, List, /* Map */ } from 'immutable';
 import notif from 'ba-utils/notifMessage';
 import {
   FETCH_DATA,
@@ -52,8 +52,8 @@ export default function reducer(state = initialImmutableState, action = {}) {
       return state.withMutations((mutableState) => {
         // const raw = state.get('dataTable').last();
         // const initial = initialItem(raw, action.anchor);
-        console.log(action.newRecord);
-        mutableState.update('dataTable', dataTable => dataTable.unshift(Map(action.newRecord)));
+        console.log('NEW CRUD RECORD ARRIVED: ', action.newRecordWithID);
+        mutableState.update('dataTable', dataTable => dataTable.unshift(fromJS(action.newRecordWithID)));
       });
     case `${branch}/${REMOVE_ROW}`:
       return state.withMutations((mutableState) => {
@@ -71,8 +71,9 @@ export default function reducer(state = initialImmutableState, action = {}) {
           if (type === 'checkbox') {
             return action.event.target.checked;
           }
-          return action.event.target.value;
+          return fromJS(action.event.target.value);
         };
+        console.log('value updated in STORE!!!', branch, action.event.target.name, action.event.target.value);
         mutableState.update('dataTable', dataTable => dataTable
           .setIn([index, cellTarget], newVal(action.event.target.type))
         );

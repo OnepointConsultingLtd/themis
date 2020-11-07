@@ -19,15 +19,16 @@ const filterOptions = (multiSelectOptions, Label, type = true) => {
   switch (type) {
     case true: // MUTLISELECTOR --------------
       return ({
-        logic: (matchedServerField, selectedFilter, row) => {
-          // console.log('LOGIC: ', matchedServerField, selectedFilter, row);
-          // console.log(matchedServerField.length);
+        logic: (matchedFieldValues, selectedFilter, row) => { // matched are the matched values in the current row. might be all might some
+          // console.log('LOGIC: ', matchedFieldValues, selectedFilter);
+          // console.log(matchedFieldValues.length);
           if (selectedFilter.length === 0) return false; // on startup don't filter anything
-          else if (matchedServerField.length > 0) {
+          else if (matchedFieldValues.length > 0) {
             // console.log(selectedFilter.some(r => matchedServerField.indexOf(r) > -1));
-            return !selectedFilter.some(r => matchedServerField.indexOf(r) > -1);
+            // return !selectedFilter.some(r => matchedServerField.indexOf(r) > -1); // MATCH IF ANY
+            return !selectedFilter.every(v => matchedFieldValues.includes(v)); // MATCH ALL!
           }
-          return true; // ---> fallback to true = EXCLUDE if filter is activated but doesnt match this row
+          return true; // ---> fallback to true = EXCLUDE if filter is activated but doesnt match the current row
         },
         display: (filterList, onChange, index, column) =>
           // console.log('Some useful filter logistics : ', filterList, index, column);

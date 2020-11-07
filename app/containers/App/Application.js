@@ -1,4 +1,5 @@
 import React from 'react';
+import { List } from 'immutable';
 import { PropTypes } from 'prop-types';
 import { Switch, Route } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
@@ -19,6 +20,7 @@ import {
 const rulesStateBranch = 'RulesManagerParentTable';
 const serversConfigStateBranch = 'ServersConfig';
 const tagsConfigStateBranch = 'TagsConfig';
+const generatorsConfigStateBranch = 'GeneratorsConfig';
 
 class Application extends React.Component {
   componentDidMount() {
@@ -34,18 +36,29 @@ class Application extends React.Component {
     this.props.fetchData(rulesStateBranch);
     this.props.fetchServersConfig(serversConfigStateBranch);
     this.props.fetchTagsConfig(tagsConfigStateBranch);
-
+    this.props.fetchGeneratorsConfig(generatorsConfigStateBranch);
     // console.log(this.props.history);
   }
 
 
   render() {
+    // console.log('?????????  RENDERING ROUTER: ', this.props.generatorsMenu);
     return (
       <Dashboard history={this.props.history}>
         <Switch>
           <Route path="/app/configuration" component={Configuration} />
-          <Route path="/app/tables/dsl-generator" component={DSLGeneratorParentTable} />
+          {/* <Route path="/app/tables/dsl-generator" component={DSLGeneratorParentTable} /> */}
           <Route path="/app/tables/rules-manager" component={RulesManagerParentTable} />
+          {
+            (this.props.generatorsMenu || List([])).toJS().map(item =>
+              (<Route
+                path={item.link}
+                component={() => (
+                  <DSLGeneratorParentTable tags={item.tags} />
+                )}
+              />)
+            )
+          }
           <Route component={NotFound} />
 
           <Route path="/app/dashboard" component={DashboardV1} />
@@ -69,7 +82,18 @@ Application.propTypes = {
   fetchData: PropTypes.func.isRequired,
   fetchServersConfig: PropTypes.func.isRequired,
   fetchTagsConfig: PropTypes.func.isRequired,
+  fetchGeneratorsConfig: PropTypes.func.isRequired,
+  generatorsMenu: PropTypes.array.isRequired,
 };
+
+/**
+ * Access to Incoming state (data)
+ * @param {Object} state
+ */
+const mapStateToProps = state => ({
+  force: state, // force state from reducer
+  generatorsMenu: state.getIn(['ui', 'menu', 2, 'child']), // injecting ONLY generators sub-branch // mind the '2' hardcoding
+});
 
 /**
  * Outgoing events (actions) w/ or w/out payload
@@ -78,11 +102,12 @@ Application.propTypes = {
 const mapDispatchToProps = dispatch => ({
   fetchData: bindActionCreators(fetchAction, dispatch),
   fetchServersConfig: bindActionCreators(crudActions.fetchAction, dispatch),
-  fetchTagsConfig: bindActionCreators(crudActions.fetchAction, dispatch)
+  fetchTagsConfig: bindActionCreators(crudActions.fetchAction, dispatch),
+  fetchGeneratorsConfig: bindActionCreators(crudActions.fetchAction, dispatch),
 });
 
 const ApplicationMapped = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Application);
 

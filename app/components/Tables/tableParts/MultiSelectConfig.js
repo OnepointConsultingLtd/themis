@@ -9,7 +9,7 @@ import css from 'ba-styles/Table.scss';
 /**
  * Selection drop down
  */
-class MultiSelectTags extends React.Component {
+class MultiSelectConfig extends React.Component {
   constructor(props) {
     super(props);
     this.state = { selectionvalue: props.cellData.value };
@@ -72,7 +72,7 @@ class MultiSelectTags extends React.Component {
   }
 }
 
-MultiSelectTags.propTypes = {
+MultiSelectConfig.propTypes = {
   allOptions: PropTypes.array.isRequired,
   cellData: PropTypes.object.isRequired,
   updateRow: PropTypes.func.isRequired,
@@ -81,4 +81,4 @@ MultiSelectTags.propTypes = {
   multiple: PropTypes.bool.isRequired,
 };
 
-export default MultiSelectTags;
+export default MultiSelectConfig;

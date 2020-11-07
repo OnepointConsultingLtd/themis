@@ -129,7 +129,7 @@ function RulesManagerVersionRow(props) {
             key={`${ruleId}-${versionData.get('version')}-servers`}
             allOptions={allServers.toJS()} // needs conversion to plain array
             // options={['PROD', 'PREP', 'TEST', 'DEV']} // TODO: need be configurable
-            activeOptions={availableServersIds.toJS()}
+            activeOptions={availableServersIds.toJS()} // this is dynamically aggregated fromall versions in the panel
             multiple
           />
         </TableCell>
@@ -145,7 +145,7 @@ function RulesManagerVersionRow(props) {
             edited={versionData.get('edited')}
             key={`${ruleId}-${versionData.get('version')}-tags`}
             allOptions={allTags.toJS()} // needs conversion to plain array
-            activeOptions={allTagsIds.toJS()}
+            activeOptions={allTagsIds.toJS()} // all configed tags from redux, nothing aggregated here
             multiple
           />
         </TableCell>

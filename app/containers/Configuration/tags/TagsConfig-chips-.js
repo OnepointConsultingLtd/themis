@@ -12,6 +12,9 @@ import {
 } from 'ba-actions/CrudTbActions';
 
 
+/** DECOMMISSIONED
+ * was used as a first attempt to create-chips-as-you-type
+ */
 function TagsConfig() {
   const [tagChips, updateTagChips] = useState();
 

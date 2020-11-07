@@ -37,6 +37,7 @@ export default function createReducer(injectedReducers) {
     initval,
     login,
     // {branch}: branchReducer(<state_handling_module>, '{branch}'),
+    GeneratorsConfig: branchReducer(crudTable, 'GeneratorsConfig'),
     TagsConfig: branchReducer(crudTable, 'TagsConfig'),
     ServersConfig: branchReducer(crudTable, 'ServersConfig'),
     RulesManagerParentTable: branchReducer(rulesTable, 'RulesManagerParentTable'),

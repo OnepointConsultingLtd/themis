@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import ExpandLess from '@material-ui/icons/ExpandLess';
+// import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 // Menu Object
-import MenuContent from 'ba-api/menu';
+// import generateSideMenu from 'ba-api/menu'; // transfered mnu generation to reducer actions
 import {
   List, ListItem, ListItemIcon,
   ListItemText, Collapse, Icon
@@ -28,7 +28,8 @@ const LinkBtn = React.forwardRef(function LinkBtn(props, ref) { // eslint-disabl
 });
 
 class MainMenu extends React.Component { // eslint-disable-line
-  handleClick() {
+
+  handleClick = () => {
     this.props.toggleDrawerOpen();
     this.props.loadTransition(false);
   }
@@ -36,70 +37,84 @@ class MainMenu extends React.Component { // eslint-disable-line
   render() {
     const {
       classes,
-      openSubMenu,
+      // openSubMenu,
       open,
+      menu
     } = this.props;
-    const getMenus = menuArray => menuArray.map((item, index) => {
-      if (item.child) {
+
+    const getMenus = menuArray => menuArray
+      .filter(item => item.label !== '' && item.label !== undefined) // filter-out any empty labeled generation screen
+      .map((item, index) => {
+        // console.log('>>>>>> NEW ARRAY TO RENDER: ', item);
+        // if item has children
+        if (item.child) {
+          return (
+            <div key={index.toString()}>
+              <ListItem
+                // button
+                className={classNames(open.indexOf(item.key) > -1 ? classes.opened : '')}
+                // onClick={() => openSubMenu(item.key, item.keyParent)}
+              >
+                {item.icon
+                  && (
+                    <ListItemIcon className={classes.iconWrapper}>
+                      <Icon className={classes.icon}>{item.icon}</Icon>
+                    </ListItemIcon>
+                  )
+                }
+                <ListItemText classes={{ primary: classes.primary }} variant="inset" primary={item.label} />
+                {/* { open.indexOf(item.key) > -1 ? <ExpandLess /> : <ExpandMore /> } */}
+                <ExpandMore />
+              </ListItem>
+
+              {/* COLLAPSED CHILDREN ----------------------------------- */}
+              <Collapse
+                component="li"
+                className={classNames(
+                  classes.nolist, classes.child
+                  // (item.keyParent ? classes.child : ''),
+                )}
+                in
+                timeout="auto"
+                unmountOnExit
+              >
+                <List className={classes.dense} style={{ paddingLeft: '20px' }} dense>
+                  { getMenus(sortByKey(item.child, 'key')) }
+                </List>
+              </Collapse>
+              {/* COLLAPSED CHILDREN ----------------------------------- */}
+
+            </div>
+          );
+        }
+        //    ={open.indexOf(item.key) > -1}
+        // Else if item does not have children
         return (
-          <div key={index.toString()}>
-            <ListItem
-              button
-              className={classNames(classes.head, open.indexOf(item.key) > -1 ? classes.opened : '')}
-              onClick={() => openSubMenu(item.key, item.keyParent)}
-            >
-              {item.icon
-                && (
-                  <ListItemIcon className={classes.iconWrapper}>
-                    <Icon className={classes.icon}>{item.icon}</Icon>
-                  </ListItemIcon>
-                )
-              }
-              <ListItemText classes={{ primary: classes.primary }} variant="inset" primary={item.name} />
-              { open.indexOf(item.key) > -1 ? <ExpandLess /> : <ExpandMore /> }
-            </ListItem>
-            <Collapse
-              component="li"
-              className={classNames(
-                classes.nolist,
-                (item.keyParent ? classes.child : ''),
-              )}
-              in={open.indexOf(item.key) > -1}
-              timeout="auto"
-              unmountOnExit
-            >
-              <List className={classes.dense} dense>
-                { getMenus(sortByKey(item.child, 'key')) }
-              </List>
-            </Collapse>
-          </div>
+          <ListItem
+            key={index.toString()}
+            button
+            exact
+            // className={classes.nested}
+            activeClassName={classes.active}
+            component={LinkBtn}
+            to={item.link}
+            onClick={this.handleClick}
+          >
+            {item.icon
+              && (
+                <ListItemIcon>
+                  <Icon className={classes.icon}>{item.icon}</Icon>
+                </ListItemIcon>
+              )
+            }
+            <ListItemText classes={{ primary: classes.primary }} primary={item.label} />
+          </ListItem>
         );
-      }
-      return (
-        <ListItem
-          key={index.toString()}
-          button
-          exact
-          className={classes.nested}
-          activeClassName={classes.active}
-          component={LinkBtn}
-          to={item.link}
-          onClick={() => this.handleClick()}
-        >
-          {item.icon
-            && (
-              <ListItemIcon>
-                <Icon className={classes.icon}>{item.icon}</Icon>
-              </ListItemIcon>
-            )
-          }
-          <ListItemText classes={{ primary: classes.primary }} inset primary={item.name} />
-        </ListItem>
-      );
-    });
+      });
     return (
       <div>
-        {getMenus(MenuContent)}
+        {/* INJECTING MENU STATE INTO SIDEBAR */}
+        {getMenus(menu.toJS())}
       </div>
     );
   }
@@ -108,21 +123,23 @@ class MainMenu extends React.Component { // eslint-disable-line
 MainMenu.propTypes = {
   classes: PropTypes.object.isRequired,
   open: PropTypes.object.isRequired,
-  openSubMenu: PropTypes.func.isRequired,
+  // openSubMenu: PropTypes.func.isRequired,
   toggleDrawerOpen: PropTypes.func.isRequired,
   loadTransition: PropTypes.func.isRequired,
+  menu: PropTypes.array.isRequired,
 };
 
 const openAction = (key, keyParent) => ({ type: 'OPEN_SUBMENU', key, keyParent });
 const reducer = 'ui';
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   force: state, // force active class for sidebar menu
-  open: state.getIn([reducer, 'subMenuOpen'])
+  open: state.getIn([reducer, 'subMenuOpen']),
+  menu: state.getIn([reducer, 'menu']),
 });
 
-const mapDispatchToProps = dispatch => ({
-  openSubMenu: bindActionCreators(openAction, dispatch)
+const mapDispatchToProps = (dispatch) => ({
+  openSubMenu: bindActionCreators(openAction, dispatch),
 });
 
 const MainMenuMapped = connect(

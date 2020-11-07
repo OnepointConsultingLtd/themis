@@ -47,7 +47,7 @@ class CrudTableDemo extends Component {
       <div>
         <Notification close={() => closeNotif(branch)} message={messageNotif} severity={severityNotif} />
         <CrudTable
-          anchor={dataSchema}
+          schema={dataSchema}
           title="Inventory"
           dataTable={dataTable}
           // fetchData={fetchData}

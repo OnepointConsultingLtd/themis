@@ -7,9 +7,14 @@ import PropTypes from 'prop-types';
 // import { makeStyles } from '@material-ui/core/styles';
 import MUIDataTable from 'mui-datatables';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import GetAppIcon from '@material-ui/icons/GetApp';
+// import IconButton from '@material-ui/core/IconButton';
+// import Tooltip from '@material-ui/core/Tooltip';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+// import ListItemIcon from '@material-ui/core/ListItemIcon';
+// import ListItemText from '@material-ui/core/ListItemText';
 // import Card from '@material-ui/core/Card';
 // import CardContent from '@material-ui/core/CardContent';
 // import Chip from '@material-ui/core/Chip';
@@ -27,11 +32,11 @@ import 'ace-builds/src-noconflict/theme-github';
 import timestamp from 'time-stamp';
 // import { PapperBlock } from 'ba-components';
 import { closeNotifAction, showNotification } from 'ba-actions/RulesTableActions';
-import { aggregateAllActiveDeployedVersions } from './demos/data';
+import { aggregateAllActiveDeployedVersions, aggregateServerReturnContent } from './demos/data';
 import PopUp from './demos/PopUp';
 import { idsToLabels, idsToUrls } from './demos/idsToProperties';
 import { renderServersChips, renderTagsChips } from './demos/renderChipLabelsFromIds';
-import filterOptions from './demos/filterLogic';
+// import filterOptions from './demos/filterLogic';
 
 // Reducer Branch
 const branch = 'RulesManagerParentTable';
@@ -48,8 +53,10 @@ class DSLGeneratorParentTable extends React.Component {
       popUpStatus: false,
       popUpType: '',
       popUpText: '',
-      selectedServerId: '',
-      isServerSelected: false
+      // selectedServerId: '',
+      // isServerSelected: false,
+      // isDeployMenuOpen: false,
+      anchorEl: null
     };
   }
 /**
@@ -59,7 +66,7 @@ class DSLGeneratorParentTable extends React.Component {
  */
 renderCollapseVersionsPanel = (rowData) => {
   // const [ruleId, version, title, **subOn, **subBy, servers, tags, **edited, content] = rowData;
-  console.log('metadata:', rowData);
+  // console.log('metadata:', rowData);
   const ruleId = rowData[0];
   const version = rowData[1];
   const content = rowData[5];
@@ -114,6 +121,11 @@ getMuiTheme = () => createMuiTheme({
     MUIDataTableFilter: {
       root: {
         width: '500px' // Filter modal was too narrow. needed some space
+      }
+    },
+    MUIDataTableFilterList: { // https://github.com/gregnb/mui-datatables/issues/181
+      chip: {
+        display: 'none'
       }
     }
   }
@@ -180,30 +192,38 @@ onSubmitDownloadRules = () => {
   this.downloadDSLR(`${timestamp.utc('YYYYMMDDHHmm')}_${serverLabel}.dslr`, this.state.popUpText);
 }
 
-handleDownloadClick = () => {
-  if (this.state.isServerSelected) { // check if user has selected a target server
-    // const fullText = this.state.popUp.text;
-    // console.log(fullText);
-    this.setState({ popUpStatus: true, popUpType: 'rules list' });
-  } else this.setState({ popUpStatus: true, popUpType: 'error', popUpText: 'Please select a target server' });
+handleClick = (event) => {
+  this.setState({ anchorEl: event.currentTarget });
+};
+
+handleClose = () => {
+  this.setState({ anchorEl: null });
+}
+
+handleDeploymentServerClick = (optionId, versionsData) => {
+  // console.log('optionId', optionId);
+  this.handleClose();
+  const serverVersions = aggregateServerReturnContent(versionsData, optionId);
+  this.setState({ popUpText: serverVersions || 'No rules for selected target server' });
+  this.setState({ popUpStatus: true, popUpType: serverVersions ? 'rules list' : 'error' });
 }
 
 render() {
   const {
     dataTable,
-    // updateRuleStatus,
     closeNotif,
     severityNotif,
     messageNotif,
     allServers,
-    allTags
+    allTags,
+    tags
   } = this.props;
-  console.log('This is our data! : ', dataTable);
-  const data = aggregateAllActiveDeployedVersions(dataTable.toJS());
-  console.log('This is our aggregated data! : ', data);
+  // console.log('>>>> PREFILTERED TAGS: ', tags);
+  // console.log('This is our data! : ', dataTable);
+  const data = aggregateAllActiveDeployedVersions(dataTable.toJS(), tags);
+  // console.log('This is our aggregated data! : ', data);
   // const customBodyRender = (value) =>
   //   value.map((val) => <Chip label={val} key={(+new Date() + Math.floor(Math.random() * 999999)).toString(36)} />);
-
   const columns = [
     {
       name: '_id',
@@ -231,12 +251,13 @@ render() {
       label: 'Servers',
       // label: 'Env.',
       options: {
-        filter: true,
-        filterType: 'custom',
-        customFilterListOptions: {
-          render: selected => idsToLabels(allServers.toJS())[selected]
-        },
-        filterOptions: filterOptions(allServers.toJS(), 'Servers', false), // import filter logic and feed it w/ config table data
+        filter: false,
+        // filterType: 'custom',
+        // filterList: [this.state.selectedServerId],
+        // customFilterListOptions: {
+        //   render: selected => idsToLabels(allServers.toJS())[selected]
+        // },
+        // filterOptions: filterOptions(allServers.toJS(), 'Servers', false), // import filter logic and feed it w/ config table data
         customBodyRender: (value, tableMeta) => renderServersChips(allServers, value, tableMeta, []) // render as chips
       }
     },
@@ -244,12 +265,14 @@ render() {
       name: 'tags',
       label: 'Tags',
       options: {
-        filter: true,
-        filterType: 'custom',
-        customFilterListOptions: {
-          render: selected => idsToLabels(allTags.toJS())[selected]
-        },
-        filterOptions: filterOptions(allTags.toJS(), 'Tags', true),
+        filter: false,
+        // filterType: 'custom',
+        // filterList: tags, // *** pre-filtering ***
+        // customFilterListOptions: {
+        //   // render: selected => idsToLabels(allTags.toJS())[selected]
+        //   render: () => ''
+        // },
+        // filterOptions: filterOptions(allTags.toJS(), 'Tags', true),
         customBodyRender: (value, tableMeta) => renderTagsChips(allTags, value, tableMeta, []) // render as chips
       }
     },
@@ -262,7 +285,7 @@ render() {
     }
   ];
   const options = {
-    filter: true,
+    filter: false,
     filterType: 'dropdown',
     responsive: 'standard',
     rowsPerPage: 15,
@@ -275,20 +298,46 @@ render() {
     print: false,
     viewColumns: false,
     download: false,
-    onFilterChange: (changedColumn, filterList, type, changedColumnIndex, displayedData) => {
-      console.log('SELECTION FILTER DETAILS: ', changedColumn, filterList, type);
-      if (filterList[3].length > 0) { // if user has filtered a server
-        this.setState({ selectedServerId: filterList[3], isServerSelected: true });
-        this.setState({ popUpText: displayedData.map(x => x.data[5]).join('\n\n') });
-      } else this.setState({ selectedServerId: '', isServerSelected: false });
-    },
+    // onTableChange: (action, tableState) => {
+    //   const { filterList, displayData } = tableState;
+    //   console.log(action, filterList, displayData, tableState);
+    //   // if (filterList[3].length > 0) { // if user has filtered a server
+    //   //   // this.setState({ selectedServerId: filterList[3], isServerSelected: true });
+    //   // this.setState({ popUpText: displayData.map(x => x.data[5]).join('\n\n') });
+    //   // } else this.setState({ selectedServerId: '', isServerSelected: false });
+    // },
+    // onFilterChange: (changedColumn, filterList, type, changedColumnIndex, displayedData) => {
+    //   console.log('>>>>>  FILTER CHANGE, DETAILS: ', changedColumn, filterList, type);
+    //   if (filterList[3].length > 0) { // if user has filtered a server
+    //     this.setState({ selectedServerId: filterList[3], isServerSelected: true });
+    //     this.setState({ popUpText: displayedData.map(x => x.data[5]).join('\n\n') });
+    //   } else this.setState({ selectedServerId: '', isServerSelected: false });
+    // },
     renderExpandableRow: this.renderCollapseVersionsPanel,
     customToolbar: () => (
-      <Tooltip title="Download/Deploy">
-        <IconButton onClick={this.handleDownloadClick}>
-          <GetAppIcon />
-        </IconButton>
-      </Tooltip>
+      <div>
+        <Button
+          variant="contained"
+          color="secondary"
+          aria-controls="simple-menu"
+          aria-haspopup="true"
+          startIcon={<CloudUploadIcon />}
+          onClick={this.handleClick}
+          style={{ marginTop: '20px' }}
+        >
+            DEPLOY
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorEl={this.state.anchorEl}
+          keepMounted
+          open={Boolean(this.state.anchorEl)}
+          onClose={this.handleClose}
+        >
+          {allServers.toJS().map((option, index) =>
+            <MenuItem onClick={() => this.handleDeploymentServerClick(option._id, data)} key={index.toString()}>{option.label}</MenuItem>)}
+        </Menu>
+      </div>
     )
   };
 
@@ -305,8 +354,8 @@ render() {
       </MuiThemeProvider>
       {this.state.popUpStatus ?
         <PopUp
-          dialogType={this.state.popUpType}
-          dialogText={this.state.popUpText}
+          dialogType={this.state.popUpType} // 'error' || 'rules text'
+          dialogText={this.state.popUpText} // error message || rules content pay-load
           onClose={this.onPopUpClose}
           onSubmitDownloadRules={this.onSubmitDownloadRules}
           onSubmitDeployRules={this.onSubmitDeployRules}
@@ -324,6 +373,7 @@ DSLGeneratorParentTable.propTypes = {
   allServers: PropTypes.array.isRequired,
   allTags: PropTypes.array.isRequired,
   severityNotif: PropTypes.string.isRequired,
+  tags: PropTypes.array.isRequired,
 };
 
 /**

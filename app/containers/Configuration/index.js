@@ -69,22 +69,22 @@ export function SimpleTabs() {
         <AppBar position="static">
           <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
             {/* <Tab label="Rule ID" {...a11yProps(0)} /> */}
-            <Tab label="Target Servers" {...a11yProps(0)} />
-            <Tab label="Tags" {...a11yProps(1)} />
-            <Tab label="Generators" {...a11yProps(2)} />
+            <Tab label="Tags" {...a11yProps(0)} />
+            <Tab label="Generators" {...a11yProps(1)} />
+            <Tab label="Target Servers" {...a11yProps(2)} />
           </Tabs>
         </AppBar>
         {/* <TabPanel value={value} index={0}>
               TODO: Rule ID. Future feature in the case of rule ID included inside the rule-name
         </TabPanel> */}
         <TabPanel value={value} index={0}>
-          <ServersConfig />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
           <TagsConfig />
         </TabPanel>
-        <TabPanel value={value} index={2}>
+        <TabPanel value={value} index={1}>
           <GeneratorsConfig />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <ServersConfig />
         </TabPanel>
 
 

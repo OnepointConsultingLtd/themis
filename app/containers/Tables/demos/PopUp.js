@@ -219,7 +219,7 @@ function PopUp({
           // ref={descriptionElementRef}
           tabIndex={-1}
         >
-          <Dropzone onDrop={handleFileDrops} accept=".dslr" maxSize={1048576}>
+          <Dropzone onDrop={handleFileDrops} accept=".dslr" maxSize={20971520}>
             {({ getRootProps, getInputProps }) => (
               <section>
                 <div {...getRootProps()} className="dropzone">

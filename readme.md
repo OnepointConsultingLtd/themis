@@ -56,6 +56,7 @@ Thus, RulesMS is a fullstack **MERN** app!
  - **Tagging notification:** Show a notification, that when someone adds a tag to a rule, it lists all the generators it will become part of.
  - **Projects:** The system should allow for rules that belong to separate project to be separated. In the future a use should have explicit permissions to access rules that belong to a specific project.
  - **Favorite searches:** In the rules manager it should be possible to pin a search/filter as favourite so the user has quick an easy access to a preselected set of rules.
+ - **Jar generator:** The system should be able to directly generate a jar on deployment.
 
 #### References
 - <sup>1</sup> : https://github.com/ilhammeidi/boss-starter

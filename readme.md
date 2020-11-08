@@ -48,8 +48,13 @@ Thus, RulesMS is a fullstack **MERN** app!
     `node node_modules/.bin/cross-env NODE_ENV=production pm2 start server`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
 
+ ### Planned features
+ - **Azure storage:** Integrate Azure storage at the end of deployment. Generated DSL files should land into an azure bucket to be later picked up for the rest of the compilation process.
+ - **Rules bulk update:** The user should be able to select multiple rules in Manager page and edit tags, edit status or delete rules with one go
+ - **Soft delete:** The user should be able to soft-delete rules instead of current hard-delete; for this, we need to introduce an extra field at the rule level, called deleted: true or hidden: true
+ - **Tagging notification:** Show a notification, that when someone adds a tag to a rule, it lists all the generators it will become part of.
 
-#### Notes
+#### References
 - <sup>1</sup> : https://github.com/ilhammeidi/boss-starter
 - <sup>2</sup> : https://github.com/react-boilerplate/react-boilerplate
 - <sup>3</sup> : https://medium.com/swlh/what-is-dx-developer-experience-401a0e44a9d9 

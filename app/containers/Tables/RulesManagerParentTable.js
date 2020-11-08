@@ -291,7 +291,7 @@ eventDel = (ruleId, rowIndex) => {
     // console.log(this.props.rowsExpanded);
     const options = {
       //   responsive: 'stacked',
-      rowsPerPage: 15,
+      rowsPerPageOptions: [10, 25, 50, 100],
       //   page: 1,
       //   onRowSelectionChange: this.onRowSelectionChange
       filter: true,

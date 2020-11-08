@@ -289,7 +289,7 @@ render() {
     filter: false,
     filterType: 'dropdown',
     responsive: 'standard',
-    rowsPerPage: 15,
+    rowsPerPageOptions: [10, 25, 50, 100],
     expandableRows: true,
     expandableRowsHeader: false,
     expandableRowsOnClick: true,

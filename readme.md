@@ -52,6 +52,7 @@ Thus, RulesMS is a fullstack **MERN** app!
  - **Azure storage:** Integrate Azure storage at the end of deployment. Generated DSL files should land into an azure bucket to be later picked up for the rest of the compilation process.
  - **Rules bulk update:** The user should be able to select multiple rules in Manager page and edit tags, edit status or delete rules with one go
  - **Soft delete:** The user should be able to soft-delete rules instead of current hard-delete; for this, we need to introduce an extra field at the rule level, called deleted: true or hidden: true
+ - **Rule validator:** Before saving the system should validate the rule syntax first.
  - **Tagging notification:** Show a notification, that when someone adds a tag to a rule, it lists all the generators it will become part of.
  - **Projects:** The system should allow for rules that belong to separate project to be separated. In the future a use should have explicit permissions to access rules that belong to a specific project.
  - **Favorite searches:** In the rules manager it should be possible to pin a search/filter as favourite so the user has quick an easy access to a preselected set of rules.

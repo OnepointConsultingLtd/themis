@@ -11,7 +11,7 @@ const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 const app = express();
 
 // parse application/json
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 
 // TODO Dealing w/ CORS when we will split dev-server in production
 // app.use((req, res) => {

@@ -32,7 +32,7 @@ import {
   removeAction,
 } from 'ba-actions/RulesTableActions';
 import Notification from 'ba-components/Notification/Notification';
-// import CustomToolbarSelect from './demos/CustomToolbarSelect';
+import CustomToolbarSelect from './demos/CustomToolbarSelect';
 import RulesManagerNestedVersionsPanel from './demos/RulesManagerNestedVersionsPanel';
 import { aggregateMaxVersions, fetchRuleFullDetails, findLockedAndDeactivatedRules } from './demos/data';
 import CustomToolbar from './demos/CustomToolbar';
@@ -163,7 +163,7 @@ eventDel = (ruleId, rowIndex) => {
       allServers,
       allTags
     } = this.props;
-    console.log(dataTable.toJS());
+    // console.log(dataTable.toJS());
     const data = aggregateMaxVersions(dataTable.toJS());
     const { lockedRows, deactivatedRows } = findLockedAndDeactivatedRules(dataTable.toJS());
     // console.log(lockedRows, deactivatedRows);
@@ -296,28 +296,30 @@ eventDel = (ruleId, rowIndex) => {
       //   onRowSelectionChange: this.onRowSelectionChange
       filter: true,
       search: true,
+      // fixedHeader: true,
+      // fixedSelectColumn: true,
       // searchOpen: true,
       download: false,
       filterType: 'dropdown',
       responsive: 'standard',
       expandableRows: true,
-      fixedHeader: true,
+      // fixedHeader: true,
       expandableRowsHeader: false,
       expandableRowsOnClick: true,
       isRowExpandable: (dataIndex, expandedRows) => {
         if (lockedRows.includes(dataIndex)) return false; // prevent locked rules from expanding
         return true;
       },
-      selectableRows: 'none',
+      selectableRows: 'multiple',
       sort: false,
       print: false,
       viewColumns: false,
       rowsExpanded: this.state.rowsExpanded, // {array} User provided expanded rows
       onFilterChange: () => this.setState({ rowsExpanded: [] }), // DEBUG: reset expanded rows upon filter (displayed data) change; it was messing expansion upon filtering
       renderExpandableRow: this.renderCollapseVersionsPanel,
-      // customToolbarSelect: (selectedRows, displayData, setSelectedRows) => ( // DECOMMISSIONED
-      //   <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} />
-      // ),
+      customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
+        <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} />
+      ),
       onRowExpansionChange: (curExpanded, allRowsExpanded, rowsExpanded) => {
         console.log('>>> Expanding: ', curExpanded, allRowsExpanded, rowsExpanded);
         this.setState({ rowsExpanded: allRowsExpanded.map(row => row.dataIndex) }); // expansion is based on row.dataIndex and not on row.index (displayed over actual data)

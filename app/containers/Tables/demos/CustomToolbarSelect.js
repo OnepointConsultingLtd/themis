@@ -4,11 +4,24 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {
+  closeNotifAction,
+  // updateExpandedRows,
+  bulkDeactivate,
+  bulkActivate,
+  bulkDelete,
+  removeAction
+} from 'ba-actions/RulesTableActions';
 // import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
-import CustomSVG from './customSVG.js';
+// import CustomSVG from './customSVG.js'; // custom created SVG's!!
+
+// Reducer Branch
+const branch = 'RulesManagerParentTable';
 
 const defaultToolbarSelectStyles = {
   iconButton: {
@@ -36,6 +49,7 @@ const defaultToolbarSelectStyles = {
   }
 };
 
+/** The custom Selection Toolbar for the Parent Rules Management Table  */
 class CustomToolbarSelect extends React.Component {
   handleClickInverseSelection = () => {
     // eslint-disable-next-line no-shadow
@@ -54,9 +68,29 @@ class CustomToolbarSelect extends React.Component {
     this.props.setSelectedRows([]);
   };
 
-  handleClickBlockSelected = () => {
-    console.log(`block users with dataIndexes: ${this.props.selectedRows.data.map(row => row.dataIndex)}`);
-  };
+  /** returns the selected rules' Id's as an array  */
+  fetchSelectedRulesIds = () => {
+    // collect all select rules absolute index withing the dataTable
+    const selectedRulesIndicesArray = this.props.selectedRows.data.map(selectedRule => selectedRule.index);
+    // fetch actual rules _ids based on above collection
+    return selectedRulesIndicesArray.map(ruleIndex => this.props.dataTable.toJS()[ruleIndex]._id);
+  }
+
+  /** Bulk update of selected rules: deactivation */
+  deactivateRules = () => {
+    this.props.bulkDeactivateRules(this.fetchSelectedRulesIds(), branch);
+  }
+
+  /** Bulk update of selected rules: activation */
+  activateRules = () => {
+    this.props.bulkActivateRules(this.fetchSelectedRulesIds(), branch);
+  }
+
+  /** Bulk update of selected rules:  deletion */
+  deleteRules = () => {
+    this.props.bulkDeleteRules(this.fetchSelectedRulesIds(), branch);
+  }
+
 
   render() {
     const { classes } = this.props;
@@ -74,21 +108,21 @@ class CustomToolbarSelect extends React.Component {
           </IconButton>
         </Tooltip>
         <Tooltip title="Deactivate">
-          <IconButton className={classes.iconButton} onClick={this.handleClickBlockSelected}>
+          <IconButton className={classes.iconButton} onClick={this.deactivateRules}>
             <Icon className={classes.icon} >pause</Icon>
           </IconButton>
         </Tooltip>
         <Tooltip title="Activate">
-          <IconButton className={classes.iconButton} onClick={this.handleClickBlockSelected}>
+          <IconButton className={classes.iconButton} onClick={this.activateRules}>
             <Icon className={classes.icon} >play_arrow</Icon>
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete">
-          <IconButton className={classes.iconButton} onClick={this.handleClickBlockSelected}>
+          <IconButton className={classes.iconButton} onClick={this.deleteRules}>
             <Icon className={classes.icon} >delete</Icon>
           </IconButton>
         </Tooltip>
-        <Tooltip title="Move up to PROD">
+        {/* <Tooltip title="Move up to PROD">
           <IconButton>
             <CustomSVG text="PROD" color="warn" />
           </IconButton>
@@ -107,7 +141,7 @@ class CustomToolbarSelect extends React.Component {
           <IconButton>
             <CustomSVG text="DEV"color="success" />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </div>
     );
   }
@@ -118,7 +152,41 @@ CustomToolbarSelect.propTypes = {
   selectedRows: PropTypes.object.isRequired,
   setSelectedRows: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  displayData: PropTypes.array.isRequired
+  displayData: PropTypes.array.isRequired,
+  dataTable: PropTypes.array.isRequired,
+  bulkDeactivateRules: PropTypes.func.isRequired,
+  bulkActivateRules: PropTypes.func.isRequired,
+  bulkDeleteRules: PropTypes.func.isRequired,
 };
 
-export default withStyles(defaultToolbarSelectStyles, { name: 'CustomToolbarSelect' })(CustomToolbarSelect);
+/**
+ * Access to Incoming state (data)
+ * @param {Object} state
+ */
+const mapStateToProps = state =>
+  ({
+    force: state, // force state from reducer
+    dataTable: state.getIn([branch, 'dataTable']),
+  });
+
+/**
+ * Outgoing events (actions) w/ or w/out payload
+ * @param {*} dispatch
+ */
+const mapDispatchToProps = dispatch => ({
+  removeRow: bindActionCreators(removeAction, dispatch),
+  closeNotif: bindActionCreators(closeNotifAction, dispatch),
+  bulkDeactivateRules: bindActionCreators(bulkDeactivate, dispatch),
+  bulkActivateRules: bindActionCreators(bulkActivate, dispatch),
+  bulkDeleteRules: bindActionCreators(bulkDelete, dispatch)
+});
+
+/**
+ * Connecting state w/ props
+ */
+const CustomToolbarSelectMapped = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomToolbarSelect);
+
+export default withStyles(defaultToolbarSelectStyles, { name: 'CustomToolbarSelect' })(CustomToolbarSelectMapped);

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import SearchIcon from '@material-ui/icons/Search';
+// import SearchIcon from '@material-ui/icons/Search';
 import MenuIcon from '@material-ui/icons/Menu';
 import {
   AppBar, Toolbar,
@@ -48,9 +48,9 @@ class Header extends React.Component {
           <div className={classes.flex}>
             <div className={classes.wrapper}>
               <div className={classes.search}>
-                <SearchIcon />
+                {/* <SearchIcon /> */}
               </div>
-              <input className={classes.input} placeholder="Search" />
+              {/* <input className={classes.input} placeholder="Search" /> */}
             </div>
           </div>
           <Hidden xsDown>

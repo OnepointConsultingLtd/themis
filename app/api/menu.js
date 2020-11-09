@@ -10,12 +10,6 @@ const generateSideMenu = (generatorsConfig) => { // dynamic injection of generat
     //   label: 'Rules',
     //   icon: 'library_books',
     //   child: [
-        {
-          // keyParent: 'rules',
-          key: 'configuration',
-          label: 'Configuration',
-          link: '/app/configuration'
-        },
         // {
         //   key: 'dashboard_v1',
         //   label: 'Dashboard',
@@ -43,6 +37,12 @@ const generateSideMenu = (generatorsConfig) => { // dynamic injection of generat
           label: 'DSLR Generators',
           // link: '/app/tables/dsl-generator',
           child: [...generatorsConfig]
+        },
+        {
+          // keyParent: 'rules',
+          key: 'configuration',
+          label: 'Configuration',
+          link: '/app/configuration'
         },
       // {
       //   key: 'reduxform',

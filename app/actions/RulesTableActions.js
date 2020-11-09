@@ -5,12 +5,6 @@ import axios from 'axios';
 import * as types from './actionTypes';
 import { matchRulePattern } from '../containers/Tables/demos/parseRules';
 
-// Old sync code => v0.1 & v1
-// export const fetchAction = (items, branch) => ({
-//   branch,
-//   type: `${branch}/${types.FETCH_DATA}`,
-//   items
-// });
 
 /** Async inject data from /api/rules => v1.5 */
 export const fetchAction = (branch) => async (dispatch) => {
@@ -55,12 +49,6 @@ export const importRules = (items, branch) => (dispatch) => {
       });
     });
 };
-
-// export const addAction = (ruleId, branch) => ({   // NOT USED / clone row was used instead
-//   ruleId,
-//   branch,
-//   type: `${branch}/${types.ADD_EMPTY_ROW}`
-// });
 
 /** Cloning the top version in the versions-list (max version) within a Rule (id). That's the 'item' */
 export const cloneAction = (ruleId, item, branch) => async (dispatch) => {
@@ -129,14 +117,6 @@ export const removeAction = (ruleId, branch) => async (dispatch) => {
   }
 };
 
-// export const updateAction = (ruleId, event, item, branch) => ({
-//   ruleId,
-//   branch,
-//   type: `${branch}/${types.UPDATE_ROW}`,
-//   event,
-//   item
-// });
-
 export const updateAction = (ruleId, event, item, branch) => // updating (content, servers & tags) will NOT get stored in Mongo
   (dispatch, getState) => {
     const injectedServersConfig = getState().get('ServersConfig').get('dataTable'); // servers and tags config injected inside rules redux
@@ -149,7 +129,6 @@ export const updateAction = (ruleId, event, item, branch) => // updating (conten
       injectedServersConfig
     });
   };
-
 
 export const updateRuleStatus = (ruleId, oldValue, branch) => async (dispatch) => {
   console.log('>>>>> About to update status and POST: ', oldValue);
@@ -180,29 +159,12 @@ export const updateRuleStatus = (ruleId, oldValue, branch) => async (dispatch) =
   }
 };
 
-// export const updateRuleStatus = (ruleId, oldValue, branch) =>
-// ({
-//   ruleId,
-//   oldValue,
-//   branch,
-//   type: `${branch}/UPDATE_RULE_STATUS`,
-// });
-
 export const editAction = (ruleId, item, branch) => ({ // click-on-edit will NOT be stored in Mongo
   ruleId,
   branch,
   type: `${branch}/${types.EDIT_ROW}`,
   item
 });
-
-// SAVE version: Sync version
-// export const saveAction = (ruleId, item, branch, content) => ({
-//   ruleId,
-//   branch,
-//   type: `${branch}/${types.SAVE_ROW}`, // SAVE TO MONGO
-//   item,
-//   content
-// });
 
 /** Cloning the top version in the list (max version). That's the 'item' */
 export const saveAction = (ruleId, item, branch, content) => async (dispatch) => {
@@ -253,6 +215,64 @@ export const saveAction = (ruleId, item, branch, content) => async (dispatch) =>
   }
 };
 
+// -----------------------------------------------------------------------------> BULK ACTIONS
+export const bulkDeactivate = (bulkIds, branch) => async (dispatch) => {
+  const response = await axios.post('/api/bulk/rules/deactivate', { array: [...bulkIds] }); // array in body cannot be posted otherwise
+  if (response.status !== 200) { // Error handling
+    dispatch({ // dispatch notification only
+      branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
+      type: `${branch}/SHOW_NOTIF`,
+      message: 'Could not connect to the server',
+      severity: 'error'
+    });
+  } else { // SUCCESS
+    dispatch({
+      bulkIds,
+      branch,
+      type: `${branch}/BULK_DEACTIVATE`,
+      message: response.data.message // message is nested under .data node
+    });
+  }
+};
+export const bulkActivate = (bulkIds, branch) => async (dispatch) => {
+  const response = await axios.post('/api/bulk/rules/activate', { array: [...bulkIds] }); // array in body cannot be posted otherwise
+  if (response.status !== 200) { // Error handling
+    dispatch({ // dispatch notification only
+      branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
+      type: `${branch}/SHOW_NOTIF`,
+      message: 'Could not connect to the server',
+      severity: 'error'
+    });
+  } else { // SUCCESS
+    dispatch({
+      bulkIds,
+      branch,
+      type: `${branch}/BULK_ACTIVATE`,
+      message: response.data.message // message is nested under .data node
+    });
+  }
+};
+export const bulkDelete = (bulkIds, branch) => async (dispatch) => {
+  console.log(bulkIds);
+  const response = await axios.post('/api/bulk/rules/delete', { array: [...bulkIds] }); // array in body cannot be posted otherwise
+  if (response.status !== 200) { // Error handling
+    dispatch({ // dispatch notification only
+      branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
+      type: `${branch}/SHOW_NOTIF`,
+      message: 'Could not connect to the server',
+      severity: 'error'
+    });
+  } else { // SUCCESS
+    dispatch({
+      bulkIds,
+      branch,
+      type: `${branch}/BULK_DELETE`,
+      message: response.data.message // message is nested under .data node
+    });
+  }
+};
+// <------------------------------------------------------------------- BULK ACTIONS
+
 export const showNotification = (message, severity, branch) => ({ // dispatch notification only
   branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
   type: `${branch}/SHOW_NOTIF`,
@@ -265,6 +285,41 @@ export const closeNotifAction = branch => ({
   type: `${branch}/${types.CLOSE_NOTIF}`,
 });
 
+
+// -------------------------------- v0.5 SYNC ACTIONS
+// Old sync code => v0.1 & v1
+// export const fetchAction = (items, branch) => ({
+//   branch,
+//   type: `${branch}/${types.FETCH_DATA}`,
+//   items
+// });
+// export const addAction = (ruleId, branch) => ({   // NOT USED / clone row was used instead
+//   ruleId,
+//   branch,
+//   type: `${branch}/${types.ADD_EMPTY_ROW}`
+// });
+// export const updateAction = (ruleId, event, item, branch) => ({
+//   ruleId,
+//   branch,
+//   type: `${branch}/${types.UPDATE_ROW}`,
+//   event,
+//   item
+// });
+// export const updateRuleStatus = (ruleId, oldValue, branch) =>
+// ({
+//   ruleId,
+//   oldValue,
+//   branch,
+//   type: `${branch}/UPDATE_RULE_STATUS`,
+// });
+// SAVE version: Sync version
+// export const saveAction = (ruleId, item, branch, content) => ({
+//   ruleId,
+//   branch,
+//   type: `${branch}/${types.SAVE_ROW}`, // SAVE TO MONGO
+//   item,
+//   content
+// });
 // export const updateExpandedRows = (item, branch) => ({
 //   branch,
 //   type: `${branch}/UPDATE_EXPANDED`,

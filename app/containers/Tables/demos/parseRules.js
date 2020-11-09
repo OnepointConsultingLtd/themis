@@ -15,11 +15,11 @@ function enhanceArrayPrototype() {
 /** Rules pattern-matching code is needed for external use also. So i detached it from parseRules() and exported */
 export const matchRulePattern = (importedText) => {
   enhanceArrayPrototype(); // calling this here since here is the exported scope for matchRulePattern()
-  console.log(importedText);
+  // console.log(importedText);
   // DEBUGGED not matching comments: needed \r\n match inside comments. Not sure if this is windows related issue
   const importsRegex = /(?<comments>(?:\/\/.*?(?:\r\n|\n))*)(?<rule>(?<deactivated>(?:\/\/|)*\s*(?:\/\/|)*\s*|)rule\s*"(?<ruleheader>(?<ruleid>.*?)\s+(?<ruletitle>.*?))"(?:\r|\n|\r\n)(?:\/\/)*\s*(?:\/\/)*\s*(?<salience>salience.*?(?:\n|\r\n)|).*(?:\r|\n|\r\n)(?:.|\n|\r|\r\n)*?end)/g;
   // console.log(importsRegex.test(text));  TODO : keep this light validation check
-  console.log('>>>> PARSED: ', [...importedText.matchAll(importsRegex)]);
+  // console.log('>>>> PARSED: ', [...importedText.matchAll(importsRegex)]);
   return [...importedText.matchAll(importsRegex)];
 };
 
@@ -31,7 +31,7 @@ export const matchRulePattern = (importedText) => {
  */
 export const parseRules = (targetServer, selectedTag, importedText) => {
   const matchedRulesPatternArray = matchRulePattern(importedText);
-  console.log('???  Matched this: ', matchedRulesPatternArray);
+  // console.log('???  Matched this: ', matchedRulesPatternArray);
 
   // eslint-disable-next-line prefer-const
   let rulesArray = [];

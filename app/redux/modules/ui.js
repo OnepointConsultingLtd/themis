@@ -81,7 +81,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case OPEN_SUBMENU:
       return state.withMutations((mutableState) => {
-        console.log('STATE MENU : ', state.get('menu'));
+        // console.log('STATE MENU : ', state.get('menu'));
         // Set initial open parent menu
         const activeParent = setNavCollapse(
           state.get('menu'), // <---- load SideBar menu state here

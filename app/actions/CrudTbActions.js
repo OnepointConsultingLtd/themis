@@ -86,7 +86,7 @@ export const addAction = (schema, branch) => async (dispatch) => {
       branch,
       type: `${branch}/${types.ADD_EMPTY_ROW}`,
     });
-    // -------------------------- ASYNC LOADING OF SIDEBAR MENU STATE --- IF branch IS GENERATORS_CONFIG
+    // -------------------------- ASYNC ADDING OF A SIDEBAR MENU ITEM --- IF branch IS GENERATORS_CONFIG
     if (branch === 'GeneratorsConfig') {
       newRecordWithID.link = `/app/tables/${newRecordWithID.label}`; // add link key
       newRecordWithID.keyParent = 'dslr_generators';

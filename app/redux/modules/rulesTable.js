@@ -1,4 +1,4 @@
-import { fromJS, List, /* OrderedSet, Map */ } from 'immutable';
+import { fromJS, List /* OrderedSet, Map */ } from 'immutable';
 // import timestamp from 'time-stamp';
 import notif from 'ba-utils/notifMessage';
 import {
@@ -34,7 +34,7 @@ const initialState = {
 //     content: ''
 //   }));
 
-// const clonedRow = (item) =>    // moved one level upwards. inside actions
+// const clonedRow = (item) =>    // moved one level upwards. inside actions as we need to send it to DB from that level
 //   (Map({
 //     version: item.get('version') + 1,
 //     name: item.get('name'),
@@ -53,11 +53,11 @@ export default function reducer(state = initialImmutableState, action = {}) {
   switch (action.type) {
     /*
     LOAD DATA INTO STATE
-    TODO: This will be converted to an event triger without any payload (only 'branch')
+    TODO V3: This will be converted to an event triger without any payload (only 'branch')
     It will just carry a signal that will triger the subscription to the server
     data stream. NOTE: we will need an extra triger called: STOP_FETCHING_DATA that
     will be called from the 'componentWillUnmount' event
-    All this because we want the rules tables to be subscriptions to live streams!
+    All this because we want the rules tables to be live subscriptions to streams!
     (rename this into START_FETCHING_DATA)
     */
 
@@ -85,7 +85,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
     //     console.log(mutableState);
     //   });
 
-    case `${branch}/${CLONE_MAX_VERSION}`: // Stack-up an advanced version (insert version on top)
+    case `${branch}/${CLONE_MAX_VERSION}`: // Stack-up an advanced version (insert a new version on top)
       return state.withMutations((mutableState) => {
         console.log('>>>>> CLONED: ', action.item);
         const rulesListIndex = mutableState.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
@@ -216,6 +216,46 @@ export default function reducer(state = initialImmutableState, action = {}) {
           .set('notifMsg', action.message)
           .set('notifSeverity', 'success');
       });
+
+    // ----------------------------------------------> BULK ACTIONS
+    case `${branch}/BULK_DEACTIVATE`:
+      return state.withMutations((mutableState) => {
+        mutableState
+          .update('dataTable', dataTable =>
+            dataTable.map(rule => {
+              if (action.bulkIds.includes(rule.get('_id')) && rule.get('active')) {
+                return rule.set('active', false);
+              }
+              return rule;
+            })
+          )
+          .set('notifMsg', action.message)
+          .set('notifSeverity', 'success');
+      });
+    case `${branch}/BULK_ACTIVATE`:
+      return state.withMutations((mutableState) => {
+        mutableState
+          .update('dataTable', dataTable =>
+            dataTable.map(rule => {
+              if (action.bulkIds.includes(rule.get('_id')) && !rule.get('active')) {
+                return rule.set('active', true);
+              }
+              return rule;
+            })
+          )
+          .set('notifMsg', action.message)
+          .set('notifSeverity', 'success');
+      });
+    case `${branch}/BULK_DELETE`:
+      return state.withMutations((mutableState) => {
+        mutableState
+          .update('dataTable', dataTable =>
+            dataTable.filterNot(rule => action.bulkIds.includes(rule.get('_id'))
+            ))
+          .set('notifMsg', action.message)
+          .set('notifSeverity', 'success');
+      });
+    // <--------------------------------------------- BULK ACTIONS
     default:
       return state;
   }

@@ -58,6 +58,8 @@ class RulesManagerParentTable extends React.Component {
       rowsExpanded: [],
       // lockedRows: [],
       // deactivatedRows: [],
+      deletedRuleId: '',
+      deletedRuleRowIndex: '',
       popUp: {
         status: false,
         type: '',
@@ -69,64 +71,70 @@ class RulesManagerParentTable extends React.Component {
 
 
   /**
- * Action to perform when user clicks CANCEL in the popup
- */
-onPopUpClose = () => {
-  this.setState({ popUp: { status: false } });
-};
+   * Action to perform when user clicks CANCEL in the popup
+   */
+  onPopUpClose = () => {
+    this.setState({ popUp: { status: false } });
+  };
 
-/**
- * Filter top popup was too narrow. needed some space
- * Overriding default styling
- */
-getMuiTheme = () => createMuiTheme({
-  overrides: {
-    MUIDataTableFilter: {
-      root: {
-        width: '500px'
+  /**
+   * Filter top popup was too narrow. needed some space
+   * Overriding default styling
+   */
+  getMuiTheme = () => createMuiTheme({
+    overrides: {
+      MUIDataTableFilter: {
+        root: {
+          width: '500px'
+        }
       }
     }
-  }
-});
-
-setCellProps = (row, dataIndex, rowIndex) => {
-  if ((this.lockedRows || []).includes(dataIndex) || (this.deactivatedRows || []).includes(dataIndex)) {
-    return {
-      style: { color: '#aaa' }
-    };
-  }
-  return true;
-};
-
-/**
- * Deleting a Rule and refreshing the expanded rows by renumbering them
- * @param {string} ruleId is the to-be-deleted rule id
- * @param {integer} rowIndex is the absolute DataIndex of the rule (index inside DataArray)
-*/
-eventDel = (ruleId, rowIndex) => (e) => {
-  e.stopPropagation();
-  // BUG: when removing a rule while expanded, browser crashes (DOM node is destroyed)
-  // DEBUGGED: collapse rule before removing (thus removing DOM-node before deleting it)
-  const expandedRowsArray = [...this.state.rowsExpanded.sort()]; // need sort because expanded-array is in historical order
-  const expandedRowsArrayIndexOf = expandedRowsArray.indexOf(rowIndex);
-
-  // first check if the to-be-deleted row is expanded
-  if (expandedRowsArrayIndexOf !== -1) {
-    expandedRowsArray.splice(expandedRowsArrayIndexOf, 1);
-    this.setState({ rowsExpanded: expandedRowsArray }); // collapse before deletion
-  }
-  // Rule deletion
-  this.props.removeRow(ruleId, branch);
-  // after deletion, renumber expanded rows indices after the deleted index (all indices are absolute)
-  const expandedRowsArray2 = expandedRowsArray.map((item, index) => {
-    if (index >= expandedRowsArrayIndexOf) { console.log('returning renumbered', item - 1); return (item - 1); }
-    return item;
   });
-  this.setState({ rowsExpanded: expandedRowsArray2 });
 
-};
+  setCellProps = (row, dataIndex, rowIndex) => {
+    if ((this.lockedRows || []).includes(dataIndex) || (this.deactivatedRows || []).includes(dataIndex)) {
+      return {
+        style: { color: '#aaa' }
+      };
+    }
+    return true;
+  };
 
-stopPropagation = (e) => { e.stopPropagation(); }
+  /**
+   * Deleting a Rule and refreshing the expanded rows by renumbering them
+   * @param {string} ruleId is the to-be-deleted rule id
+   * @param {integer} rowIndex is the absolute DataIndex of the rule (index inside DataArray)
+  */
+  eventDel = (deletedRuleId, deletedRuleRowIndex) => (e) => {
+    e.stopPropagation();
+    // Launch confirmation pop-up
+    this.setState({ popUp: { status: true, type: 'confirm delete', text: '' } });
+    this.setState({ deletedRuleId, deletedRuleRowIndex });
+  };
+
+  onConfirmDeleteRule = () => {
+    // BUG: when removing a rule while expanded, browser crashes (DOM node is destroyed)
+    // DEBUGGED: collapse rule before removing (thus removing DOM-node before deleting it)
+    const expandedRowsArray = [...this.state.rowsExpanded.sort()]; // need sort because expanded-array is in historical order
+    const expandedRowsArrayIndexOf = expandedRowsArray.indexOf(this.state.deletedRowIndex);
+
+    // first check if the to-be-deleted row is expanded
+    if (expandedRowsArrayIndexOf !== -1) {
+      expandedRowsArray.splice(expandedRowsArrayIndexOf, 1);
+      this.setState({ rowsExpanded: expandedRowsArray }); // collapse before deletion
+    }
+
+    // Rule deletion
+    this.props.removeRow(this.state.deletedRuleId, branch);
+    // after deletion, renumber expanded rows indices after the deleted index (all indices are absolute)
+    const expandedRowsArray2 = expandedRowsArray.map((item, index) => {
+      if (index >= expandedRowsArrayIndexOf) { console.log('returning renumbered', item - 1); return (item - 1); }
+      return item;
+    });
+    this.setState({ rowsExpanded: expandedRowsArray2 });
+  }
+
+  stopPropagation = (e) => { e.stopPropagation(); }
 
   /**
    * Renders a single rule's multi-versions panel
@@ -377,6 +385,10 @@ stopPropagation = (e) => { e.stopPropagation(); }
             onClose={this.onPopUpClose}
             allServers={allServers}
             allTags={allTags}
+            onConfirmDeleteRule={() => {
+              this.onConfirmDeleteRule();
+              this.setState({ popUp: { status: false } });
+            }}
             onSubmitImportedRules={(targetServer, selectedTag, selectedFiles) => {
               // console.log('selectedFiles', selectedFiles);
               ImportRules(targetServer, selectedTag, selectedFiles); // Sending selected DSLR files for parsing

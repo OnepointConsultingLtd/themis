@@ -32,7 +32,7 @@ import './style.css';
  * @param {callback function} onSubmit: callback for submit button in dialog
  */
 function PopUp({
-  dialogType, dialogText, onClose, onSubmitImportedRules, onSubmitCreatedRule, onSubmitDownloadRules, onSubmitDeployRules, allServers, allTags
+  dialogType, dialogText, onClose, onConfirmDeleteRule, onSubmitImportedRules, onSubmitCreatedRule, onSubmitDownloadRules, onSubmitDeployRules, allServers, allTags
 }) {
   const [selectedFiles, setSelectedFiles] = useState(); // DEBUGGED: needed empty init state and not ([])
   const [selectedServer, setSelectedServer] = useState(['NA']);
@@ -140,6 +140,34 @@ function PopUp({
         <DialogActions>
           <Button onClick={onClose} color="primary">
               Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+
+  const renderDeleteRuleConfirmation = () =>
+    (
+      <Dialog
+        open
+        scroll="paper"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Confirmation</DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText
+            id="scroll-dialog-description1"
+            tabIndex={-1}
+          >
+            <div>Are you sure you want to delete rule?</div>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary">
+              Cancel
+          </Button>
+          <Button onClick={onConfirmDeleteRule} color="secondary">
+              Delete
           </Button>
         </DialogActions>
       </Dialog>
@@ -305,6 +333,8 @@ function PopUp({
   switch (dialogType) {
     case 'error':
       return renderError();
+    case 'confirm delete':
+      return renderDeleteRuleConfirmation();
     case 'rules list':
       return renderRulesList();
     case 'drop files':
@@ -319,8 +349,9 @@ PopUp.propTypes = {
   dialogText: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   dialogType: PropTypes.string.isRequired,
-  onSubmitImportRules: PropTypes.func.isRequired,
-  onSubmitCreatedRule: PropTypes.func.isRequired
+  onSubmitImportedRules: PropTypes.func.isRequired,
+  onSubmitCreatedRule: PropTypes.func.isRequired,
+  onConfirmDeleteRule: PropTypes.func.isRequired,
 };
 
 export default PopUp;

@@ -1,3 +1,6 @@
+# some npm files
+package-lock.json
+
 # Don't check auto-generated stuff into git
 coverage
 build

@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 /* eslint-disable no-else-return */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-sequences */
@@ -55,6 +56,8 @@ class RulesManagerParentTable extends React.Component {
     super(props);
     this.state = {
       rowsExpanded: [],
+      // lockedRows: [],
+      // deactivatedRows: [],
       popUp: {
         status: false,
         type: '',
@@ -72,41 +75,58 @@ onPopUpClose = () => {
   this.setState({ popUp: { status: false } });
 };
 
+/**
+ * Filter top popup was too narrow. needed some space
+ * Overriding default styling
+ */
 getMuiTheme = () => createMuiTheme({
   overrides: {
     MUIDataTableFilter: {
       root: {
-        width: '500px' // Filter modal was too narrow. needed some space
+        width: '500px'
       }
     }
   }
-})
+});
 
-eventDel = (ruleId, rowIndex) => {
+setCellProps = (row, dataIndex, rowIndex) => {
+  if ((this.lockedRows || []).includes(dataIndex) || (this.deactivatedRows || []).includes(dataIndex)) {
+    return {
+      style: { color: '#aaa' }
+    };
+  }
+  return true;
+};
+
+/**
+ * Deleting a Rule and refreshing the expanded rows by renumbering them
+ * @param {string} ruleId is the to-be-deleted rule id
+ * @param {integer} rowIndex is the absolute DataIndex of the rule (index inside DataArray)
+*/
+eventDel = (ruleId, rowIndex) => (e) => {
+  e.stopPropagation();
   // BUG: when removing a rule while expanded, browser crashes (DOM node is destroyed)
-  // DEBUGGED: collapse rule before removing (remove DOM-node before deleting)
-  // eslint-disable-next-line prefer-const
-  let expandedRowsArray = [...this.state.rowsExpanded.sort()]; // need sort because expanded-array is historical
-  // console.log('BEFORE DELETION: ', expandedRowsArray);
+  // DEBUGGED: collapse rule before removing (thus removing DOM-node before deleting it)
+  const expandedRowsArray = [...this.state.rowsExpanded.sort()]; // need sort because expanded-array is in historical order
   const expandedRowsArrayIndexOf = expandedRowsArray.indexOf(rowIndex);
-  if (expandedRowsArrayIndexOf !== -1) { // first check if the to-be-deleted row is expanded
+
+  // first check if the to-be-deleted row is expanded
+  if (expandedRowsArrayIndexOf !== -1) {
     expandedRowsArray.splice(expandedRowsArrayIndexOf, 1);
     this.setState({ rowsExpanded: expandedRowsArray }); // collapse before deletion
   }
-
   // Rule deletion
   this.props.removeRow(ruleId, branch);
-  // console.log('AFTER DELETION: ', expandedRowsArray, expandedRowsArrayIndexOf);
-
-  // after deletion, renumber expanded rows indices after the deleted index
+  // after deletion, renumber expanded rows indices after the deleted index (all indices are absolute)
   const expandedRowsArray2 = expandedRowsArray.map((item, index) => {
     if (index >= expandedRowsArrayIndexOf) { console.log('returning renumbered', item - 1); return (item - 1); }
     return item;
   });
-  // console.log('AFTER RENUMBERING: ', expandedRowsArray2);
   this.setState({ rowsExpanded: expandedRowsArray2 });
 
 };
+
+stopPropagation = (e) => { e.stopPropagation(); }
 
   /**
    * Renders a single rule's multi-versions panel
@@ -114,7 +134,6 @@ eventDel = (ruleId, rowIndex) => {
    * We need Rule's ID for quering rule's full details
    */
   renderCollapseVersionsPanel = (rowData) => {
-    // console.log('Attempting to expand row: ', rowData);
     const colSpan = rowData.length + 1;
     const inlineStyle = {
       animation: '0.8s ease-out fadeIn 1',
@@ -152,37 +171,73 @@ eventDel = (ruleId, rowIndex) => {
     return (<div />); // rule was not there so render nothing
   }
 
+  onChangeRuleStatus = (ruleId, ruleStatus, updateValue) => (e) => {
+    e.stopPropagation();
+    updateValue(e.target.value !== 'Yes');
+    this.props.updateRuleStatus(ruleId, ruleStatus, branch);
+  }
+
+  renderCRUDActionsColumn = (value, tableMeta, updateValue) => {
+    let disabled;
+    if ((this.lockedRows || []).includes(tableMeta.rowIndex)) {
+      disabled = true; // prevent current user from deleting or changing locked-rules status
+    } else disabled = false;
+    return (
+      <div>
+        <FormControlLabel
+        // label={value ? 'Yes' : 'No'}
+          disabled={disabled}
+          value={value ? 'Yes' : 'No'}
+          control={
+            <Switch
+              color="primary"
+              checked={value}
+              value={value ? 'Yes' : 'No'}
+            />
+          }
+          onClick={this.stopPropagation}
+          onChange={this.onChangeRuleStatus(tableMeta.rowData[0], tableMeta.rowData[5], updateValue)}
+        />
+        <IconButton
+          onClick={this.eventDel(tableMeta.rowData[0], tableMeta.rowIndex)}
+          disabled={disabled}
+          aria-label="Delete"
+        >
+          <DeleteIcon />
+        </IconButton>
+      </div>
+    );
+  }
+
+  renderServersColumn = (value, tableMeta) => renderServersChips(this.props.allServers, value, tableMeta, this.lockedRows) // render as chips
+
+  renderTagsColumn = (value, tableMeta) => renderTagsChips(this.props.allTags, value, tableMeta, this.lockedRows) // render as chips
+
+  isRowExpandableLogic = (dataIndex, expandedRows) => {
+    if (this.lockedRows.includes(dataIndex)) return false; // prevent locked rules from expanding
+    return true;
+  };
+
+  // Expansion is based on row.dataIndex and not on row.index (absolute index=>dataIndex over displayed data index=>index)
+  onRowExpansionChangeLogic = (curExpanded, allRowsExpanded, rowsExpanded) => {
+    this.setState({ rowsExpanded: allRowsExpanded.map(row => row.dataIndex) });
+  }
+
   render() {
 
     const {
       dataTable,
-      // updateRuleStatus,
       closeNotif,
       messageNotif,
       severityNotif,
       allServers,
       allTags
     } = this.props;
-    // console.log(dataTable.toJS());
+
     const data = aggregateMaxVersions(dataTable.toJS());
     const { lockedRows, deactivatedRows } = findLockedAndDeactivatedRules(dataTable.toJS());
-    // console.log(lockedRows, deactivatedRows);
-
-    const setCellProps = (row, dataIndex, rowIndex) => {
-      if ((lockedRows || []).includes(dataIndex) || (deactivatedRows || []).includes(dataIndex)) {
-        return {
-          style: { color: '#aaa' }
-        };
-      }
-      return true;
-    };
-
-    /** Render tags chips */ // Decommissioned chips, v05 v1
-    // const renderTagsChips = (arrayOfValues, tableMeta) => {
-    //   // convert _id's to labels
-
-    //   return renderChips(arrayOfValues, tableMeta);
-    // };
+    this.lockedRows = lockedRows;
+    this.deactivatedRows = deactivatedRows;
 
     const columns = [
       {
@@ -190,7 +245,7 @@ eventDel = (ruleId, rowIndex) => {
         options: {
           display: false,
           filter: false,
-          setCellProps
+          setCellProps: this.setCellProps
         }
       },
       {
@@ -198,7 +253,7 @@ eventDel = (ruleId, rowIndex) => {
         label: 'Max. Version',
         options: {
           filter: false,
-          setCellProps
+          setCellProps: this.setCellProps
         }
       },
       {
@@ -206,7 +261,7 @@ eventDel = (ruleId, rowIndex) => {
         label: 'Name',
         options: {
           filter: false,
-          setCellProps
+          setCellProps: this.setCellProps
         }
       },
       {
@@ -216,9 +271,9 @@ eventDel = (ruleId, rowIndex) => {
         options: {
           filterType: 'custom',
           filter: true,
-          setCellProps,
+          setCellProps: this.setCellProps,
           // hint: 'Taget Execution Server',
-          customBodyRender: (value, tableMeta) => renderServersChips(allServers, value, tableMeta, lockedRows), // render as chips
+          customBodyRender: this.renderServersColumn,
           customFilterListOptions: {
             render: selected => selected.map(id => idsToLabels(allServers.toJS())[id])
           },
@@ -231,12 +286,7 @@ eventDel = (ruleId, rowIndex) => {
         options: {
           filter: true,
           filterType: 'custom',
-          // filterOptions: {
-          // //   names: ['AXA'],
-          //   renderValue: labels => labels.split(',').map(label => label.trim())
-          // //   display: (filterList, onChange, index, column) => { console.log(filterList, onChange, index, column); return (<div> {filterList}, {onChange}, {index}, {column} </div>); }
-          // },
-          customBodyRender: (value, tableMeta) => renderTagsChips(allTags, value, tableMeta, lockedRows), // render as chips
+          customBodyRender: this.renderTagsColumn,
           customFilterListOptions: {
             render: selected => selected.map(id => idsToLabels(allTags.toJS())[id])
           },
@@ -244,47 +294,11 @@ eventDel = (ruleId, rowIndex) => {
         }
       },
       {
-        name: 'active', // Custom rendering status-toggle in last column
+        name: 'active', // Custom rendering status-toggle & delete actions in last column
         label: 'Active',
         options: {
           filter: true,
-          customBodyRender: (value, tableMeta, updateValue) => {
-            let disabled;
-            if ((lockedRows || []).includes(tableMeta.rowIndex)) {
-              disabled = true; // prevent current user from deleting or changing locked-rules status
-            } else disabled = false;
-            return (
-              <div>
-                <FormControlLabel
-                // label={value ? 'Yes' : 'No'}
-                  disabled={disabled}
-                  value={value ? 'Yes' : 'No'}
-                  control={
-                    <Switch
-                      color="primary"
-                      checked={value}
-                      value={value ? 'Yes' : 'No'}
-                    />
-                  }
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(event) => {
-                    event.stopPropagation();
-                    // console.log('Value changed!');
-                    updateValue(event.target.value !== 'Yes');
-                    this.props.updateRuleStatus(tableMeta.rowData[0], tableMeta.rowData[5], branch);
-                    // console.log(tableMeta);
-                  }}
-                />
-                <IconButton
-                  onClick={(e) => { e.stopPropagation(); this.eventDel(tableMeta.rowData[0], tableMeta.rowIndex); }}
-                  disabled={disabled}
-                  aria-label="Delete"
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
-            );
-          }
+          customBodyRender: this.renderCRUDActionsColumn
         }
       }
     ];
@@ -306,10 +320,7 @@ eventDel = (ruleId, rowIndex) => {
       // fixedHeader: true,
       expandableRowsHeader: false,
       expandableRowsOnClick: true,
-      isRowExpandable: (dataIndex, expandedRows) => {
-        if (lockedRows.includes(dataIndex)) return false; // prevent locked rules from expanding
-        return true;
-      },
+      isRowExpandable: this.isRowExpandableLogic,
       selectableRows: 'multiple',
       sort: false,
       print: false,
@@ -320,10 +331,7 @@ eventDel = (ruleId, rowIndex) => {
       customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
         <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} />
       ),
-      onRowExpansionChange: (curExpanded, allRowsExpanded, rowsExpanded) => {
-        console.log('>>> Expanding: ', curExpanded, allRowsExpanded, rowsExpanded);
-        this.setState({ rowsExpanded: allRowsExpanded.map(row => row.dataIndex) }); // expansion is based on row.dataIndex and not on row.index (displayed over actual data)
-      },
+      onRowExpansionChange: this.onRowExpansionChangeLogic,
       customToolbar: () => ( // {jsx} Expanding table toolbar w/ import rules and create new rule
         <CustomToolbar
           onClickImportRules={() => this.setState({ popUp: { status: true, type: 'drop files', text: '' } })}
@@ -340,8 +348,8 @@ eventDel = (ruleId, rowIndex) => {
     };
 
     const components = {
-      ExpandButton(props) {
-        if (lockedRows.includes(props.dataIndex)) {
+      ExpandButton: (props) => {
+        if (this.lockedRows.includes(props.dataIndex)) {
           return (
             <LockIcon style={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: '20px' }} />
           );

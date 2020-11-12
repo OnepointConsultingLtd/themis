@@ -159,7 +159,7 @@ function PopUp({
             id="scroll-dialog-description1"
             tabIndex={-1}
           >
-            <div>Are you sure you want to delete rule?</div>
+            <div>Are you sure you want to delete rule(s)?</div>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -349,9 +349,9 @@ PopUp.propTypes = {
   dialogText: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   dialogType: PropTypes.string.isRequired,
-  onSubmitImportedRules: PropTypes.func.isRequired,
-  onSubmitCreatedRule: PropTypes.func.isRequired,
-  onConfirmDeleteRule: PropTypes.func.isRequired,
+  onSubmitImportedRules: PropTypes.func,
+  onSubmitCreatedRule: PropTypes.func,
+  onConfirmDeleteRule: PropTypes.func,
 };
 
 export default PopUp;

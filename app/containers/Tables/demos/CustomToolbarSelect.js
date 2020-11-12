@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 /* eslint-disable react/style-prop-object */
 /* eslint-disable react/no-unknown-property */
 import React from 'react';
@@ -18,6 +19,7 @@ import {
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
+import PopUp from './PopUp';
 // import CustomSVG from './customSVG.js'; // custom created SVG's!!
 
 // Reducer Branch
@@ -51,6 +53,11 @@ const defaultToolbarSelectStyles = {
 
 /** The custom Selection Toolbar for the Parent Rules Management Table  */
 class CustomToolbarSelect extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { popUp: false };
+  }
+
   handleClickInverseSelection = () => {
     // eslint-disable-next-line no-shadow
     const nextSelectedRows = this.props.displayData.reduce((nextSelectedRows, _, index) => {
@@ -91,6 +98,13 @@ class CustomToolbarSelect extends React.Component {
     this.props.bulkDeleteRules(this.fetchSelectedRulesIds(), branch);
   }
 
+  /**
+  * Action to perform when user clicks CANCEL in the popup
+  */
+  onPopUpClose = () => {
+    this.setState({ popUp: false });
+  };
+
 
   render() {
     const { classes } = this.props;
@@ -118,10 +132,20 @@ class CustomToolbarSelect extends React.Component {
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete">
-          <IconButton className={classes.iconButton} onClick={this.deleteRules}>
+          <IconButton className={classes.iconButton} onClick={() => this.setState({ popUp: true })}>
             <Icon className={classes.icon} >delete</Icon>
           </IconButton>
         </Tooltip>
+        {this.state.popUp ?
+          <PopUp
+            dialogType="confirm delete"
+            dialogText=""
+            onClose={this.onPopUpClose}
+            onConfirmDeleteRule={() => {
+              this.deleteRules();
+              this.setState({ popUp: false });
+            }}
+          /> : ''}
         {/* <Tooltip title="Move up to PROD">
           <IconButton>
             <CustomSVG text="PROD" color="warn" />

@@ -7,7 +7,8 @@ import TableCell from '@material-ui/core/TableCell';
 import css from 'ba-styles/Table.scss';
 
 /**
- * Selection drop down
+ * Selection drop down which is used in RulesManager rule versions panel.
+ * It has no direct access to any redux store
  */
 class MultiSelectConfig extends React.Component {
   constructor(props) {
@@ -25,9 +26,8 @@ class MultiSelectConfig extends React.Component {
       value.splice(value.indexOf('NA'), 1);
     }
 
-    // console.log('Selection updated', event.target.value, event, this.props.cellData);
     this.setState({ selectionvalue: value });
-    this.props.updateRow(event); // TODO: Check if we really want app-state update here
+    this.props.updateRow(event); // ATTENTION: emmitting the whole event object here
   };
 
   render() {
@@ -38,8 +38,6 @@ class MultiSelectConfig extends React.Component {
       multiple,
       activeOptions, // available server's ids
     } = this.props;
-
-    // console.log('current value: ', cellData.value);
 
     return (
       <React.Fragment>

@@ -383,8 +383,8 @@ class RulesManagerParentTable extends React.Component {
             dialogType={this.state.popUp.type}
             dialogText={this.state.popUp.text}
             onClose={this.onPopUpClose}
-            allServers={allServers}
-            allTags={allTags}
+            // allServers={allServers}
+            // allTags={allTags}
             onConfirmDeleteRule={() => {
               this.onConfirmDeleteRule();
               this.setState({ popUp: { status: false } });

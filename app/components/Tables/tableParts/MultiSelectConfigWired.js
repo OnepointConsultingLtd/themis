@@ -9,7 +9,8 @@ import TableCell from '@material-ui/core/TableCell';
 import css from 'ba-styles/Table.scss';
 
 /**
- * Selection drop down
+ * Selection drop down, used in Generators Config Tab,
+ * and has direct access to configuration tables redux
  */
 class MultiSelectConfigWired extends React.Component {
   // constructor(props) {

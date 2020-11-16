@@ -6,18 +6,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-// import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import MultiSelectConfig from 'ba-components/Tables/tableParts/MultiSelectConfig';
 import { makeStyles } from '@material-ui/core/styles';
-// import Divider from '@material-ui/core/Divider';
-// import InputLabel from '@material-ui/core/InputLabel';
-// import Grid from '@material-ui/core/Grid';
-// import Typography from '@material-ui/core/Typography';
-// import Select from '@material-ui/core/Select';
-// import MenuItem from '@material-ui/core/MenuItem';
-// import css from 'ba-styles/Table.scss';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-github';
@@ -28,84 +20,6 @@ import Dropzone from 'react-dropzone';
 // https://react-dropzone.js.org/
 import { connect } from 'react-redux';
 import './style.css';
-// import serversTagsSelect from './serversTagsSelect';
-
-// function Selectors() {
-//   const [selectedServer, setSelectedServer] = useState(['NA']);
-//   const [selectedTag, setSelectedTag] = useState(['NA']);
-
-//   const handleTargetServer = event => {
-//     let { value } = event.target;
-
-//     // necessary selection validations ('NA' shouldn't be selectable but should show when nothing is selected)
-//     if (value.length === 0) value = ['NA'];
-//     else
-//     if (value.includes('NA')) {
-//       value.splice(value.indexOf('NA'), 1);
-//     }
-//     setSelectedServer(value);
-//   };
-
-//   const handleSelectedTag = event => {
-//     let { value } = event.target;
-
-//     // necessary selection validations ('NA' shouldn't be selectable but should show when nothing is selected)
-//     if (value.length === 0) value = ['NA'];
-//     else
-//     if (value.includes('NA')) {
-//       value.splice(value.indexOf('NA'), 1);
-//     }
-//     setSelectedTag(value);
-//   };
-
-//   return (
-//     <Grid container spacing={6}>
-//       <Grid item xs={4}>
-//         <Typography gutterBottom variant="body1" style={{ minWidth: '150px' }}>
-//               Target Server
-//         </Typography>
-//         {/* <InputLabel id="demo-simple-select-label">Select Target Server:</InputLabel> */}
-//         <Select
-//           style={{ minWidth: '150px' }}
-//           name="new-rule-servers"
-//           id="new-rule-servers-id4"
-//           className={css.crudInput}
-//           value={selectedServer}
-//           onChange={handleTargetServer}
-//           displayEmpty
-//           margin="none"
-//           multiple
-//         >
-//           <MenuItem value="NA" disabled>NA</MenuItem>
-//           {allServers.map((serverOption) =>
-//             (<MenuItem value={serverOption.get('_id')} key={`server-${serverOption.get('_id')}`}>{serverOption.get('label')}</MenuItem>)
-//           )}
-//         </Select>
-//       </Grid>
-//       <Grid item xs={4}>
-//         <Typography gutterBottom variant="body1" style={{ minWidth: '150px' }}>
-//               Tag(s)
-//         </Typography>
-//         <Select
-//           style={{ minWidth: '150px' }}
-//           name="new-rule-tags"
-//           id="new-rule-tags-id4"
-//           className={css.crudInput}
-//           value={selectedTag}
-//           onChange={handleSelectedTag}
-//           displayEmpty
-//           margin="none"
-//           multiple
-//         >
-//           <MenuItem value="NA" disabled>NA</MenuItem>
-//           {allTags.map((tagOption) =>
-//             (<MenuItem value={tagOption.get('_id')} key={`tag-${tagOption.get('_id')}`}>{tagOption.get('label')}</MenuItem>)
-//           )}
-//         </Select>
-//       </Grid>
-//     </Grid>
-//   );
-// }
 
 const useRowStyles = makeStyles({
   root: {
@@ -241,10 +155,10 @@ function PopUp({
           <Button onClick={onClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={onSubmitDownloadRules} color="primary"> {/* TODO: Download click */}
+          <Button onClick={onSubmitDownloadRules} color="primary">
             Download
           </Button>
-          <Button onClick={onSubmitDeployRules} color="primary"> {/* TODO: Download click */}
+          <Button onClick={onSubmitDeployRules} color="primary">
             Deploy
           </Button>
         </DialogActions>

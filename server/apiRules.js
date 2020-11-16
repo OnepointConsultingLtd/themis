@@ -154,44 +154,35 @@ app.post('/api/version/update/:id/:version', (req, res) => {
     console.log('Connected to MongoDB. Updating version.:', version, req.body);
     const db = client.db('rulems');
 
-    // Importing version by updating rule
-    // db.collection('rules').updateOne(
-    //   { _id: ObjectId(id), 'versions.version': parseInt(version) },
-    //   {
-    //     $set: {
-    //       'versions.$.name': req.body.name,
-    //       'versions.$.subOn': req.body.subOn,
-    //       'versions.$.subBy': req.body.subBy,
-    //       'versions.$.servers': req.body.servers,
-    //       'versions.$.tags': req.body.tags,
-    //       'versions.$.salience': req.body.salience,
-    //       'versions.$.content': req.body.content,
-    //     }
-    //   },
-    db.collection('rules').findOneAndUpdate(
+    delete req.body._id; // removing posted _id
+
+    db.collection('rules').findOneAndReplace(
       { _id: ObjectId(id) },
-      {
-        $set: {
-          'versions.$[elem].name': req.body.name,
-          'versions.$[elem].subOn': req.body.subOn,
-          'versions.$[elem].subBy': req.body.subBy,
-          'versions.$[elem].servers': req.body.servers,
-          'versions.$[elem].tags': req.body.tags,
-          'versions.$[elem].salience': req.body.salience,
-          'versions.$[elem].content': req.body.content,
-        }
-      },
-      { arrayFilters: [{ 'elem.version': { $eq: parseInt(version) } }] }, // <------ req.params return strings
+      req.body,
+      // {
+      //   $set: {
+      //     'versions.$[elem].name': req.body.name,
+      //     'versions.$[elem].subOn': req.body.subOn,
+      //     'versions.$[elem].subBy': req.body.subBy,
+      //     'versions.$[elem].servers': req.body.servers,
+      //     'versions.$[elem].tags': req.body.tags,
+      //     'versions.$[elem].salience': req.body.salience,
+      //     'versions.$[elem].content': req.body.content,
+      //   }
+      // },
+      // { arrayFilters: [{ 'elem.version': { $eq: parseInt(version) } }] }, // <------ req.params return strings
       (err, result) => {
         if (err) {
           res.status(404).send({
             message: 'Version could not be updated'
           });
+          client.close();
+        } else {
+          console.log('Updated version result: ', result.value); // Note: updateOne returns success even if no item has been updated
+          client.close();
+          if (!result.value) res.status(404).send({ message: 'Version could not be updated' });
+          else res.status(200).send({ message: 'Version has been updated succesfully' });
         }
-        console.log('Updated version result: ', result.value); // Note: updateOne returns success even if no item has been updated
-        client.close();
-        if (!result.value) res.status(404).send({ message: 'Version could not be updated' });
-        else res.status(200).send({ message: 'Version has been updated succesfully' });
       }
     );
   });
@@ -212,10 +203,12 @@ app.post('/api/rules/delete/:id', (req, res) => {
           res.status(404).send({
             message: 'Rule could not be deleted'
           });
+          client.close();
+        } else {
+          console.log('Delete rule result: ', result.result); // Note: updateOne returns success even if no item has been updated
+          client.close();
+          res.status(200).send({ message: 'Rule has been removed succesfully' });
         }
-        console.log('Delete rule result: ', result.result); // Note: updateOne returns success even if no item has been updated
-        client.close();
-        res.status(200).send({ message: 'Rule has been removed succesfully' });
       }
     );
   });

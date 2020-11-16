@@ -11,10 +11,10 @@ import css from 'ba-styles/Table.scss';
  * It has no direct access to any redux store
  */
 class MultiSelectConfig extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { selectionvalue: props.cellData.value };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = { selectionvalue: props.cellData.value };
+  // }
 
   handleChange = event => {
     let { value } = event.target;
@@ -26,7 +26,7 @@ class MultiSelectConfig extends React.Component {
       value.splice(value.indexOf('NA'), 1);
     }
 
-    this.setState({ selectionvalue: value });
+    // this.setState({ selectionvalue: value });
     this.props.updateRow(event); // ATTENTION: emmitting the whole event object here
   };
 

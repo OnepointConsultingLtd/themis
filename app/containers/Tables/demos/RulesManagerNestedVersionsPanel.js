@@ -49,13 +49,13 @@ function RulesManagerNestedVersionsPanel(props) {
     // allServers
   } = props;
   const ruleID = props.ruleData.get('_id');
-
+  // console.log('ruleData >>>>>>>> ', ruleData);
   // const onAddEmptyRow = () => {
   //   addEmptyRow(ruleID, branch);
   // };
 
   /** Clone top (max) version */
-  const onCloneVersion = () => cloneRow(ruleID, ruleData.get('versions').first(), branch);
+  const onCloneVersion = () => { cloneRow(ruleID, ruleData.get('versions').first(), branch); };
 
   return (
     <Table aria-label="collapsible table" size="small" style={{ margin: 0 }}>
@@ -80,7 +80,7 @@ function RulesManagerNestedVersionsPanel(props) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {ruleData.get('versions').map((versionData) => {
+        {ruleData.get('versions').map(versionData => {
           const key = ruleID + 'version' + versionData.get('version').toString();
           return (
             <RulesManagerVersionRow
@@ -88,7 +88,6 @@ function RulesManagerNestedVersionsPanel(props) {
               branch={branch}
               versionData={versionData}
               maxVersion={maxVersion}
-              // availableServers={availableServers}
               key={key}
             />
           );
@@ -101,28 +100,15 @@ function RulesManagerNestedVersionsPanel(props) {
 RulesManagerNestedVersionsPanel.propTypes = {
   ruleData: PropTypes.object.isRequired,
   branch: PropTypes.string.isRequired,
-  // availableServers: PropTypes.array.isRequired,
-  // addEmptyRow: PropTypes.func.isRequired,
   cloneRow: PropTypes.func.isRequired,
   maxVersion: PropTypes.number.isRequired,
-  // allServers: PropTypes.array.isRequired
 };
-
-/**
- * Incoming state (data)
- * @param {Object} state
- */
-const mapStateToProps = state => ({
-  force: state, // force state from reducer
-  // allServers: state.getIn(['ServersConfig', 'dataTable']), // injecting servers config here in this component
-});
 
 /**
  * Outgoing events (actions) w/ or w/out payload
  * @param {*} dispatch
  */
 const mapDispatchToProps = dispatch => ({
-  // addEmptyRow: bindActionCreators(addAction, dispatch),
   cloneRow: bindActionCreators(cloneAction, dispatch),
 });
 
@@ -130,9 +116,8 @@ const mapDispatchToProps = dispatch => ({
  * Connecting state w/ props
  */
 const RulesManagerNestedVersionsPanelMapped = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(RulesManagerNestedVersionsPanel);
 
 export default RulesManagerNestedVersionsPanelMapped;
-

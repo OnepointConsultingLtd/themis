@@ -174,7 +174,7 @@ export const saveAction = (item, branch) => async (dispatch) => {
     // -------------------------- ASYNC LOADING OF SIDEBAR MENU STATE --- IF branch IS GENERATORS_CONFIG
     if (branch === 'GeneratorsConfig') {
       const edittedItem = item.toJS(); // convert item to JS object because unordered Maps cannot be added keys
-      edittedItem.link = `/app/tables/${item.get('label')}`; // add link key
+      edittedItem.link = `/app/tables/generator/${item.get('label')}`; // add link key
 
       dispatch({ // TODO: this dispatched action belongs originally to the UI-actions.js
         item: fromJS(edittedItem),

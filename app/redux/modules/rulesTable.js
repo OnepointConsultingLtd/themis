@@ -1,11 +1,11 @@
-import { fromJS, List /* OrderedSet, Map */ } from 'immutable';
+import { fromJS, List, /* , OrderedSet Map */ } from 'immutable';
 // import timestamp from 'time-stamp';
 import notif from 'ba-utils/notifMessage';
 import {
   FETCH_DATA,
   // ADD_EMPTY_ROW,
   CLONE_MAX_VERSION,
-  UPDATE_ROW,
+  // UPDATE_ROW,
   REMOVE_ROW,
   EDIT_ROW,
   SAVE_ROW,
@@ -110,35 +110,55 @@ export default function reducer(state = initialImmutableState, action = {}) {
           .set('notifSeverity', 'success');
       });
 
-    case `${branch}/${UPDATE_ROW}`: // continuous value UPDATE !!! currently only for SERVER-dropdown (CONTENT change would be too much to trigger updates per typed character)
-      return state.withMutations((mutableState) => {
-        const cellTarget = action.event.target.name;
-        // const allServers = action.injectedServersConfig.map(server => server._id); // fetch list of servers _id's
-        // const newVal = type => {
-        //   if (type === 'checkbox') {
-        //     return action.event.target.checked;
-        //   }
-        //   return action.event.target.value;
-        // };
+    // DECOMMISSIONED: No update rule action anymore
+    // case `${branch}/${UPDATE_ROW}`: // continuous value (versions: server/tag) UPDATE !!! currently only for SERVER-dropdown (CONTENT change would be too much to trigger updates per typed character)
+    //   return state.withMutations((mutableState) => {
+    //     const cellTarget = action.event.target.name;
+    //     // const allServers = action.injectedServersConfig.map(server => server._id); // fetch list of servers _id's
+    //     // const newVal = type => {
+    //     //   if (type === 'checkbox') {
+    //     //     return action.event.target.checked;
+    //     //   }
+    //     //   return action.event.target.value;
+    //     // };
 
-        // !!!!!!!!!!
-        // TODO: Add live content and tags updates : these changes should be kept only in state and remain till user reloads page
-        // NOTE: Content is kept in session but NOT parsed (salience remains as is unless user SAVES their changes)
-        // !!!!!!!!!!
-        const newVal = fromJS(action.event.target.value); // all server values are of JS type
-        const versionsListIndex = state.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').indexOf(action.item);
-        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
-        mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, cellTarget], newVal));
+    //     // !!!!!!!!!!
+    //     // TODO: Add live content and tags updates : these changes should be kept only in state and remain till user reloads page
+    //     // NOTE: Content is kept in session but NOT parsed (salience remains as is unless user SAVES their changes)
+    //     // !!!!!!!!!!
+    //     const newVal = fromJS(action.event.target.value); // all server values are of JS type
+    //     const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
+    //     const versionsListIndex = state.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').indexOf(action.item);
 
-        // update available servers list interractively so all versions to get informed
-        // const usedServers = mutableState.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').map(version => version.get('servers'))
-        //  .toJS()
-        //  .flat(); // flattening array of arrays (selected servers is an array, dont forget)
+    //     // remove selected server(s) (!) from other versions
+    //     if (cellTarget === 'servers') {
+    //       const versionsArray = state.getIn(['dataTable', rulesListIndex]).get('versions');
+    //       // newVal is an array of selected server _ids. Subtract these selected server(s) from any other verions one-by-one
+    //       newVal.forEach(selectedServer => {
+    //         const whichVersionIndexHasThisServer = versionsArray.findIndex(version => version.get('servers').includes(selectedServer));
+    //         // found servers in other versions. Let's remove them
+    //         if (whichVersionIndexHasThisServer > -1) {
+    //           const whichServersDoesItHave = versionsArray.getIn([whichVersionIndexHasThisServer, 'servers']);
+    //           // removing them via subrtaction!
+    //           const newServersAfterSubtraction = OrderedSet(whichServersDoesItHave).subtract([selectedServer]); // NOTE!: SUBTRACT always works with arrays
+    //           // Applying changes in state
+    //           mutableState.update('dataTable', dataTable =>
+    //             dataTable.setIn([rulesListIndex, 'versions', whichVersionIndexHasThisServer, 'servers'], newServersAfterSubtraction));
+    //         }
+    //       });
+    //     }
+    //     // assign selected server/tag to version
+    //     mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, cellTarget], newVal));
 
-        // const availableServers = OrderedSet(['PROD', 'PREP', 'TEST', 'DEV']).subtract(usedServers);
-        // const availableServers = OrderedSet(allServers).subtract(usedServers); // <----- SERVER's LIST INJECTION ???? :/
-        // mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'availableServers'], availableServers));
-      });
+    // update available servers list interractively so all versions to get informed
+    // const usedServers = mutableState.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').map(version => version.get('servers'))
+    //  .toJS()
+    //  .flat(); // flattening array of arrays (selected servers is an array, dont forget)
+
+    // const availableServers = OrderedSet(['PROD', 'PREP', 'TEST', 'DEV']).subtract(usedServers);
+    // const availableServers = OrderedSet(allServers).subtract(usedServers); // <----- SERVER's LIST INJECTION ???? :/
+    // mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'availableServers'], availableServers));
+    // });
 
     case `${branch}/UPDATE_RULE_STATUS`: // update rule status (toggle)
       return state.withMutations((mutableState) => {
@@ -155,30 +175,22 @@ export default function reducer(state = initialImmutableState, action = {}) {
         const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
         mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'edited'], true));
       });
-
-    case `${branch}/${SAVE_ROW}`: // deactivating editing and saving content - NO further UPDATES can be made until edit button is pressed !!!
+    case `${branch}/DISCARD_ROW`: // deactivate editing, discard any changes
       return state.withMutations((mutableState) => {
-        const { ruleId, item, content } = action;
-        const versionsListIndex = state.get('dataTable').find(rule => rule.get('_id') === ruleId).get('versions').findIndex(obj => obj.get('version') === item.get('version'));
-        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === ruleId));
-        // Trigger re-parse! New content might be there that could include changes in: Tags and Salience. Before saving the rule we need to fetch those changes
-        // console.log(matchRulePattern(content)[0].groups);
-        /* eslint-disable-next-line prefer-const */
-        // let { salience, ruleheader } = matchRulePattern(content)[0].groups; // TODO: we need dynamic TAGs matching and fetching
-        // eslint-disable-next-line radix
-        // salience = parseInt(salience.trim().split(' ').last()) || 0;
-        // console.log('Salience Changed!:', salience);
-
-        // TODO: Fetch and validate that ID remained intact --> This is SERIOUS
-        // if (ruleId !== ruleid) {
-        //   mutableState
-        //     .set('notifMsg', 'ERROR: Version Rule ID does not match! Version cannot be saved');
-        // } else {
+        const versionsListIndex = state.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').indexOf(action.item);
+        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
         mutableState
           .update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'edited'], false))
-          .update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'name'], item.get('name')))
-          .update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'salience'], item.get('salience')))
-          .update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'content'], content))
+          .set('notifMsg', 'Discarded any changes')
+          .set('notifSeverity', 'success');
+      });
+    case `${branch}/${SAVE_ROW}`: // deactivating editing and saving content - NO further UPDATES can be made until edit button is pressed again
+      return state.withMutations((mutableState) => {
+        const { rule } = action;
+        // console.log('>> SAVING RULE IN STATE: ', rule);
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === rule.get('_id'));
+        mutableState
+          .setIn(['dataTable', rulesListIndex], rule)
           .set('notifMsg', notif.saved)
           .set('notifSeverity', 'success');
         // }

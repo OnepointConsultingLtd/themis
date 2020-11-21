@@ -74,12 +74,12 @@ function RulesManagerVersionRow(props) {
   const [selectedTags, setTags] = useState(versionData.get('tags').toJS());
   const [content, setContent] = useState(versionData.get('content'));
 
-  // Keep data flowing (w/out this, selectors want be alive!)
+  // Keep data flowing (w/out this, selectors won't be alive!)
   useEffect(() => {
     setTags(versionData.get('tags').toJS());
-    setServers(versionData.get('servers').toJS());
+    setServers(versionData.get('servers').toJS()); // ---> these are the actions triggered by Observable changes
     setContent(versionData.get('content'));
-  }, [versionData]);
+  }, [versionData]); // ---> this acts as the Observable of the subscription
 
   const classes = useRowStyles();
   // let content = versionData.get('content');

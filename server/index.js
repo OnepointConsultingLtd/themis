@@ -3,6 +3,7 @@ const express = require('express');
 const apiRules = require('./apiRules');
 const apiConfig = require('./apiConfig');
 const apiDeploy = require('./apiDeploy');
+const apiValidate = require('./apiValidate');
 const favicon = require('serve-favicon');
 const path = require('path');
 const logger = require('./logger');
@@ -21,6 +22,7 @@ const app = express();
 app.use(apiRules);
 app.use(apiConfig);
 app.use(apiDeploy);
+app.use(apiValidate);
 
 app.use('/', express.static('public', { etag: false }));
 app.use(favicon(path.join('public', 'favicons', 'favicon.ico')));

@@ -166,7 +166,7 @@ class RulesManagerParentTable extends React.Component {
           <TableCell colSpan={colSpan} style={inlineStyle} id={'expandedRow' + rowData[0]} >
             <RulesManagerNestedVersionsPanel
             // ruleData={fetchRuleFullDetails(this.props.dataTable.toJS(), rowData[0])} // Rule query
-              ruleData={this.props.dataTable.find(rule => rule.get('_id') === rowData[0])} // Rule query
+              ruleData={findRule} // Rule query
               branch={branch}
               maxVersion={rowData[1]}
               // availableServers={(this.props.dataTable.find(rule => rule.get('_id') === rowData[0]) || Map({ availableServers: '' })).get('availableServers')}

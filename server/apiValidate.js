@@ -34,7 +34,7 @@ app.post('/api/validate/rule', (req, res) => {
   console.log('This is the requested rule: ', req.body);
   validateRules(req.body,
     ({ err, stderr, stdout }) => {
-      if (err || stderr) res.status(404).send({ message: `${err} ${stderr}` });
+      if (err /* || stderr */) res.status(404).send({ message: `${err} ${stderr}` }); // unwiring stderr as the jar won't sent any runtime errors
       else res.status(200).send({ errors: stdout /* parseErrors(stdout) */, serverFolder: `${__dirname} & ${process.cwd()}` });
     });
 });

@@ -11,7 +11,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import IconButton from '@material-ui/core/IconButton';
-import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+// import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 // import SyntaxHighlighter, { github } from 'react-syntax-highlighter';
 // import { docco } from 'react-syntax-highlighter';
@@ -75,24 +75,6 @@ function RulesManagerNestedVersionsPanel(props) {
               aria-label="Add version"
             >
               <AddCircleOutlineIcon style={{ fontSize: '35px' }} />
-            </IconButton>
-            <IconButton
-              onClick={async () => {
-                console.log('Sending rule: ', ruleData.get('versions').first().get('content'));
-                const response = await fetch('/api/validate/rule', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'text/plain',
-                    Accept: 'application/json'
-                  },
-                  body: JSON.stringify(ruleData.get('versions').first().get('content'))
-                });
-                console.log(response);
-              }}
-              className={classes.button}
-              aria-label="Validate max version"
-            >
-              <AssignmentTurnedInIcon />
             </IconButton>
           </TableCell>
           {/* <TableCell align="left" style={{ width: '10%' }} /> */}

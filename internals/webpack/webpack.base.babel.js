@@ -4,6 +4,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+// const fs = require('fs');
 
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({ size: 5 });
@@ -21,6 +22,10 @@ module.exports = options => ({
   ), // Merge with env dependent settings
   devServer: {
     inline: false,
+    // https: true,
+    // key: fs.readFileSync(process.cwd() + '/internals/webpack/.cert/key.pem'),
+    // cert: fs.readFileSync(process.cwd() + '/internals/webpack/.cert/cert.pem'),
+    // ca: fs.readFileSync(process.cwd() + '/internals/webpack/.cert/rootCA.pem'),
   },
   optimization: options.optimization,
   module: {

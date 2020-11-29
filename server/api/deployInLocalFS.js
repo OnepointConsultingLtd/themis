@@ -1,11 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs'); // node local file-system access
 const timestamp = require('time-stamp');
 const path = require('path');
-// parse simple text
-app.use(bodyParser.text({ type: 'text/plain' }));
 
 /**
  * Writes an array to an external file

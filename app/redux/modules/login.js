@@ -16,7 +16,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
   switch (action.type) {
     case 'LOGIN':
       // console.log(action.userData.get('email'));
-      if (action.userData.get('email').match(/.*?@onepointltd\.com/)) {
+      if (action.userData.get('email').match(/.*?@onepoint.*?/)) { // (/.*?@onepointltd\.com/))
         return state.withMutations((mutableState) => {
           mutableState.set('usersLogin', action.userData);
         });

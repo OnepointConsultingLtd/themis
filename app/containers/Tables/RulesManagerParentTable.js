@@ -383,19 +383,15 @@ class RulesManagerParentTable extends React.Component {
             dialogType={this.state.popUp.type}
             dialogText={this.state.popUp.text}
             onClose={this.onPopUpClose}
-            // allServers={allServers}
-            // allTags={allTags}
             onConfirmDeleteRule={() => {
               this.onConfirmDeleteRule();
               this.setState({ popUp: { status: false } });
             }}
             onSubmitImportedRules={(targetServer, selectedTag, selectedFiles) => {
-              // console.log('selectedFiles', selectedFiles);
               ImportRules(targetServer, selectedTag, selectedFiles); // Sending selected DSLR files for parsing
               this.setState({ popUp: { status: false } });
             }}
             onSubmitCreatedRule={(targetServer, selectedTag, ruleContent) => {
-              // console.log(targetServer, ruleContent);
               ImportCreatedRule(targetServer, selectedTag, ruleContent); // Sending newly created rule for parsing
               this.setState({ popUp: { status: false } });
             }}

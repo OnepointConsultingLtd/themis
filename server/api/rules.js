@@ -1,17 +1,14 @@
 /* eslint-disable radix */
 /* eslint-disable no-unused-vars */
+const validateRules = require('./functions/validate');
 const express = require('express');
-const bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require('mongodb');
-const dedupQuery = require('./aggregations');
+const dedupQuery = require('./functions/aggregations');
 // const rules = require('./rulesList'); // Serving a static json file. (Our first attempt)
 // Mongo Connection URL
 const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 
 const app = express();
-
-// parse application/json
-app.use(bodyParser.json({ limit: '50mb' })); // https://stackoverflow.com/questions/52016659/nodejs-router-payload-too-large
 
 // TODO Dealing w/ CORS when we will split dev-server in production
 // app.use((req, res) => {
@@ -129,7 +126,7 @@ app.post('/api/version/update/status/:id', (req, res) => {
     const db = client.db('rulems');
     db.collection('rules').findOneAndUpdate(
       { _id: ObjectId(id) },
-      { $set: { active: !!req.body } }, // <------ req.params return strings
+      { $set: { active: !!req.body } }, // <------ req.body returns JSON object
       (err, result) => {
         if (err) {
           res.status(404).send({
@@ -145,47 +142,53 @@ app.post('/api/version/update/status/:id', (req, res) => {
   });
 });
 
-/** UPDATE a version's servers, tags, salience, name */
+/** UPDATE the whole rule (all versions incl.) */
 app.post('/api/version/update/:id/:version', (req, res) => {
   const { id, version } = req.params; // <---- ATTENTION: string type
+  console.log(req.body.versions, version);
+  // validating the content of the rule
+  // console.log(validateRules(req.body.versions.filter(versionItem => versionItem.version == version)[0].content));
+  const { err, stdout } = validateRules(req.body.versions.filter(versionItem => versionItem.version == version)[0].content);
+  if (err) res.status(404).send({ message: 'Rule could not get validated' }); // VALIDATION process error
+  else if (stdout.length === 0) { // VALID RULE
+    MongoClient.connect(dbUrl, { useUnifiedTopology: true }, async (error, client) => {
+      if (error) throw error;
+      console.log('Connected to MongoDB. Updating version.:', req.body);
+      const db = client.db('rulems');
 
-  MongoClient.connect(dbUrl, { useUnifiedTopology: true }, async (error, client) => {
-    if (error) throw error;
-    console.log('Connected to MongoDB. Updating version.:', version, req.body);
-    const db = client.db('rulems');
+      delete req.body._id; // removing posted '_id' field
 
-    delete req.body._id; // removing posted _id
-
-    db.collection('rules').findOneAndReplace(
-      { _id: ObjectId(id) },
-      req.body,
-      // {
-      //   $set: {
-      //     'versions.$[elem].name': req.body.name,
-      //     'versions.$[elem].subOn': req.body.subOn,
-      //     'versions.$[elem].subBy': req.body.subBy,
-      //     'versions.$[elem].servers': req.body.servers,
-      //     'versions.$[elem].tags': req.body.tags,
-      //     'versions.$[elem].salience': req.body.salience,
-      //     'versions.$[elem].content': req.body.content,
-      //   }
-      // },
-      // { arrayFilters: [{ 'elem.version': { $eq: parseInt(version) } }] }, // <------ req.params return strings
-      (err, result) => {
-        if (err) {
-          res.status(404).send({
-            message: 'Version could not be updated'
-          });
-          client.close();
-        } else {
-          console.log('Updated version result: ', result.value); // Note: updateOne returns success even if no item has been updated
-          client.close();
-          if (!result.value) res.status(404).send({ message: 'Version could not be updated' });
-          else res.status(200).send({ message: 'Version has been updated succesfully' });
+      db.collection('rules').findOneAndReplace(
+        { _id: ObjectId(id) },
+        req.body,
+        // {
+        //   $set: {
+        //     'versions.$[elem].name': req.body.name,
+        //     'versions.$[elem].subOn': req.body.subOn,
+        //     'versions.$[elem].subBy': req.body.subBy,
+        //     'versions.$[elem].servers': req.body.servers,
+        //     'versions.$[elem].tags': req.body.tags,
+        //     'versions.$[elem].salience': req.body.salience,
+        //     'versions.$[elem].content': req.body.content,
+        //   }
+        // },
+        // { arrayFilters: [{ 'elem.version': { $eq: parseInt(version) } }] }, // <------ req.params return strings
+        (replaceErr, result) => {
+          if (replaceErr) {
+            res.status(404).send({
+              message: 'Rule could not be updated'
+            });
+            client.close();
+          } else {
+            console.log('Updated version result: ', result.value); // Note: updateOne returns success even if no item has been updated
+            client.close();
+            if (!result.value) res.status(404).send({ message: 'Rule could not be updated' });
+            else res.status(200).send({ message: 'Rule has been updated succesfully' });
+          }
         }
-      }
-    );
-  });
+      );
+    });
+  } else res.status(201).send({ errorArray: stdout }); // INVALID RULE, send array of error(s)
 });
 
 /** DELETE a rule */

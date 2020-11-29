@@ -37,6 +37,7 @@ import {
 // eslint-disable-next-line no-unused-vars
 import { /* fromJS, List, */ OrderedSet /* Map */ } from 'immutable';
 import flatten from 'immutable';
+import PopUp from './PopUp';
 
 const useRowStyles = makeStyles({
   root: {
@@ -73,6 +74,7 @@ function RulesManagerVersionRow(props) {
   const [selectedServers, setServers] = useState(versionData.get('servers').toJS());
   const [selectedTags, setTags] = useState(versionData.get('tags').toJS());
   const [content, setContent] = useState(versionData.get('content'));
+  const [valErrorPopUp, setValErrorPopUp] = useState({ status: false, errorArray: [] });
 
   // Keep data flowing (w/out this, selectors won't be alive!)
   useEffect(() => {
@@ -100,6 +102,15 @@ function RulesManagerVersionRow(props) {
   const handleOpen = () => {
     setOpen(!open);
   };
+
+  /**
+  * Action to perform when user clicks CANCEL/CLOSE in the popup
+  */
+  const onPopUpClose = () => {
+    setValErrorPopUp(prevState => ({ ...prevState, status: false }));
+    if (!open) setOpen(true);
+  };
+
   // const onChangeContent = (liveContent) => {
   //   setContent(liveContent);
   // };
@@ -121,7 +132,7 @@ function RulesManagerVersionRow(props) {
   };
   const eventDone = () => {
     if (open) setOpen(!open);
-    saveRow(ruleId, versionData.get('version'), selectedServers, selectedTags, content, branch);
+    saveRow(ruleId, versionData.get('version'), selectedServers, selectedTags, content, branch, setValErrorPopUp);
   };
 
   // https://github.com/sotiriosalpha/rulesMS/issues/10:
@@ -140,6 +151,12 @@ function RulesManagerVersionRow(props) {
 
   return (
     <React.Fragment>
+      {valErrorPopUp.status ?
+        <PopUp
+          dialogType="validation error"
+          dialogArray={valErrorPopUp.errorArray}
+          onClose={onPopUpClose}
+        /> : ''}
       <TableRow className={classes.root} style={{ borderBottom: 'unset' }} key={ruleId + versionData.get('version')}>
         <TableCell>
           <IconButton aria-label="expand row" size="small" onClick={handleOpen}>

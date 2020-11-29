@@ -39,7 +39,7 @@ const useRowStyles = makeStyles({
 function PopUp({
   dialogType, dialogText, onClose, onConfirmDeleteRule,
   onSubmitImportedRules, onSubmitCreatedRule, onSubmitDownloadRules,
-  onSubmitDeployRules, allServers, allTags
+  onSubmitDeployRules, allServers, allTags, dialogArray
 }) {
   const classes = useRowStyles();
   const [selectedFiles, setSelectedFiles] = useState(); // DEBUGGED: needed empty init state and not ([])
@@ -75,6 +75,31 @@ function PopUp({
         <DialogActions>
           <Button onClick={onClose} color="primary">
               Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+
+  const renderValError = () =>
+    (
+      <Dialog
+        open
+        scroll="paper"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Validation Error</DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText
+            id="scroll-dialog-description1"
+            tabIndex={-1}
+          >
+            <div>{dialogArray.map(error => (<div>{error}</div>))}</div>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary">
+              Close
           </Button>
         </DialogActions>
       </Dialog>
@@ -358,6 +383,8 @@ function PopUp({
   switch (dialogType) {
     case 'error':
       return renderError();
+    case 'validation error':
+      return renderValError();
     case 'confirm delete':
       return renderDeleteRuleConfirmation();
     case 'rules list':
@@ -373,7 +400,8 @@ function PopUp({
 PopUp.propTypes = {
   allServers: PropTypes.array.isRequired,
   allTags: PropTypes.array.isRequired,
-  dialogText: PropTypes.string.isRequired,
+  dialogText: PropTypes.string,
+  dialogArray: PropTypes.array,
   onClose: PropTypes.func.isRequired,
   dialogType: PropTypes.string.isRequired,
   onSubmitImportedRules: PropTypes.func,

@@ -182,7 +182,7 @@ export const discardAction = (ruleId, item, branch) => ({ // click-on-discard wi
 });
 
 /** Cloning the top version in the list (max version). That's the 'item' */
-export const saveAction = (ruleId, version, selectedServers, selectedTags, content, branch) => async (dispatch, getState) => {
+export const saveAction = (ruleId, version, selectedServers, selectedTags, content, branch, setValErrorPopUp) => async (dispatch, getState) => {
   // Do the parsing here: we parse name, salience, status and content
   /* eslint-disable-next-line prefer-const */
   let { salience, ruleheader } = matchRulePattern(content)[0].groups;
@@ -265,18 +265,21 @@ export const saveAction = (ruleId, version, selectedServers, selectedTags, conte
     body: JSON.stringify(rule.toJS())
   });
 
-  if (response.status !== 200) { // Error handling
+  if (!response.ok) { // Error handling
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
       type: `${branch}/SHOW_NOTIF`,
       message: 'Could not connect to the server',
       severity: 'error'
     });
+  } else if (response.status === 201) {
+    const { errorArray } = await response.json();
+    setValErrorPopUp({ status: true, errorArray }); // launch the validation error popup in RulesManager page
   } else {
     dispatch({
       rule, // Dispatching the whole rule
       branch,
-      type: `${branch}/${types.SAVE_ROW}`, // TODO: rename action to SAVE_VERSION
+      type: `${branch}/${types.SAVE_ROW}`, // TODO: rename action to UPDATE_RULE
     });
   }
 };

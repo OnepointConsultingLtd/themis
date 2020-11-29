@@ -145,8 +145,11 @@ onPopUpClose = () => {
  */
 onSubmitDeployRules = async () => {
   console.log(`Ready to deploy to ${idsToUrls(this.props.allServers.toJS())[this.state.selectedServerId]} CONTENT: ${this.state.popUpText}`);
-  const serverURL = idsToUrls(this.props.allServers.toJS())[this.state.selectedServerId];
-  const deploymentResponse = await fetch(serverURL, {
+  // Server url from Config screen
+  // const serverURL = idsToUrls(this.props.allServers.toJS())[this.state.selectedServerId];
+  // Server url for Azure Storage
+  const deplayAPI = '/api/deploy/azure-storage/testGenerator.dslr'; // TODO HARDCODED URL  //
+  const deploymentResponse = await fetch(deplayAPI, {
     method: 'POST',
     headers: {
       'Content-Type': 'text/plain',
@@ -189,7 +192,7 @@ downloadDSLR = (filename, text) => {
  */
 onSubmitDownloadRules = () => {
   const serverLabel = idsToLabels(this.props.allServers.toJS())[this.state.selectedServerId];
-  this.downloadDSLR(`${timestamp.utc('YYYYMMDDHHmm')}_${serverLabel}.dslr`, this.state.popUpText);
+  this.downloadDSLR(`${timestamp.utc('YYYYMMDDHHmmss')}_${serverLabel}.dslr`, this.state.popUpText);
 }
 
 handleClick = (event) => {
@@ -358,8 +361,8 @@ render() {
           dialogType={this.state.popUpType} // 'error' || 'rules text'
           dialogText={this.state.popUpText} // error message || rules content pay-load
           onClose={this.onPopUpClose}
-          onSubmitDownloadRules={this.onSubmitDownloadRules}
-          onSubmitDeployRules={this.onSubmitDeployRules}
+          onSubmitDownloadRules={this.onSubmitDownloadRules(this.props.tags)}
+          onSubmitDeployRules={this.onSubmitDeployRules(this.props.tags)}
         /> : ''}
     </div>
   );

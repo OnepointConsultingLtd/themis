@@ -87,6 +87,7 @@
     ]
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.3.0",
     "@babel/plugin-proposal-export-default-from": "^7.2.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/polyfill": "7.4.3",

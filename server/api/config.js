@@ -1,13 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require('mongodb');
 // Mongo Connection URL
 const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 
 const app = express();
-
-// parse application/json
-app.use(bodyParser.json());
 
 /** GET Configuration tables
  * @param branch: CRUD-table's redux-branch = MongoCollection name

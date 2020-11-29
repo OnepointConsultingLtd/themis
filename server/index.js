@@ -1,9 +1,10 @@
 /* eslint consistent-return:0 */
 const express = require('express');
-const apiRules = require('./apiRules');
-const apiConfig = require('./apiConfig');
-const apiDeploy = require('./apiDeploy');
-const apiValidate = require('./apiValidate');
+const apiRules = require('./api/rules');
+const apiConfig = require('./api/config');
+// const apiDeployInLocalFS = require('./api/deployInLocalFS');
+// const apiValidate = require('./api/functions/validate');
+const apiDeployAS = require('./api/deployAS'); // TODO: RENAME AND USE DEPLOY PATH
 const favicon = require('serve-favicon');
 const path = require('path');
 const logger = require('./logger');
@@ -16,13 +17,24 @@ const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
   : false;
 const { resolve } = require('path');
 const app = express();
+const bodyParser = require('body-parser');
+
+// https://stackoverflow.com/questions/52016659/nodejs-router-payload-too-large
+const limit = '50Mb';
+const extended = true;
+const options = { limit, extended };
+app.use(bodyParser.json(options));
+app.use(bodyParser.urlencoded(options));
+app.use(bodyParser.text(options));
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
+
 app.use(apiRules);
 app.use(apiConfig);
-app.use(apiDeploy);
-app.use(apiValidate);
+// app.use(apiDeployInLocalFS);
+// app.use(apiValidate);
+app.use(apiDeployAS); // TODO: RENAME AND USE DEPLOY PATH
 
 app.use('/', express.static('public', { etag: false }));
 app.use(favicon(path.join('public', 'favicons', 'favicon.ico')));

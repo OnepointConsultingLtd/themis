@@ -53,7 +53,7 @@ class DSLGeneratorParentTable extends React.Component {
       popUpStatus: false,
       popUpType: '',
       popUpText: '',
-      // selectedServerId: '',
+      selectedServerId: '',
       // isServerSelected: false,
       // isDeployMenuOpen: false,
       anchorEl: null
@@ -209,6 +209,7 @@ handleDeploymentServerClick = (optionId, versionsData) => {
   const serverVersions = aggregateServerReturnContent(versionsData, optionId);
   this.setState({ popUpText: serverVersions || 'No rules for selected target server' });
   this.setState({ popUpStatus: true, popUpType: serverVersions ? 'rules list' : 'error' });
+  this.setState({ selectedServerId: optionId });
 }
 
 render() {
@@ -361,8 +362,8 @@ render() {
           dialogType={this.state.popUpType} // 'error' || 'rules text'
           dialogText={this.state.popUpText} // error message || rules content pay-load
           onClose={this.onPopUpClose}
-          onSubmitDownloadRules={this.onSubmitDownloadRules(this.props.tags)}
-          onSubmitDeployRules={this.onSubmitDeployRules(this.props.tags)}
+          onSubmitDownloadRules={this.onSubmitDownloadRules}
+          onSubmitDeployRules={this.onSubmitDeployRules}
         /> : ''}
     </div>
   );

@@ -13,14 +13,17 @@ import {
   bulkDeactivate,
   bulkActivate,
   bulkDelete,
-  removeAction
+  bulkUpdateTags
 } from 'ba-actions/RulesTableActions';
 // import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+import ToggleOnIcon from '@material-ui/icons/ToggleOn';
+import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 import PopUp from './PopUp';
 // import CustomSVG from './customSVG.js'; // custom created SVG's!!
+import Autocomplete from './autocomplete';
 
 // Reducer Branch
 const branch = 'RulesManagerParentTable';
@@ -55,7 +58,10 @@ const defaultToolbarSelectStyles = {
 class CustomToolbarSelect extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { popUp: false };
+    this.state = {
+      popUp: false,
+      tagsValue: []
+    };
   }
 
   handleClickInverseSelection = () => {
@@ -77,8 +83,8 @@ class CustomToolbarSelect extends React.Component {
 
   /** returns the selected rules' Id's as an array  */
   fetchSelectedRulesIds = () => {
-    // collect all select rules absolute index withing the dataTable
-    const selectedRulesIndicesArray = this.props.selectedRows.data.map(selectedRule => selectedRule.index);
+    // collect all select rules absolute index within the dataTable (dataIndex)
+    const selectedRulesIndicesArray = this.props.selectedRows.data.map(selectedRule => selectedRule.dataIndex);
     // fetch actual rules _ids based on above collection
     return selectedRulesIndicesArray.map(ruleIndex => this.props.dataTable.toJS()[ruleIndex]._id);
   }
@@ -90,12 +96,22 @@ class CustomToolbarSelect extends React.Component {
 
   /** Bulk update of selected rules: activation */
   activateRules = () => {
+    // const selectedRows = this.props.selectedRows.data.map(row => row.index);
     this.props.bulkActivateRules(this.fetchSelectedRulesIds(), branch);
+    // console.log('Selected Rows: ', this.props.selectedRows);
+    // this.props.setSelectedRows(selectedRows);
   }
 
   /** Bulk update of selected rules:  deletion */
   deleteRules = () => {
     this.props.bulkDeleteRules(this.fetchSelectedRulesIds(), branch);
+    this.props.setSelectedRows([]); // dont forget to empty the selected
+  }
+
+  /** Bulk update the tags of the selected rules */
+  updateTags = (e, newValue) => {
+    this.setState({ tagsValue: newValue });
+    this.props.bulkUpdateRulesTags(this.fetchSelectedRulesIds(), newValue, branch);
   }
 
   /**
@@ -107,10 +123,10 @@ class CustomToolbarSelect extends React.Component {
 
 
   render() {
-    const { classes } = this.props;
+    const { classes, allTags } = this.props;
 
     return (
-      <div className="custom-toolbar-select">
+      <div style={{ width: '583px', display: 'flex', flexWrap: 'no-wrap' }}>
         <Tooltip title="Deselect ALL">
           <IconButton className={classes.iconButton} onClick={this.handleClickDeselectAll}>
             <IndeterminateCheckBoxIcon className={classes.icon} />
@@ -121,14 +137,25 @@ class CustomToolbarSelect extends React.Component {
             <Icon className={classes.icon} >exposure</Icon>
           </IconButton>
         </Tooltip>
+        <Tooltip title="Select tags">
+          <div style={{ minWidth: '200px', marginRight: '24px', marginTop: '5px' }}>
+            <Autocomplete
+              options={allTags.toJS()}
+              value={this.state.tagsValue} // value is the array of labels
+              onChange={this.updateTags}
+              noUnderline={false}
+              placeholder="Tags"
+            />
+          </div>
+        </Tooltip>
         <Tooltip title="Deactivate">
           <IconButton className={classes.iconButton} onClick={this.deactivateRules}>
-            <Icon className={classes.icon} >pause</Icon>
+            <ToggleOffIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Activate">
           <IconButton className={classes.iconButton} onClick={this.activateRules}>
-            <Icon className={classes.icon} >play_arrow</Icon>
+            <ToggleOnIcon color="primary" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete">
@@ -181,6 +208,8 @@ CustomToolbarSelect.propTypes = {
   bulkDeactivateRules: PropTypes.func.isRequired,
   bulkActivateRules: PropTypes.func.isRequired,
   bulkDeleteRules: PropTypes.func.isRequired,
+  bulkUpdateRulesTags: PropTypes.func.isRequired,
+  allTags: PropTypes.array.isRequired,
 };
 
 /**
@@ -191,6 +220,7 @@ const mapStateToProps = state =>
   ({
     force: state, // force state from reducer
     dataTable: state.getIn([branch, 'dataTable']),
+    allTags: state.getIn(['TagsConfig', 'dataTable']), // injecting servers config for chips id-to-label conversion
   });
 
 /**
@@ -198,11 +228,11 @@ const mapStateToProps = state =>
  * @param {*} dispatch
  */
 const mapDispatchToProps = dispatch => ({
-  removeRow: bindActionCreators(removeAction, dispatch),
   closeNotif: bindActionCreators(closeNotifAction, dispatch),
   bulkDeactivateRules: bindActionCreators(bulkDeactivate, dispatch),
   bulkActivateRules: bindActionCreators(bulkActivate, dispatch),
-  bulkDeleteRules: bindActionCreators(bulkDelete, dispatch)
+  bulkDeleteRules: bindActionCreators(bulkDelete, dispatch),
+  bulkUpdateRulesTags: bindActionCreators(bulkUpdateTags, dispatch)
 });
 
 /**

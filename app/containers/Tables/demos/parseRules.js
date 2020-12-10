@@ -17,7 +17,7 @@ export const matchRulePattern = (importedText) => {
   enhanceArrayPrototype(); // calling this here since here is the exported scope for matchRulePattern()
   // console.log(importedText);
   // DEBUGGED not matching comments: needed \r\n match inside comments. Not sure if this is windows related issue
-  const importsRegex = /(?<comments>(?:\/\/.*?(?:\r\n|\n))*)(?<rule>(?<deactivated>(?:\/\/|)*\s*(?:\/\/|)*\s*|)rule\s*"(?<ruleheader>(?<ruleid>.*?)\s+(?<ruletitle>.*?))"(?:\r|\n|\r\n)(?:\/\/)*\s*(?:\/\/)*\s*(?<salience>salience.*?(?:\n|\r\n)|).*(?:\r|\n|\r\n)(?:.|\n|\r|\r\n)*?end)/g;
+  const importsRegex = /(?<comments>(?:\/\/.*?(?:\r\n|\n))*)(?<rule>(?<deactivated>(?:\/\/|)*\s*(?:\/\/|)*\s*|)rule\s*"(?<rulename>(?<ruleid>.*?)\s+(?<ruletitle>.*?))"(?:\r|\n|\r\n)(?:\/\/)*\s*(?:\/\/)*\s*(?<salience>salience.*?(?:\n|\r\n)|).*(?:\r|\n|\r\n)(?:.|\n|\r|\r\n)*?end)/g;
   // console.log(importsRegex.test(text));  TODO : keep this light validation check
   // console.log('>>>> PARSED: ', [...importedText.matchAll(importsRegex)]);
   return [...importedText.matchAll(importsRegex)];
@@ -40,7 +40,7 @@ export const parseRules = (targetServer, selectedTag, importedText) => {
     matchedRulesPatternArray.forEach(match => {
       // const comments = match.groups.comments || '';
       const {
-        comments, rule, deactivated, ruleheader, salience
+        comments, rule, deactivated, rulename, salience
       } = match.groups;
 
       // const content = match[0];
@@ -56,17 +56,16 @@ export const parseRules = (targetServer, selectedTag, importedText) => {
 
       rulesArray.push({
         // _id: ruleheader, // Mongo will generate id
-        // availableServers: OrderedSet(['PROD', 'PREP', 'TEST', 'DEV']).subtract(targetServer).toJS(), // TODO: make dynamic
+        name: rulename,
         active: !deactivated,
         locked: false,
+        tags: selectedTag,
         versions: [
           {
             version: 1,
-            name: ruleheader,
             subOn: timestamp.utc('YYYY-MM-DD HH:mm'),
             subBy: 'sotirios@alpha', // TODO: make dynamic
-            servers: targetServer, // TODO: configurable: newly imported rules in server: NA 1 2 3 4 etc
-            tags: selectedTag, // TODO we need to be able to regex-fetch tagable key-fields
+            servers: targetServer,
             edited: false,
             // eslint-disable-next-line radix
             salience: parseInt(salience.trim().split(' ').last()) || 0,

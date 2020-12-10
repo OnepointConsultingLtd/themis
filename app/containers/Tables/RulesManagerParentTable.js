@@ -14,6 +14,7 @@ import React from 'react';
 // import { Map } from 'immutable';
 import MUIDataTable, { ExpandButton } from 'mui-datatables';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import LockIcon from '@material-ui/icons/Lock';
 // import BlockIcon from '@material-ui/icons/Block';
@@ -29,19 +30,22 @@ import { connect } from 'react-redux';
 import {
   closeNotifAction,
   // updateExpandedRows,
+  updateSelectedRows,
   updateRuleStatus,
+  updateRuleTags,
   removeAction,
 } from 'ba-actions/RulesTableActions';
 import Notification from 'ba-components/Notification/Notification';
 import CustomToolbarSelect from './demos/CustomToolbarSelect';
 import RulesManagerNestedVersionsPanel from './demos/RulesManagerNestedVersionsPanel';
-import { aggregateMaxVersions, fetchRuleFullDetails, findLockedAndDeactivatedRules } from './demos/data';
+import { aggregateRules, fetchRuleFullDetails, findLockedAndDeactivatedRules } from './demos/data';
 import CustomToolbar from './demos/CustomToolbar';
 import PopUp from './demos/PopUp';
 import { ImportRules, ImportCreatedRule } from './demos/importRules';
-import { idsToLabels } from './demos/idsToProperties';
-import { renderServersChips, renderTagsChips } from './demos/renderChipLabelsFromIds';
+import { idsToLabels, labelsArrayToIdsArray } from './demos/idsToProperties';
+import { renderServersChips } from './demos/renderChipLabelsFromIds';
 import filterOptions from './demos/filterLogic';
+import Autocomplete from './demos/autocomplete';
 
 // Reducer Branch
 const branch = 'RulesManagerParentTable';
@@ -56,6 +60,7 @@ class RulesManagerParentTable extends React.Component {
     super(props);
     this.state = {
       rowsExpanded: [],
+      rowsSelected: [],
       // lockedRows: [],
       // deactivatedRows: [],
       deletedRuleId: '',
@@ -168,7 +173,6 @@ class RulesManagerParentTable extends React.Component {
             // ruleData={fetchRuleFullDetails(this.props.dataTable.toJS(), rowData[0])} // Rule query
               ruleData={findRule} // Rule query
               branch={branch}
-              maxVersion={rowData[1]}
               // availableServers={(this.props.dataTable.find(rule => rule.get('_id') === rowData[0]) || Map({ availableServers: '' })).get('availableServers')}
             />
           </TableCell>
@@ -179,10 +183,9 @@ class RulesManagerParentTable extends React.Component {
     return (<div />); // rule was not there so render nothing
   }
 
-  onChangeRuleStatus = (ruleId, ruleStatus, updateValue) => (e) => {
+  onChangeRuleStatus = (ruleId) => (e) => {
     e.stopPropagation();
-    updateValue(e.target.value !== 'Yes');
-    this.props.updateRuleStatus(ruleId, ruleStatus, branch);
+    this.props.updateRuleStatus(ruleId, (e.target.value !== 'Yes'), branch);
   }
 
   renderCRUDActionsColumn = (value, tableMeta, updateValue) => {
@@ -191,9 +194,8 @@ class RulesManagerParentTable extends React.Component {
       disabled = true; // prevent current user from deleting or changing locked-rules status
     } else disabled = false;
     return (
-      <div>
+      <div style={{ minWidth: '120px' }}>
         <FormControlLabel
-        // label={value ? 'Yes' : 'No'}
           disabled={disabled}
           value={value ? 'Yes' : 'No'}
           control={
@@ -204,7 +206,7 @@ class RulesManagerParentTable extends React.Component {
             />
           }
           onClick={this.stopPropagation}
-          onChange={this.onChangeRuleStatus(tableMeta.rowData[0], tableMeta.rowData[5], updateValue)}
+          onChange={this.onChangeRuleStatus(tableMeta.rowData[0])}
         />
         <IconButton
           onClick={this.eventDel(tableMeta.rowData[0], tableMeta.rowIndex)}
@@ -217,9 +219,38 @@ class RulesManagerParentTable extends React.Component {
     );
   }
 
+  stopPropagation = (e) => e.stopPropagation();
+
   renderServersColumn = (value, tableMeta) => renderServersChips(this.props.allServers, value, tableMeta, this.lockedRows) // render as chips
 
-  renderTagsColumn = (value, tableMeta) => renderTagsChips(this.props.allTags, value, tableMeta, this.lockedRows) // render as chips
+  // renderTagsColumn = (value, tableMeta) => renderTagsChips(this.props.allTags, value, tableMeta, this.lockedRows) // render as chips
+
+  onChangeTag = (ruleId, theBranch) => (e, newValue) => {
+    e.stopPropagation(); // selecting options was expanding-contracting versions panel at the back
+    this.props.updateRuleTags(ruleId, newValue, theBranch);
+  }
+  /** Renders the "Tags" column with an autocomplete mutli-selector
+   * @param {string[]}: an array of _id's   (selected tags' ids)
+   */
+  renderTagsColumn = (value, tableMeta) => {
+
+    // console.log(value, this.props.allTags.toJS());
+    // value: ["5fa459b307b106245809cdd4", "5fa4473807b106245809cdd0", ....]
+    // allTags: { _id: "5fa4473807b106245809cdd0", edited: false, label: "FIN" } ....
+
+    // const tagsValue = value.map(id => idsToLabels(this.props.allTags.toJS())[id]); // TODO: remove all expensive .toJS() conversions. We need to be able to consume immutable data directly
+
+    return (<Autocomplete
+      // disabled // TODO: connect to lockedRows
+      options={this.props.allTags.toJS()} // options are the records of tagsConfig !!!! not good !!!!!
+      value={value} // value is the array of ids
+      onChange={// listen and dispatch the value change
+      // convert newValue from array-of-labels to array-of-ids
+      // dispatch the newValue
+        this.onChangeTag(tableMeta.rowData[0], branch)
+      }
+    />);
+  }
 
   isRowExpandableLogic = (dataIndex, expandedRows) => {
     if (this.lockedRows.includes(dataIndex)) return false; // prevent locked rules from expanding
@@ -227,8 +258,12 @@ class RulesManagerParentTable extends React.Component {
   };
 
   // Expansion is based on row.dataIndex and not on row.index (absolute index=>dataIndex over displayed data index=>index)
-  onRowExpansionChangeLogic = (curExpanded, allRowsExpanded, rowsExpanded) => {
+  onRowExpansionChange = (curExpanded, allRowsExpanded, rowsExpanded) => {
     this.setState({ rowsExpanded: allRowsExpanded.map(row => row.dataIndex) });
+  }
+
+  onRowSelectionChange = (currentRowsSelected, allRowsSelected, rowsSelected) => {
+    this.props.updateSelectedRows(allRowsSelected.map(row => row.dataIndex), branch);
   }
 
   render() {
@@ -239,10 +274,10 @@ class RulesManagerParentTable extends React.Component {
       messageNotif,
       severityNotif,
       allServers,
-      allTags
+      allTags,
+      rowsSelected,
     } = this.props;
-
-    const data = aggregateMaxVersions(dataTable.toJS());
+    const data = aggregateRules(dataTable.toJS());
     const { lockedRows, deactivatedRows } = findLockedAndDeactivatedRules(dataTable.toJS());
     this.lockedRows = lockedRows;
     this.deactivatedRows = deactivatedRows;
@@ -256,14 +291,14 @@ class RulesManagerParentTable extends React.Component {
           setCellProps: this.setCellProps
         }
       },
-      {
-        name: 'version',
-        label: 'Max. Version',
-        options: {
-          filter: false,
-          setCellProps: this.setCellProps
-        }
-      },
+      // {
+      //   name: 'version',
+      //   label: 'Max. Version',
+      //   options: {
+      //     filter: false,
+      //     setCellProps: this.setCellProps
+      //   }
+      // },
       {
         name: 'name',
         label: 'Name',
@@ -315,7 +350,6 @@ class RulesManagerParentTable extends React.Component {
       //   responsive: 'stacked',
       rowsPerPageOptions: [10, 25, 50, 100],
       //   page: 1,
-      //   onRowSelectionChange: this.onRowSelectionChange
       filter: true,
       search: true,
       // fixedHeader: true,
@@ -334,12 +368,17 @@ class RulesManagerParentTable extends React.Component {
       print: false,
       viewColumns: false,
       rowsExpanded: this.state.rowsExpanded, // {array} User provided expanded rows
+      // eslint-disable-next-line object-shorthand
+      rowsSelected: rowsSelected,
       onFilterChange: () => this.setState({ rowsExpanded: [] }), // DEBUG: reset expanded rows upon filter (displayed data) change; it was messing expansion upon filtering
       renderExpandableRow: this.renderCollapseVersionsPanel,
-      customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
-        <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} />
-      ),
-      onRowExpansionChange: this.onRowExpansionChangeLogic,
+      customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+        // this.setState({ rowsSelected: selectedRows.data.map(selectedRow => selectedRow.dataIndex) });
+        // console.log(selectedRows);
+        return (<CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} />);
+      },
+      onRowExpansionChange: this.onRowExpansionChange,
+      onRowSelectionChange: this.onRowSelectionChange,
       customToolbar: () => ( // {jsx} Expanding table toolbar w/ import rules and create new rule
         <CustomToolbar
           onClickImportRules={() => this.setState({ popUp: { status: true, type: 'drop files', text: '' } })}
@@ -404,11 +443,14 @@ class RulesManagerParentTable extends React.Component {
 RulesManagerParentTable.propTypes = {
   removeRow: PropTypes.func.isRequired,
   // updateExpandedRows: PropTypes.func.isRequired,
+  updateSelectedRows: PropTypes.func.isRequired,
   updateRuleStatus: PropTypes.func.isRequired,
+  updateRuleTags: PropTypes.func.isRequired,
   dataTable: PropTypes.object.isRequired,
   closeNotif: PropTypes.func.isRequired,
   messageNotif: PropTypes.string.isRequired,
-  // rowsExpanded: PropTypes.array.isRequired
+  // rowsExpanded: PropTypes.array.isRequired,
+  rowsSelected: PropTypes.array.isRequired,
   severityNotif: PropTypes.string.isRequired,
   allServers: PropTypes.array.isRequired,
   allTags: PropTypes.array.isRequired,
@@ -427,6 +469,7 @@ const mapStateToProps = state => {
     allServers: state.getIn(['ServersConfig', 'dataTable']), // injecting servers config for chips id-to-label conversion
     allTags: state.getIn(['TagsConfig', 'dataTable']), // injecting servers config for chips id-to-label conversion
     // rowsExpanded: state.getIn([branch, 'rowsExpanded'])
+    rowsSelected: state.getIn([branch, 'rowsSelected'])
   };
 };
 
@@ -438,7 +481,9 @@ const mapDispatchToProps = dispatch => ({
   removeRow: bindActionCreators(removeAction, dispatch),
   closeNotif: bindActionCreators(closeNotifAction, dispatch),
   // updateExpandedRows: bindActionCreators(updateExpandedRows, dispatch),
+  updateSelectedRows: bindActionCreators(updateSelectedRows, dispatch),
   updateRuleStatus: bindActionCreators(updateRuleStatus, dispatch), // connect to action
+  updateRuleTags: bindActionCreators(updateRuleTags, dispatch), // connect to action
 });
 
 /**

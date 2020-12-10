@@ -2,7 +2,7 @@ const dedupQuery = [
   {
     $group: {
       _id: {
-        name: '$versions.name'
+        name: '$name'
       },
       _idsNeedsToBeDeleted: {
         $push: '$$ROOT._id'

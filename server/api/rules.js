@@ -114,19 +114,23 @@ app.post('/api/version/clone/:id', (req, res) => {
   });
 });
 
-/** UPDATE a version's servers, tags, salience, name */
+/** UPDATE any rule's top-level field: such as name, tags, active, locked */
 // this route should prior to '/update/:id/:version': i was getting "pls pass string value" error
 // https://stackoverflow.com/questions/48705503/error-argument-passed-in-must-be-a-single-string-of-12-bytes-or-a-string-of-24
-app.post('/api/version/update/status/:id', (req, res) => {
+app.post('/api/rules/update/:id', (req, res) => {
   const { id } = req.params; // <---- ATTENTION: string type
 
   MongoClient.connect(dbUrl, { useUnifiedTopology: true }, async (error, client) => {
     if (error) throw error;
     console.log('Connected to MongoDB. Updating status of rule.: ', id, req.body);
     const db = client.db('rulems');
+    const updateQuery = {};
+    // eslint-disable-next-line prefer-destructuring
+    updateQuery[Object.keys(req.body)[0]] = Object.values(req.body)[0]; // key-value included in req.body
+
     db.collection('rules').findOneAndUpdate(
       { _id: ObjectId(id) },
-      { $set: { active: !!req.body } }, // <------ req.body returns JSON object
+      { $set: updateQuery }, // <------ req.body is a JSON object (thanks to body-parser)
       (err, result) => {
         if (err) {
           res.status(404).send({
@@ -279,12 +283,37 @@ app.post('/api/bulk/rules/delete', (req, res) => {
       (err, result) => {
         if (err) {
           res.status(404).send({
-            message: 'Rule could not be deleted'
+            message: 'Rules could not be deleted'
           });
         }
         console.log('Delete rule result: ', result.result); // Note: updateOne returns success even if no item has been updated
         client.close();
         res.status(200).send({ message: `${result.result.n} rules have been removed succesfully` });
+      }
+    );
+  });
+});
+/** Bulk Update tags */
+app.post('/api/bulk/rules/update/tags', (req, res) => {
+  const bulkIds = req.body.array.map(id => ObjectId(id));
+  const { tags } = req.body;
+  MongoClient.connect(dbUrl, { useUnifiedTopology: true }, (error, client) => {
+    if (error) throw error;
+    console.log(`Connected to MongoDB. Updating rules with id's: ${bulkIds}`);
+    const db = client.db('rulems');
+
+    db.collection('rules').updateMany(
+      { _id: { $in: bulkIds } },
+      { $set: { tags } },
+      (err, result) => {
+        if (err) {
+          res.status(404).send({
+            message: 'Rules could not get updated'
+          });
+        }
+        console.log('Update rule tags result: ', result.result); // Note: updateOne returns success even if no item has been updated
+        client.close();
+        res.status(200).send({ message: `${result.result.n} rules have been updated succesfully` });
       }
     );
   });

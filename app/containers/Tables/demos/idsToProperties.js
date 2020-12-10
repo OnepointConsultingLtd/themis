@@ -15,3 +15,6 @@ export const idsToAny = (dataArray, field) =>
 
 export const idsToArray = (dataArray) =>
   [...dataArray].map(item => item._id);
+
+export const labelsArrayToIdsArray = (labelsArray, allTags) =>
+  allTags.filter(item => labelsArray.includes(item.label)).map(tagRec => tagRec._id);

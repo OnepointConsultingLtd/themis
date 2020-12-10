@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import MultiSelectConfig from 'ba-components/Tables/tableParts/MultiSelectConfig';
+// import MultiSelectConfig from 'ba-components/Tables/tableParts/MultiSelectConfig';
 import { makeStyles } from '@material-ui/core/styles';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-java';
@@ -20,6 +20,7 @@ import Dropzone from 'react-dropzone';
 // https://react-dropzone.js.org/
 import { connect } from 'react-redux';
 import './style.css';
+import Autocomplete from './autocomplete';
 
 const useRowStyles = makeStyles({
   root: {
@@ -44,8 +45,8 @@ function PopUp({
   const classes = useRowStyles();
   const [selectedFiles, setSelectedFiles] = useState(); // DEBUGGED: needed empty init state and not ([])
   const [ruleCodeContent, setRuleCodeContent] = useState();
-  const [selectedServer, setSelectedServer] = useState({ target: { value: ['NA'] } });
-  const [selectedTag, setSelectedTag] = useState({ target: { value: ['NA'] } });
+  const [selectedServer, setSelectedServer] = useState([]);
+  const [selectedTag, setSelectedTag] = useState([]);
 
   const handleFileDrops = (droppedFiles) => {
     setSelectedFiles(droppedFiles);
@@ -80,7 +81,7 @@ function PopUp({
       </Dialog>
     );
 
-  const renderValError = () =>
+  const renderValidationErrors = () =>
     (
       <Dialog
         open
@@ -190,13 +191,13 @@ function PopUp({
       </Dialog>
     );
 
-  // Servers ids aggregation
-  const allServersIds = allServers.map(server => server.get('_id'));
-  // Tags ids aggregation
-  const allTagsIds = allTags.map(tag => tag.get('_id'));
+  // // Servers ids aggregation
+  // const allServersIds = allServers.map(server => server.get('_id'));
+  // // Tags ids aggregation
+  // const allTagsIds = allTags.map(tag => tag.get('_id'));
 
   /** Renders the import files dropzone */
-  const renderFileDropZone = () => (
+  const renderImportDLSRFile = () => (
     <Dialog
       open
       // onClose={handleClose}
@@ -236,34 +237,26 @@ function PopUp({
             </TableCell>
           </TableRow>
           <TableRow className={classes.root} style={{ borderBottom: 'unset' }}>
-            <TableCell align="left">
-              <MultiSelectConfig
-                updateRow={setSelectedServer}
-                cellData={{
-                  name: 'servers', // field name, neccessary for redux UPDATE cell action
-                  value: selectedServer.target.value, // ??? i can explain... MultiSelectConfig was built to emit the whole event objects not just the value (event carries more detailed payload for redux-store)
-                  id: '1453',
+            <TableCell align="left" style={{ minWidth: '200px' }}>
+              <Autocomplete
+                options={allServers.toJS()}
+                value={selectedServer} // value is the array of ids
+                onChange={(e, newValue) => {
+                  // console.log(newValue);
+                  setSelectedServer(newValue);
                 }}
-                edited
-                key="import-rules-servers"
-                allOptions={allServers.toJS()} // needs conversion to plain array
-                activeOptions={allServersIds.toJS()}
-                multiple
+                noUnderline={false}
               />
             </TableCell>
-            <TableCell align="left">
-              <MultiSelectConfig
-                updateRow={setSelectedTag}
-                cellData={{
-                  name: 'tags', // field name, neccessary for redux UPDATE cell action
-                  value: selectedTag.target.value, // ??? i can explain... MultiSelectConfig was built to emit the whole event objects not just the value (event carries more detailed payload for redux-store)
-                  id: '2345354',
+            <TableCell align="left" style={{ minWidth: '200px' }}>
+              <Autocomplete
+                options={allTags.toJS()}
+                value={selectedTag} // value is the array of ids
+                onChange={(e, newValue) => {
+                  // console.log(newValue);
+                  setSelectedTag(newValue);
                 }}
-                edited
-                key="import-rules-tags"
-                allOptions={allTags.toJS()} // needs conversion to plain array
-                activeOptions={allTagsIds.toJS()}
-                multiple
+                noUnderline={false}
               />
             </TableCell>
           </TableRow>
@@ -275,7 +268,7 @@ function PopUp({
         </Button>
         <Button
           disabled={!selectedFiles}
-          onClick={() => onSubmitImportedRules(selectedServer.target.value, selectedTag.target.value, selectedFiles)} // TODO: this is scarry. Pls change emmited values
+          onClick={() => onSubmitImportedRules(selectedServer.length === 0 ? ['NA'] : selectedServer, selectedTag, selectedFiles)} // TODO: this is scarry. Pls change emmited values
           color="primary"
         >
             OK
@@ -285,7 +278,7 @@ function PopUp({
   );
 
   /** Renders the text editor for single-rule import */
-  const createNewRule = () => (
+  const renderCreateNewRule = () => (
     <Dialog
       fullWidth
       maxWidth="md"
@@ -311,34 +304,26 @@ function PopUp({
             </TableCell>
           </TableRow>
           <TableRow className={classes.root} style={{ borderBottom: 'unset' }}>
-            <TableCell align="left">
-              <MultiSelectConfig
-                updateRow={setSelectedServer}
-                cellData={{
-                  name: 'servers', // field name, neccessary for redux UPDATE cell action
-                  value: selectedServer.target.value, // ??? i can explain... MultiSelectConfig was built to emit the whole event objects not just the value (event carries more detailed payload for redux-store)
-                  id: '1453',
+            <TableCell align="left" style={{ minWidth: '200px' }}>
+              <Autocomplete
+                options={allServers.toJS()}
+                value={selectedServer} // value is the array of ids
+                onChange={(e, newValue) => {
+                  // console.log(newValue);
+                  setSelectedServer(newValue);
                 }}
-                edited
-                key="import-rules-servers"
-                allOptions={allServers.toJS()} // needs conversion to plain array
-                activeOptions={allServersIds.toJS()}
-                multiple
+                noUnderline={false}
               />
             </TableCell>
-            <TableCell align="left">
-              <MultiSelectConfig
-                updateRow={setSelectedTag}
-                cellData={{
-                  name: 'tags', // field name, neccessary for redux UPDATE cell action
-                  value: selectedTag.target.value, // ??? i can explain... MultiSelectConfig was built to emit the whole event objects not just the value (event carries more detailed payload for redux-store)
-                  id: '2345354',
+            <TableCell align="left" style={{ minWidth: '200px' }}>
+              <Autocomplete
+                options={allTags.toJS()}
+                value={selectedTag} // value is the array of ids
+                onChange={(e, newValue) => {
+                  // console.log(newValue);
+                  setSelectedTag(newValue);
                 }}
-                edited
-                key="import-rules-tags"
-                allOptions={allTags.toJS()} // needs conversion to plain array
-                activeOptions={allTagsIds.toJS()}
-                multiple
+                noUnderline={false}
               />
             </TableCell>
           </TableRow>
@@ -371,7 +356,7 @@ function PopUp({
         </Button>
         <Button
           disabled={!ruleCodeContent}
-          onClick={() => onSubmitCreatedRule(selectedServer.target.value, selectedTag.target.value, ruleCodeContent)} // TODO: this is scarry. Pls change emmited values
+          onClick={() => onSubmitCreatedRule(selectedServer.length === 0 ? ['NA'] : selectedServer, selectedTag, ruleCodeContent)} // TODO: this is scarry. Pls change emmited values
           color="primary"
         >
           Submit new rule
@@ -384,15 +369,15 @@ function PopUp({
     case 'error':
       return renderError();
     case 'validation error':
-      return renderValError();
+      return renderValidationErrors();
     case 'confirm delete':
       return renderDeleteRuleConfirmation();
     case 'rules list':
       return renderRulesGeneratorPreview();
     case 'drop files':
-      return renderFileDropZone();
+      return renderImportDLSRFile();
     case 'create new rule':
-      return createNewRule();
+      return renderCreateNewRule();
     default: return (<br />);
   }
 }

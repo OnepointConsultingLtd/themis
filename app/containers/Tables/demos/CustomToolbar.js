@@ -9,12 +9,12 @@ class CustomToolbar extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Tooltip title="Import Rules">
+        <Tooltip title="Import rules">
           <IconButton onClick={this.props.onClickImportRules}>
             <PostAddIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="add new Rules">
+        <Tooltip title="Add new rule">
           <IconButton onClick={this.props.onClickCreateRule}>
             <AddCircleOutlineIcon />
           </IconButton>

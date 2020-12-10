@@ -9,6 +9,7 @@ import {
   MenuItem
 } from '@material-ui/core';
 import { idsToLabels } from './idsToProperties';
+import Autocomplete from './autocomplete';
 
 /** Describes the filter logic and filters rendering for RulesManagerParentTable component
  * @param {config table}: multiSelectOptions
@@ -19,9 +20,13 @@ const filterOptions = (multiSelectOptions, Label, type = true) => {
   switch (type) {
     case true: // MUTLISELECTOR --------------
       return ({
+        /**
+        * matchedFieldValues:
+        * selectedFilter:
+        * row:
+        */
         logic: (matchedFieldValues, selectedFilter, row) => { // matched are the matched values in the current row. might be all might some
-          // console.log('LOGIC: ', matchedFieldValues, selectedFilter);
-          // console.log(matchedFieldValues.length);
+          // console.log('LOGIC: ', matchedFieldValues, selectedFilter, row);
           if (selectedFilter.length === 0) return false; // on startup don't filter anything
           else if (matchedFieldValues.length > 0) {
             // console.log(selectedFilter.some(r => matchedServerField.indexOf(r) > -1));
@@ -30,35 +35,58 @@ const filterOptions = (multiSelectOptions, Label, type = true) => {
           }
           return true; // ---> fallback to true = EXCLUDE if filter is activated but doesnt match the current row
         },
-        display: (filterList, onChange, index, column) =>
+        /**
+        * filterList: array of all columns selected filters,
+        * index: index of the current column
+        * column: filter-column data object
+        */
+        // eslint-disable-next-line arrow-body-style
+        display: (filterList, onChange, index, column) => {
           // console.log('Some useful filter logistics : ', filterList, index, column);
-          (
-            <FormControl>
-              <InputLabel htmlFor="select-multiple-chip">
+          return (
+            <div>
+              <div>
                 {Label}
-              </InputLabel>
-              <Select
-                multiple
-                value={filterList[index]}
-                renderValue={selected => selected.map(id => idsToLabels(multiSelectOptions)[id]).join(', ')} // render selected values not as array of id's but array of labels. We need the id2label conversion
-                onChange={event => {
-                  // eslint-disable-next-line no-param-reassign
-                  filterList[index] = event.target.value;
-                  onChange(filterList[index], index, column);
+              </div>
+              <Autocomplete
+                options={multiSelectOptions}
+                value={filterList[index]} // value is the array of ids
+                onChange={(e, newValue) => {
+                  console.log(newValue);
+                  onChange(newValue, index, column);
                 }}
-              >
-                {multiSelectOptions.map(item => (
-                  <MenuItem key={item._id} value={item._id}>
-                    <Checkbox
-                      color="primary"
-                      checked={filterList[index].indexOf(item._id) > -1}
-                    />
-                    <ListItemText primary={item.label} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )
+                noUnderline={false}
+              />
+            </div>);
+
+          // return (
+          //   <FormControl>
+          //     <InputLabel htmlFor="select-multiple-chip">
+          //       {Label}
+          //     </InputLabel>
+          //     <Select
+          //       multiple
+          //       value={filterList[index]}
+          //       renderValue={selected => selected.map(id => idsToLabels(multiSelectOptions)[id]).join(', ')} // render selected values not as array of id's but array of labels. We need the id2label conversion
+          //       onChange={event => {
+          //         // eslint-disable-next-line no-param-reassign
+          //         // filterList[index] = event.target.value;
+          //         onChange(event.target.value, index, column);
+          //       }}
+          //     >
+          //       {multiSelectOptions.map(item => (
+          //         <MenuItem key={item._id} value={item._id}>
+          //           <Checkbox
+          //             color="primary"
+          //             checked={filterList[index].indexOf(item._id) > -1}
+          //           />
+          //           <ListItemText primary={item.label} />
+          //         </MenuItem>
+          //       ))}
+          //     </Select>
+          //   </FormControl>
+          // );
+        }
       });
     case false: // SINGLE SELECTOR -----------------
       return ({

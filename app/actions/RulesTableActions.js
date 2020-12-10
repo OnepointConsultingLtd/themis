@@ -140,16 +140,14 @@ export const updateAction = (ruleId, event, item, branch) => ({
 //     });
 //   };
 
-export const updateRuleStatus = (ruleId, oldValue, branch) => async (dispatch) => {
-  // console.log('>>>>> About to update status and POST: ', oldValue);
-
-  const response = await fetch(`/api/version/update/status/${ruleId}`, {
+export const updateRuleStatus = (ruleId, newValue, branch) => async (dispatch) => {
+  const response = await fetch(`/api/rules/update/${ruleId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json'
     },
-    body: JSON.stringify({ active: !oldValue }) // toggle value and POST
+    body: JSON.stringify({ active: newValue }) // toggle value and POST
   });
 
   if (response.status !== 200) { // Error handling
@@ -162,12 +160,40 @@ export const updateRuleStatus = (ruleId, oldValue, branch) => async (dispatch) =
   } else {
     dispatch({
       ruleId, // _id remains same (_id is of parent not of nested versions)
-      oldValue,
+      newValue,
       branch,
       type: `${branch}/UPDATE_RULE_STATUS`,
     });
   }
 };
+
+export const updateRuleTags = (ruleId, newValue, branch) => async (dispatch) => {
+  const response = await fetch(`/api/rules/update/${ruleId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
+    body: JSON.stringify({ tags: newValue }) // toggle value and POST
+  });
+
+  if (response.status !== 200) { // Error handling
+    dispatch({ // dispatch notification only
+      branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
+      type: `${branch}/SHOW_NOTIF`,
+      message: 'Could not connect to the server',
+      severity: 'error'
+    });
+  } else {
+    dispatch({
+      ruleId, // _id remains same (_id is of parent not of nested versions)
+      newValue,
+      branch,
+      type: `${branch}/UPDATE_RULE_TAGS`,
+    });
+  }
+};
+
 export const editAction = (ruleId, item, branch) => ({ // click-on-edit will NOT be stored in Mongo
   ruleId,
   branch,
@@ -182,7 +208,7 @@ export const discardAction = (ruleId, item, branch) => ({ // click-on-discard wi
 });
 
 /** Cloning the top version in the list (max version). That's the 'item' */
-export const saveAction = (ruleId, version, selectedServers, selectedTags, content, branch, setValErrorPopUp) => async (dispatch, getState) => {
+export const saveAction = (ruleId, version, selectedServers, content, branch, setValErrorPopUp) => async (dispatch, getState) => {
   // Do the parsing here: we parse name, salience, status and content
   /* eslint-disable-next-line prefer-const */
   let { salience, ruleheader } = matchRulePattern(content)[0].groups;
@@ -198,7 +224,6 @@ export const saveAction = (ruleId, version, selectedServers, selectedTags, conte
     subOn: timestamp.utc('YYYY-MM-DD HH:mm'),
     subBy: 'sotirios@alpha', // TODO: Inject Logged in user from login reducer
     servers: nonEmptyServers,
-    tags: selectedTags,
     edited: false,
     salience, // newly parsed rule-salience
     content
@@ -284,6 +309,13 @@ export const saveAction = (ruleId, version, selectedServers, selectedTags, conte
   }
 };
 
+/** Update selected rows in Rules manager screen */
+export const updateSelectedRows = (item, branch) => ({
+  branch,
+  type: `${branch}/UPDATE_SELECTED_ROWS`,
+  item
+});
+
 // -----------------------------------------------------------------------------> BULK ACTIONS
 export const bulkDeactivate = (bulkIds, branch) => async (dispatch) => {
   const response = await axios.post('/api/bulk/rules/deactivate', { array: [...bulkIds] }); // array in body cannot be posted otherwise
@@ -336,6 +368,26 @@ export const bulkDelete = (bulkIds, branch) => async (dispatch) => {
       bulkIds,
       branch,
       type: `${branch}/BULK_DELETE`,
+      message: response.data.message // message is nested under .data node
+    });
+  }
+};
+export const bulkUpdateTags = (bulkIds, tags, branch) => async (dispatch) => {
+  // console.log(bulkIds);
+  const response = await axios.post('/api/bulk/rules/update/tags', { array: [...bulkIds], tags }); // array in body cannot be posted otherwise
+  if (response.status !== 200) { // Error handling
+    dispatch({ // dispatch notification only
+      branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
+      type: `${branch}/SHOW_NOTIF`,
+      message: 'Could not connect to the server',
+      severity: 'error'
+    });
+  } else { // SUCCESS
+    dispatch({
+      bulkIds,
+      tags,
+      branch,
+      type: `${branch}/BULK_UPDATE_TAGS`,
       message: response.data.message // message is nested under .data node
     });
   }

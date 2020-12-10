@@ -17,6 +17,7 @@ const initialState = {
   dataTable: List([]),
   notifMsg: '',
   notifSeverity: '',
+  rowsSelected: List([])
   // rowsExpanded: List([]),
   // serversList: List([])
   // versionPanelState:
@@ -87,8 +88,8 @@ export default function reducer(state = initialImmutableState, action = {}) {
 
     case `${branch}/${CLONE_MAX_VERSION}`: // Stack-up an advanced version (insert a new version on top)
       return state.withMutations((mutableState) => {
-        console.log('>>>>> CLONED: ', action.item);
-        const rulesListIndex = mutableState.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
+        const { ruleId } = action;
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === ruleId);
         mutableState.updateIn(['dataTable', rulesListIndex, 'versions'], versions => versions.unshift(action.item)); // use unshift instead of push if version order will be reversed
       });
 
@@ -103,7 +104,8 @@ export default function reducer(state = initialImmutableState, action = {}) {
 
     case `${branch}/${REMOVE_ROW}`: // Delete the whole rule
       return state.withMutations((mutableState) => {
-        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
+        const { ruleId } = action;
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === ruleId);
         mutableState
           .update('dataTable', dataTable => dataTable.removeIn([rulesListIndex]))
           .set('notifMsg', notif.removed)
@@ -162,23 +164,34 @@ export default function reducer(state = initialImmutableState, action = {}) {
 
     case `${branch}/UPDATE_RULE_STATUS`: // update rule status (toggle)
       return state.withMutations((mutableState) => {
-        const { ruleId, oldValue } = action;
-        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === ruleId));
-        mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'active'], !oldValue))
+        const { ruleId, newValue } = action;
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === ruleId);
+        mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'active'], newValue))
           .set('notifMsg', notif.status)
+          .set('notifSeverity', 'success');
+      });
+
+    case `${branch}/UPDATE_RULE_TAGS`: // update rule tags
+      return state.withMutations((mutableState) => {
+        const { ruleId, newValue } = action;
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === ruleId);
+        mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'tags'], newValue))
+          .set('notifMsg', 'Tags have updated successfully')
           .set('notifSeverity', 'success');
       });
 
     case `${branch}/${EDIT_ROW}`: // activate editing
       return state.withMutations((mutableState) => {
+        const { ruleId } = action;
         const versionsListIndex = state.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').indexOf(action.item);
-        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === ruleId);
         mutableState.update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'edited'], true));
       });
     case `${branch}/DISCARD_ROW`: // deactivate editing, discard any changes
       return state.withMutations((mutableState) => {
+        const { ruleId } = action;
         const versionsListIndex = state.get('dataTable').find(rule => rule.get('_id') === action.ruleId).get('versions').indexOf(action.item);
-        const rulesListIndex = state.get('dataTable').indexOf(state.get('dataTable').find(rule => rule.get('_id') === action.ruleId));
+        const rulesListIndex = state.get('dataTable').findIndex(ruleRecord => ruleRecord.get('_id') === ruleId);
         mutableState
           .update('dataTable', dataTable => dataTable.setIn([rulesListIndex, 'versions', versionsListIndex, 'edited'], false))
           .set('notifMsg', 'Discarded any changes')
@@ -210,11 +223,6 @@ export default function reducer(state = initialImmutableState, action = {}) {
           .set('notifSeverity', action.severity);
       });
 
-    // case `${branch}/UPDATE_EXPANDED`:
-    //   return state.withMutations((mutableState) => {
-    //     mutableState.set('rowsExpanded', action.item);
-    //   });
-
     case `${branch}/IMPORT_RULES`:
       return state.withMutations((mutableState) => {
         mutableState
@@ -227,6 +235,16 @@ export default function reducer(state = initialImmutableState, action = {}) {
           // .sort()) // sort the whole rules list // TODO: where is the sort-field: "name"?
           .set('notifMsg', action.message)
           .set('notifSeverity', 'success');
+      });
+
+    // case `${branch}/UPDATE_EXPANDED`:
+    //   return state.withMutations((mutableState) => {
+    //     mutableState.set('rowsExpanded', action.item);
+    //   });
+
+    case `${branch}/UPDATE_SELECTED_ROWS`:
+      return state.withMutations((mutableState) => {
+        mutableState.set('rowsSelected', action.item);
       });
 
     // ----------------------------------------------> BULK ACTIONS
@@ -264,6 +282,20 @@ export default function reducer(state = initialImmutableState, action = {}) {
           .update('dataTable', dataTable =>
             dataTable.filterNot(rule => action.bulkIds.includes(rule.get('_id'))
             ))
+          .set('notifMsg', action.message)
+          .set('notifSeverity', 'success');
+      });
+    case `${branch}/BULK_UPDATE_TAGS`:
+      return state.withMutations((mutableState) => {
+        mutableState
+          .update('dataTable', dataTable =>
+            dataTable.map(rule => {
+              if (action.bulkIds.includes(rule.get('_id'))) {
+                return rule.set('tags', action.tags);
+              }
+              return rule;
+            })
+          )
           .set('notifMsg', action.message)
           .set('notifSeverity', 'success');
       });

@@ -10,6 +10,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import classNames from 'classnames';
 import Collapse from '@material-ui/core/Collapse';
+// import SyntaxHighlighter, { github } from 'react-syntax-highlighter';
+// import { docco } from 'react-syntax-highlighter';
+// import FormControl from "@material-ui/core/FormControl";
+// import CodeEditor from './codeEditor';
 import AceEditor from 'react-ace'; // https://www.npmjs.com/package/react-ace   https://securingsincity.github.io/react-ace/
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-github';
@@ -19,7 +23,7 @@ import EditIcon from '@material-ui/icons/BorderColor';
 // import PauseCircleOutlineIcon from '@material-ui/icons/PauseCircleOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import MultiSelectConfig from 'ba-components/Tables/tableParts/MultiSelectConfig';
 // import DeleteIcon from '@material-ui/icons/Delete';
 import DoneIcon from '@material-ui/icons/Done';
@@ -56,11 +60,10 @@ function RulesManagerVersionRow(props) {
     force,
     versionData,
     ruleId,
-    maxVersion,
     // usedServers,
     // availableServers,
     allServers, // injected servers config table
-    allTags, // injected tags config table
+    // allTags, // injected tags config table // MOVED ONE LEVEL UP in schema
     branch,
     // removeRow, // moved to rule level
     // updateRow, // Decommissioned
@@ -72,13 +75,11 @@ function RulesManagerVersionRow(props) {
   // Local state hook (content expansion)
   const [open, setOpen] = useState(false);
   const [selectedServers, setServers] = useState(versionData.get('servers').toJS());
-  const [selectedTags, setTags] = useState(versionData.get('tags').toJS());
   const [content, setContent] = useState(versionData.get('content'));
   const [valErrorPopUp, setValErrorPopUp] = useState({ status: false, errorArray: [] });
 
   // Keep data flowing (w/out this, selectors won't be alive!)
   useEffect(() => {
-    setTags(versionData.get('tags').toJS());
     setServers(versionData.get('servers').toJS()); // ---> these are the actions triggered by Observable changes
     setContent(versionData.get('content'));
   }, [versionData]); // ---> this acts as the Observable of the subscription
@@ -118,7 +119,6 @@ function RulesManagerVersionRow(props) {
   // const onDropDownChange = (event) => updateRow(ruleId, event, versionData, branch); // Old update-version event
   const onDropDownChange = (selector) => (event) => {
     if (selector === 'servers') setServers(event.target.value);
-    else setTags(event.target.value);
   };
   const eventEdit = () => {
     if (!open) setOpen(!open);
@@ -126,13 +126,12 @@ function RulesManagerVersionRow(props) {
   };
   const eventDiscardChanges = () => {
     setServers(versionData.get('servers').toJS());
-    setTags(versionData.get('tags').toJS());
     setContent(versionData.get('content'));
     discardRow(ruleId, versionData, branch);
   };
   const eventDone = () => {
     if (open) setOpen(!open);
-    saveRow(ruleId, versionData.get('version'), selectedServers, selectedTags, content, branch, setValErrorPopUp);
+    saveRow(ruleId, versionData.get('version'), selectedServers, content, branch, setValErrorPopUp);
   };
 
   // https://github.com/sotiriosalpha/rulesMS/issues/10:
@@ -147,7 +146,7 @@ function RulesManagerVersionRow(props) {
   // const availableServersIds = OrderedSet(allServersIds).subtract(usedServers); // <---- Dynamic calculation of available servers
 
   // Tags ids
-  const allTagsIds = allTags.map(tag => tag.get('_id')); // <----- SERVER's ID's LIST INJECTION, needed for MultiSelectServers.js reusability
+  // const allTagsIds = allTags.map(tag => tag.get('_id')); // <----- TAGS's ID's LIST INJECTION, needed for MultiSelectServers.js reusability
 
   return (
     <React.Fragment>
@@ -160,7 +159,7 @@ function RulesManagerVersionRow(props) {
       <TableRow className={classes.root} style={{ borderBottom: 'unset' }} key={ruleId + versionData.get('version')}>
         <TableCell>
           <IconButton aria-label="expand row" size="small" onClick={handleOpen}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
           </IconButton>
         </TableCell>
         <TableCell align="center">{versionData.get('version')}</TableCell>
@@ -182,23 +181,6 @@ function RulesManagerVersionRow(props) {
             multiple
           />
         </TableCell>
-        <TableCell align="left">
-          {/* {versionData.get('tags').map((val, key) => <Chip label={val} key={Math.random(key)} />)} OLD CHIPS ARRANGEMENT */}
-          <MultiSelectConfig
-            updateRow={onDropDownChange('tags')} // Check where this is wired up in redux actions side
-            cellData={{
-              name: 'tags', // field name, neccessary for redux UPDATE cell action
-              value: selectedTags,
-              id: '1',
-            }}
-            edited={versionData.get('edited')}
-            key={`${ruleId}-${versionData.get('version')}-tags`}
-            allOptions={allTags.toJS()} // needs conversion to plain array
-            activeOptions={allTagsIds.toJS()} // all configed tags from redux, nothing aggregated here
-            multiple
-          />
-        </TableCell>
-        {/* <TableCell align="left">{versionData.get('edited') ? 'TRUE' : 'NO'}</TableCell> */}
         <TableCell align="right" >
           <Tooltip title="Edit rule">
             <IconButton
@@ -230,27 +212,6 @@ function RulesManagerVersionRow(props) {
               <Clear />
             </IconButton>
           </Tooltip>
-          {/* <IconButton
-            onClick={onCloneVersion}    // Decommissioned
-            className={classes.button}
-            aria-label="Clone version"
-          >
-            <ControlPointDuplicateIcon />
-          </IconButton> */}
-          {/* <IconButton
-            onClick={onForceNA}
-            className={classes.button}
-            aria-label="Deactivate"
-          >
-            <PauseCircleOutlineIcon />
-          </IconButton> */}
-          {/* <IconButton
-            onClick={eventDel}
-            className={classes.button}
-            aria-label="Delete"
-          >
-            <DeleteIcon />
-          </IconButton> */}
         </TableCell>
       </TableRow>
       <TableRow className={classes.root} style={{ borderBottom: 'unset' }} >
@@ -288,16 +249,10 @@ RulesManagerVersionRow.propTypes = {
   ruleId: PropTypes.string.isRequired,
   branch: PropTypes.string.isRequired,
   versionData: PropTypes.object.isRequired,
-  maxVersion: PropTypes.number.isRequired,
-  // usedServers: PropTypes.array.isRequired,
-  // removeRow: PropTypes.func.isRequired, // moved to rule level
-  // updateRow: PropTypes.func.isRequired, // decommissioned
-  // cloneRow: PropTypes.func.isRequired, // decommissioned
   editRow: PropTypes.func.isRequired,
   discardRow: PropTypes.func.isRequired,
   saveRow: PropTypes.func.isRequired,
   allServers: PropTypes.array.isRequired,
-  allTags: PropTypes.array.isRequired,
 };
 
 
@@ -313,7 +268,7 @@ const mapStateToProps = (state, ownProps) => ({
   //   .map(version => version.get('servers')) // -------------------->
   //   .flatten(), // immu-flattening array of arrays (the field 'servers' is an array, dont forget)
   allServers: state.getIn(['ServersConfig', 'dataTable']), // -> injecting servers config here in this component
-  allTags: state.getIn(['TagsConfig', 'dataTable']), // -------> injecting tags config here in this component
+  // allTags: state.getIn(['TagsConfig', 'dataTable']), // -------> injecting tags config here in this component
 });
 
 /**

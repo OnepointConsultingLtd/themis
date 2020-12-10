@@ -13,10 +13,6 @@ import TableRow from '@material-ui/core/TableRow';
 import IconButton from '@material-ui/core/IconButton';
 // import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-// import SyntaxHighlighter, { github } from 'react-syntax-highlighter';
-// import { docco } from 'react-syntax-highlighter';
-// import FormControl from "@material-ui/core/FormControl";
-// import CodeEditor from './codeEditor';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -43,17 +39,10 @@ function RulesManagerNestedVersionsPanel(props) {
   const {
     ruleData,
     branch,
-    maxVersion,
-    // availableServers,
-    // addEmptyRow,
     cloneRow,
-    // allServers
   } = props;
+
   const ruleID = props.ruleData.get('_id');
-  // console.log('ruleData >>>>>>>> ', ruleData);
-  // const onAddEmptyRow = () => {
-  //   addEmptyRow(ruleID, branch);
-  // };
 
   /** Clone top (max) version */
   const onCloneVersion = () => { cloneRow(ruleID, ruleData.get('versions').first(), branch); };
@@ -67,7 +56,6 @@ function RulesManagerNestedVersionsPanel(props) {
           <TableCell align="left" style={{ width: '15%' }}>Submitted On</TableCell>
           <TableCell align="left" style={{ width: '15%' }}>Submitted By</TableCell>
           <TableCell align="left" style={{ width: '10%' }}>Servers</TableCell>
-          <TableCell align="left" style={{ width: '10%' }}>Tags</TableCell>
           <TableCell align="right" style={{ width: '20%' }}>
             <IconButton
               onClick={onCloneVersion}
@@ -88,7 +76,6 @@ function RulesManagerNestedVersionsPanel(props) {
               ruleId={ruleID}
               branch={branch}
               versionData={versionData}
-              maxVersion={maxVersion}
               key={key}
             />
           );
@@ -102,7 +89,6 @@ RulesManagerNestedVersionsPanel.propTypes = {
   ruleData: PropTypes.object.isRequired,
   branch: PropTypes.string.isRequired,
   cloneRow: PropTypes.func.isRequired,
-  maxVersion: PropTypes.number.isRequired,
 };
 
 /**

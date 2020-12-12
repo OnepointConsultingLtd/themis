@@ -57,7 +57,6 @@ const useRowStyles = makeStyles({
  */
 function RulesManagerVersionRow(props) {
   const {
-    force,
     versionData,
     ruleId,
     // usedServers,
@@ -71,6 +70,7 @@ function RulesManagerVersionRow(props) {
     editRow,
     discardRow,
     saveRow,
+    maxVersion
   } = props;
   // Local state hook (content expansion)
   const [open, setOpen] = useState(false);
@@ -119,6 +119,8 @@ function RulesManagerVersionRow(props) {
   // const onDropDownChange = (event) => updateRow(ruleId, event, versionData, branch); // Old update-version event
   const onDropDownChange = (selector) => (event) => {
     if (selector === 'servers') setServers(event.target.value);
+    // console.log(selectedServers, event.target.value); // BUG: why is selectedServers not getting updated?
+    saveRow(ruleId, versionData.get('version'), event.target.value, content, branch, setValErrorPopUp);
   };
   const eventEdit = () => {
     if (!open) setOpen(!open);
@@ -173,7 +175,7 @@ function RulesManagerVersionRow(props) {
               value: selectedServers,
               id: '1',
             }}
-            edited={versionData.get('edited')}
+            edited
             key={`${ruleId}-${versionData.get('version')}-servers`}
             allOptions={allServers.toJS()} // needs conversion to plain array
             // activeOptions={availableServersIds.toJS()} // https://github.com/sotiriosalpha/rulesMS/issues/10 // this is dynamically aggregated fromall versions in the panel
@@ -187,7 +189,7 @@ function RulesManagerVersionRow(props) {
               onClick={eventEdit}
               className={classNames((versionData.get('edited') ? css.hideAction : ''), classes.button)}
               aria-label="Edit"
-              // ***NEVER DISABLED as of #10 https://github.com/sotiriosalpha/rulesMS/issues/10 **** disabled={versionData.toJS().version !== maxVersion && versionData.toJS().servers[0] !== 'NA'}
+              disabled={versionData.toJS().version !== maxVersion}
             >
               <EditIcon />
             </IconButton>
@@ -245,7 +247,6 @@ function RulesManagerVersionRow(props) {
 }
 
 RulesManagerVersionRow.propTypes = {
-  force: PropTypes.object.isRequired,
   ruleId: PropTypes.string.isRequired,
   branch: PropTypes.string.isRequired,
   versionData: PropTypes.object.isRequired,
@@ -253,6 +254,7 @@ RulesManagerVersionRow.propTypes = {
   discardRow: PropTypes.func.isRequired,
   saveRow: PropTypes.func.isRequired,
   allServers: PropTypes.array.isRequired,
+  maxVersion: PropTypes.number.isRequired
 };
 
 

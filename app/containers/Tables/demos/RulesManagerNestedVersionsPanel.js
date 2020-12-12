@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import Tooltip from '@material-ui/core/Tooltip';
 // import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -43,6 +44,7 @@ function RulesManagerNestedVersionsPanel(props) {
   } = props;
 
   const ruleID = props.ruleData.get('_id');
+  const maxVersion = props.ruleData.get('versions').get(0).get('version');
 
   /** Clone top (max) version */
   const onCloneVersion = () => { cloneRow(ruleID, ruleData.get('versions').first(), branch); };
@@ -51,19 +53,21 @@ function RulesManagerNestedVersionsPanel(props) {
     <Table aria-label="collapsible table" size="small" style={{ margin: 0 }}>
       <TableHead>
         <TableRow className={classes.root} style={{ borderBottom: 'none' }}>
-          <TableCell style={{ width: '3%' }} />
-          <TableCell align="center" component="th" scope="row" style={{ width: '10%' }}>Ver.</TableCell>
-          <TableCell align="left" style={{ width: '15%' }}>Submitted On</TableCell>
-          <TableCell align="left" style={{ width: '15%' }}>Submitted By</TableCell>
+          <TableCell style={{ width: '0.001%' }} />
+          <TableCell align="center" component="th" scope="row" style={{ width: '3%', minWidth: '80px' }}>Ver.</TableCell>
+          <TableCell align="left" style={{ width: '2%', minWidth: '160px' }}>Submitted On</TableCell>
+          <TableCell align="left" style={{ width: '15%', minWidth: '120px' }}>Submitted By</TableCell>
           <TableCell align="left" style={{ width: '10%' }}>Servers</TableCell>
-          <TableCell align="right" style={{ width: '20%' }}>
-            <IconButton
-              onClick={onCloneVersion}
-              className={classes.button}
-              aria-label="Add version"
-            >
-              <AddCircleOutlineIcon style={{ fontSize: '35px' }} />
-            </IconButton>
+          <TableCell align="right" style={{ width: '70%' }}>
+            <Tooltip title="Add new version">
+              <IconButton
+                onClick={onCloneVersion}
+                className={classes.button}
+                aria-label="Add version"
+              >
+                <AddCircleOutlineIcon style={{ fontSize: '30px' }} />
+              </IconButton>
+            </Tooltip>
           </TableCell>
           {/* <TableCell align="left" style={{ width: '10%' }} /> */}
         </TableRow>
@@ -77,6 +81,7 @@ function RulesManagerNestedVersionsPanel(props) {
               branch={branch}
               versionData={versionData}
               key={key}
+              maxVersion={maxVersion}
             />
           );
         })}

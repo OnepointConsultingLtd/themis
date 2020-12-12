@@ -16,12 +16,14 @@ const renderChips = (arrayOfValues, tableMeta, lockedRows) => {
 
 /** Render servers chips */
 export const renderServersChips = (allServers, arrayOfIds, tableMeta, lockedRows) => {
-  if (arrayOfIds.includes('NA')) { return ''; }
+  // if (arrayOfIds.includes('NA')) { return ''; }
   // convert _id's to labels:
   // 1. create an object that has id-label as key-value pairs
   const idLabelObject = idsToLabels(allServers.toJS()); // <----- id 2 labels !!!!
   // 2. create final array of labels (substitute all ids w/ labels)
-  const arrayOfLabels = arrayOfIds.map(id => idLabelObject[id]);
+  const arrayOfLabels = arrayOfIds
+    .filter(i => i !== 'NA') // filter-out all 'NA'
+    .map(id => idLabelObject[id]);
   return renderChips(arrayOfLabels, tableMeta, lockedRows);
 };
 

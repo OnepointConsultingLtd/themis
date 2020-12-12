@@ -10,7 +10,7 @@ function parseErrors(stdout) {
   // Parse the errors
   const errorsRegexPattern = /(?:\[[0-9]+,[0-9]+\]: \[ERR [0-9]*\] Line [0-9]+:[0-9]+\s.*?)(?=,\s\[[0-9]+,[0-9]+\]|\]$)+/gm; // expecting an /r/n ending character
   console.log('Matching: ', stdout.match(errorsRegexPattern));
-  return stdout.match(errorsRegexPattern);
+  return stdout.match(errorsRegexPattern) || []; // check for null
 }
 
 /** VALID SYNTAX  (inner double-quotes should be escaped)
@@ -34,7 +34,7 @@ const validateRules = (text, /* responseFn */) => {
     // (err, stdout, stderr) => { // DECOMISSIONED callback of exec()
     //   console.log('stderr: ', stderr); // unwiring stderr as the jar won't sent any runtime errors and unfortunatelly heroku is using this channel for log messages
     console.log('stdout: ', stdout);
-    if (stdout === '[]\r\n') return { err: null, stdout: [] }; // expecting an /r/n ending character
+    if (stdout === '[]\r\n' || stdout === '[]') return { err: null, stdout: [] }; // expecting an /r/n ending character
     return { err: null, stdout: parseErrors(stdout) };
     // });
   } catch (err) {

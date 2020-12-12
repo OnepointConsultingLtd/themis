@@ -15,7 +15,7 @@ export default function Autocomplete(props) {
     autoComplete
     autoHighlight
     multiple
-    autoSelect
+    // autoSelect // FIXED: autoSelect=true causes autonomous selection when user clicks away
     disableClearable
     disableCloseOnSelect
     // blurOnSelect="mouse"

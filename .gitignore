@@ -11,3 +11,9 @@ stats.json
 .DS_Store
 npm-debug.log
 .idea
+
+
+*.dsl
+*.dslr
+ALanguage.dsl
+

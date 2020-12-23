@@ -7,10 +7,9 @@ const timestamp = require('time-stamp');
 
 const account = process.env.RULES_AZURE_ACCOUNT;
 const sas = process.env.RULES_AZURE_SAS;
+const containerName = process.env.RULES_AZURE_CONTAINER;
 
 const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net${sas}`);
-
-const containerName = process.env.RULES_AZURE_CONTAINER;
 
 async function uploadBlob(content, fileName) {
   const containerClient = blobServiceClient.getContainerClient(containerName);

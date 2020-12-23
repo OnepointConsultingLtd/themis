@@ -50,11 +50,11 @@ class Application extends React.Component {
           {/* <Route path="/app/tables/dsl-generator" component={DSLGeneratorParentTable} /> */}
           <Route path="/app/tables/rules-manager" component={RulesManagerParentTable} />
           {
-            (this.props.generatorsMenu || List([])).toJS().map(item =>
+            (this.props.generatorsMenu || List([])).map(item =>
               (<Route
-                path={item.link}
+                path={item.get('link')}
                 component={() => (
-                  <DSLGeneratorParentTable tags={item.tags} filterLogic={item.filterLogic} />
+                  <DSLGeneratorParentTable tags={item.get('tags')} filterLogic={item.get('filterLogic')} />
                 )}
               />)
             )

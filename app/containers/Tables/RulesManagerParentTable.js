@@ -92,8 +92,16 @@ class RulesManagerParentTable extends React.Component {
         root: {
           width: '500px'
         }
-      }
-    }
+      },
+      MuiTableCell: {
+        root: { // Rules root row padding
+          padding: '8px',
+        },
+        sizeSmall: { // Versions panel row padding
+          padding: '8px',
+        }
+      },
+    },
   });
 
   setCellProps = (row, dataIndex, rowIndex) => {

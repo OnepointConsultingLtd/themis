@@ -1,10 +1,5 @@
 /* eslint consistent-return:0 */
 const express = require('express');
-const apiRules = require('./api/rules');
-const apiConfig = require('./api/config');
-// const apiDeployInLocalFS = require('./api/deployInLocalFS');
-// const apiValidate = require('./api/functions/validate');
-const apiDeployAS = require('./api/deployAS'); // TODO: RENAME AND USE DEPLOY PATH
 const favicon = require('serve-favicon');
 const path = require('path');
 const logger = require('./logger');
@@ -17,24 +12,23 @@ const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
   : false;
 const { resolve } = require('path');
 const app = express();
-const bodyParser = require('body-parser');
 
-// https://stackoverflow.com/questions/52016659/nodejs-router-payload-too-large
-const limit = '50Mb';
-const extended = true;
-const options = { limit, extended };
-app.use(bodyParser.json(options));
-app.use(bodyParser.urlencoded(options));
-app.use(bodyParser.text(options));
 
-// If you need a backend, e.g. an API, add your custom backend-specific middleware here
-// app.use('/api', myApi);
+// CRA: If you need a backend, e.g. an API, add your custom backend-specific middleware here
 
-app.use(apiRules);
-app.use(apiConfig);
-// app.use(apiDeployInLocalFS);
-// app.use(apiValidate);
-app.use(apiDeployAS); // TODO: RENAME AND USE DEPLOY PATH
+if (isDev) {
+// DEV API [DEDICATED API SERVER PARADIGM]
+  const httpProxy = require('http-proxy');
+  const proxy = httpProxy.createProxyServer();
+  app.all('/api/*', (req, res) => {
+    console.log('Proxying Request', req.method, req.url);
+    proxy.web(req, res, { target: 'http://localhost:4000' });
+  });
+} else {
+// PROD API [SINGLE-SERVER PARADIGM]
+  const api = require('./api/index');
+  app.use('/api', api);
+}
 
 app.use('/', express.static('public', { etag: false }));
 app.use(favicon(path.join('public', 'favicons', 'favicon.ico')));

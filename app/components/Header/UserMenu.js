@@ -24,6 +24,7 @@ import messageStyles from 'ba-styles/Messages.scss';
 import avatarApi from 'ba-api/avatars';
 import styles from './header-jss';
 
+/** Top right user menu */
 class UserMenu extends React.Component {
   state = {
     anchorEl: null,

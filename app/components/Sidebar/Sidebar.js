@@ -1,23 +1,19 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-// import { bindActionCreators } from 'redux';
-// import { connect } from 'react-redux';
 import classNames from 'classnames';
 import brand from 'ba-api/brand';
-import dummy from 'ba-api/dummyContents';
 import logo from 'ba-images/logo2.svg';
 import {
   Hidden,
   Drawer,
-  SwipeableDrawer,
-  Avatar
+  SwipeableDrawer
 } from '@material-ui/core';
+import ProjectSelector from './ProjectSelector';
 import MainMenu from './MainMenu';
 import styles from './sidebar-jss';
-// import { uploadMenuAction } from '../../actions/UiActions';
 
-
+/** Left sidebar, header-logo incl. */
 const MenuContent = props => {
   const {
     classes,
@@ -30,19 +26,11 @@ const MenuContent = props => {
     <div className={classNames(classes.drawerInner, !drawerPaper ? classes.drawerPaperClose : '')}>
       <div className={classes.drawerHeader}>
         <div className={classNames(classes.brand, classes.brandBar, turnDarker && classes.darker)}>
-          <img src={logo} alt={brand.name} width="80" />
-          <h3>{brand.name}</h3>
+          <img src={logo} alt={brand.name} style={{ width: '45px', marginRight: '-13px', marginTop: '19px' }} />
+          <h2>{brand.name}</h2>
         </div>
         <div className={classNames(classes.profile, classes.user)}>
-          <Avatar
-            alt={dummy.user.name}
-            src={dummy.user.avatar}
-            className={classNames(classes.avatar, classes.bigAvatar)}
-          />
-          <div>
-            <h4>{dummy.user.name}</h4>
-            <span>{dummy.user.title}</span>
-          </div>
+          <ProjectSelector classes={classes} />
         </div>
       </div>
       <div className={classes.menuContainer}>
@@ -75,11 +63,6 @@ class Sidebar extends React.Component {
   state = {
     anchor: 'left'
   };
-
-  // componentDidMount() {
-  //   // Load menu content in redux
-  //   this.props.loadMenu();
-  // }
 
   render() {
     const { anchor } = this.state;
@@ -130,18 +113,5 @@ Sidebar.propTypes = {
   open: PropTypes.bool.isRequired,
   // loadMenu: PropTypes.func.isRequired
 };
-
-/**
- * Outgoing events (actions) w/ or w/out payload
- * @param {*} dispatch
- */
-// const mapDispatchToProps = dispatch => ({
-//   loadMenu: bindActionCreators(uploadMenuAction, dispatch)
-// });
-
-// const SidebarMapped = connect(
-//   null,
-//   mapDispatchToProps
-// )(Sidebar);
 
 export default withStyles(styles)(Sidebar);

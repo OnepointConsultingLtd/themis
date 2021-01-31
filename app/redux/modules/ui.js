@@ -9,6 +9,8 @@ import {
 
 const initialState = {
   menu: List([]),
+  project: '',
+  projects: List([]),
   sidebarOpen: true,
   theme: 'purpleRedTheme',
   pageLoaded: false,

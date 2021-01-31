@@ -299,14 +299,6 @@ class RulesManagerParentTable extends React.Component {
           setCellProps: this.setCellProps
         }
       },
-      // {
-      //   name: 'version',
-      //   label: 'Max. Version',
-      //   options: {
-      //     filter: false,
-      //     setCellProps: this.setCellProps
-      //   }
-      // },
       {
         name: 'name',
         label: 'Name',

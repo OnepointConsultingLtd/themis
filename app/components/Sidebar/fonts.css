@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400&display=swap');
+/* SEGOE UI Light was the original intention but it was a MSFT font */
+
+.logo {
+    font-family: 'Cairo';
+    font-weight: 300;
+    font-size: 30px;
+}

@@ -1,7 +1,7 @@
 {
-  "name": "rules-ms",
+  "name": "themis",
   "version": "1.0.0",
-  "description": "RulesMS - MERN stack business rules manager",
+  "description": "THEMIS - MERN stack business rules manager",
   "private": true,
   "engines": {
     "npm": ">=5",
@@ -87,7 +87,6 @@
     ]
   },
   "dependencies": {
-    "@azure/storage-blob": "^12.3.0",
     "@babel/plugin-proposal-export-default-from": "^7.2.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/polyfill": "7.4.3",
@@ -139,7 +138,6 @@
     "material-ui-pickers": "^2.2.4",
     "minimist": "1.2.0",
     "moment": "^2.27.0",
-    "mongodb": "^3.6.2",
     "mui-datatables": "^3.4.1",
     "net": "^1.0.2",
     "prop-types": "15.7.2",

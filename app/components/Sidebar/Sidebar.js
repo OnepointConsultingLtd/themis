@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import brand from 'ba-api/brand';
-import logo from 'ba-images/logo2.svg';
+import logo from 'ba-images/logoThemis.png';
 import {
   Hidden,
   Drawer,
@@ -12,6 +12,7 @@ import {
 import ProjectSelector from './ProjectSelector';
 import MainMenu from './MainMenu';
 import styles from './sidebar-jss';
+import './fonts.css';
 
 /** Left sidebar, header-logo incl. */
 const MenuContent = props => {
@@ -25,9 +26,9 @@ const MenuContent = props => {
   return (
     <div className={classNames(classes.drawerInner, !drawerPaper ? classes.drawerPaperClose : '')}>
       <div className={classes.drawerHeader}>
-        <div className={classNames(classes.brand, classes.brandBar, turnDarker && classes.darker)}>
-          <img src={logo} alt={brand.name} style={{ width: '45px', marginRight: '-13px', marginTop: '19px' }} />
-          <h2>{brand.name}</h2>
+        <div style={{ justifyContent: 'left' }}className={classNames(classes.brand, classes.brandBar, turnDarker && classes.darker)}>
+          <img src={logo} alt={brand.name} style={{ width: '40px', marginRight: '5px', marginTop: '-6px' }} />
+          <h2 className="logo" style={{ marginTop: '14px' }}>{brand.name}</h2>
         </div>
         <div className={classNames(classes.profile, classes.user)}>
           <ProjectSelector classes={classes} />

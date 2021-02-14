@@ -16,19 +16,13 @@ const app = express();
 
 // CRA: If you need a backend, e.g. an API, add your custom backend-specific middleware here
 
-if (isDev) {
-// DEV API [DEDICATED API SERVER PARADIGM]
-  const httpProxy = require('http-proxy');
-  const proxy = httpProxy.createProxyServer();
-  app.all('/api/*', (req, res) => {
-    console.log('Proxying Request', req.method, req.url);
-    proxy.web(req, res, { target: 'http://localhost:4000' });
-  });
-} else {
-// PROD API [SINGLE-SERVER PARADIGM]
-  const api = require('./api/index');
-  app.use('/api', api);
-}
+// Proxying all /api/* calls to Themis API service
+const httpProxy = require('http-proxy');
+const proxy = httpProxy.createProxyServer();
+app.all('/api/*', (req, res) => {
+  console.log('Proxying Request', req.method, req.url);
+  proxy.web(req, res, { target: isDev ? 'http://localhost:5000' : 'http://rules-ms-server.herokuapp.com' });
+});
 
 app.use('/', express.static('public', { etag: false }));
 app.use(favicon(path.join('public', 'favicons', 'favicon.ico')));

@@ -1,14 +1,12 @@
 import axios from 'axios';
 import { fromJS } from 'immutable';
 import generateSideMenu from 'ba-api/menu';
+import API from 'ba-actions/api';
 import * as types from './actionTypes';
 
-
-// Async inject data from /api/:branch => v1.5
 export const fetchAction = (branch) => async (dispatch) => {
-  const response = await axios.get(`/api/${branch}/load`); // using axios to allow multiple body consumes!!
-  // console.log(response);
-  if (response.status !== 200) { // Error handling
+  const response = await axios.get(`${API.config.read}/${branch}`); // using axios to allow multiple body consumes!!
+  if (response.status !== 200) {
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
       type: `${branch}/SHOW_NOTIF`,
@@ -27,7 +25,6 @@ export const fetchAction = (branch) => async (dispatch) => {
       const injectedGeneratorsConfig = response.data;
       const menu = generateSideMenu( // send generators submenu to SideMenu factory
         injectedGeneratorsConfig // tap into generators cnfg. and load pinned-tags
-          // .toJS() // dont forget, state is always immutable
           .map(item => ( // formulate the generators submenu array
             {
               _id: item._id,
@@ -38,7 +35,6 @@ export const fetchAction = (branch) => async (dispatch) => {
               filterLogic: item.filterLogic,
               link: `/app/tables/generator/${item.label}`
             })));
-      // console.log('>>>>>> About to dispatch MENU >>>>:', menu);
       dispatch({ // TODO: this dispatched action belongs originally to the UI-actions.js
         menu,
         type: 'UPLOAD_MENU'
@@ -69,7 +65,7 @@ export const addAction = (schema, branch) => async (dispatch) => {
   // eslint-disable-next-line prefer-const
   let newRecord = createNewRecord(schema);
   console.log('>>> NEW RECORD: ', newRecord);
-  const response = await axios.post(`/api/${branch}/create`, JSON.stringify(newRecord));
+  const response = await axios.post(`${API.config.create}/${branch}`, JSON.stringify(newRecord));
   if (response.status !== 200) { // Error handling
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
@@ -101,7 +97,7 @@ export const addAction = (schema, branch) => async (dispatch) => {
 };
 
 export const removeAction = (item, branch) => async (dispatch) => {
-  const response = await fetch(`/api/${branch}/delete/${item.get('_id')}`, {
+  const response = await fetch(`${API.config.delete}/${branch}/${item.get('_id')}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -144,13 +140,12 @@ export const editAction = (item, branch) => ({
 });
 
 /** Dispatched redux action & Update Mongo-call upon finalising the record editing: SAVE
- *
 */
 export const saveAction = (item, branch) => async (dispatch) => {
   const itemToBeEditted = { ...item.toJS() };
   delete itemToBeEditted._id; // items id is a string ; this conflicts w/ the DB's ObjectId
   itemToBeEditted.edited = false;
-  const response = await fetch(`/api/${branch}/update/${item.get('_id')}`, {
+  const response = await fetch(`${API.config.update}/${branch}/${item.get('_id')}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

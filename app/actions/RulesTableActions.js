@@ -1,16 +1,17 @@
 /* eslint-disable arrow-body-style */
 /* eslint-disable no-shadow */
-import { /* Map, */ fromJS, OrderedSet, List } from 'immutable';
+import { fromJS, OrderedSet, List } from 'immutable';
 import timestamp from 'time-stamp';
 import axios from 'axios';
+import API from 'ba-actions/api';
 import * as types from './actionTypes';
 import { matchRulePattern } from '../containers/Tables/demos/parseRules';
 
 
-/** Async inject data from /api/rules => v1.5 */
+/** Async inject data */
 export const fetchAction = (branch) => async (dispatch) => {
-  const response = await axios.get('/api/rules/load'); // using axios to allow multiple body consumes!!
-  if (response.status !== 200) { // Error handling
+  const response = await axios.get(API.rules.read); // using axios to allow multiple body consumes!!
+  if (response.status !== 200) {
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
       type: `${branch}/SHOW_NOTIF`,
@@ -28,8 +29,7 @@ export const fetchAction = (branch) => async (dispatch) => {
 
 /** Async import new rules into database */
 export const importRules = (items, branch) => (dispatch) => {
-  // console.log('>>>>> About to POST: ', items);
-  fetch('/api/rules/import', {
+  fetch(API.rules.create, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -39,7 +39,6 @@ export const importRules = (items, branch) => (dispatch) => {
   })
     .then(response => response.json())
     .then(({ message, insertedIds, deletedIds }) => { // TODO: Error Handling: inbetween .then() to check message and act accordingly
-      // console.log(message, 'Inserting: ', insertedIds, 'Deleting: ', deletedIds);
       return dispatch({
         branch,
         type: `${branch}/IMPORT_RULES`,
@@ -53,8 +52,6 @@ export const importRules = (items, branch) => (dispatch) => {
 
 /** Cloning the top version in the versions-list (max version) within a Rule (id). That's the 'item' */
 export const cloneAction = (ruleId, item, branch) => async (dispatch) => {
-  // console.log('>>>>> About to clone and POST: ', item);
-  // const itemNonImmutable = item.toJS();
   // Manipulating the cloned version: upgrading version, attaching timestamps, injecting current user
   const clonedRow = {
     version: item.get('version') + 1,
@@ -67,7 +64,7 @@ export const cloneAction = (ruleId, item, branch) => async (dispatch) => {
     edited: false,
     content: item.get('content')
   };
-  const response = await fetch(`/api/version/clone/${ruleId}`, {
+  const response = await fetch(`${API.rules.createVersion}/${ruleId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -94,7 +91,7 @@ export const cloneAction = (ruleId, item, branch) => async (dispatch) => {
 };
 
 export const removeAction = (ruleId, branch) => async (dispatch) => {
-  const response = await fetch(`/api/rules/delete/${ruleId}`, {
+  const response = await fetch(`${API.rules.delete}/${ruleId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -126,22 +123,9 @@ export const updateAction = (ruleId, event, item, branch) => ({
   event,
   item
 });
-/** DECOMMISSIONED: due to change of server-selection logic */
-// export const updateAction = (ruleId, event, item, branch) => // updating (content, servers & tags) will NOT get stored in Mongo
-//   (dispatch, getState) => {
-//     const injectedServersConfig = getState().get('ServersConfig').get('dataTable'); // servers and tags config injected inside rules redux
-//     dispatch({
-//       ruleId,
-//       branch,
-//       type: `${branch}/${types.UPDATE_ROW}`,
-//       event,
-//       item,
-//       injectedServersConfig
-//     });
-//   };
 
 export const updateRuleStatus = (ruleId, newValue, branch) => async (dispatch) => {
-  const response = await fetch(`/api/rules/update/${ruleId}`, {
+  const response = await fetch(`${API.rules.updateRule}/${ruleId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -168,7 +152,7 @@ export const updateRuleStatus = (ruleId, newValue, branch) => async (dispatch) =
 };
 
 export const updateRuleTags = (ruleId, newValue, branch) => async (dispatch) => {
-  const response = await fetch(`/api/rules/update/${ruleId}`, {
+  const response = await fetch(`${API.rules.updateRule}/${ruleId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -207,7 +191,7 @@ export const discardAction = (ruleId, item, branch) => ({ // click-on-discard wi
   item
 });
 
-/** Cloning the top version in the list (max version). That's the 'item' */
+/** Update version */
 export const saveAction = (ruleId, version, selectedServers, content, branch, setValErrorPopUp) => async (dispatch, getState) => {
   // Do the parsing here: we parse name, salience, status and content
   /* eslint-disable-next-line prefer-const */
@@ -277,11 +261,9 @@ export const saveAction = (ruleId, version, selectedServers, content, branch, se
       1 is index 0 --> len - 1 = 0
    */
   rule = rule.setIn(['versions', (rule.get('versions').size - version)], fromJS(savedVersion)); // this thing wouldn't update with Map(savedVersion), not sure why
-  // console.log('>>> Which index: ', rule.get('versions').size - version);
-  // console.log('Rule to send: ', rule.toJS());
 
   // Posting the whole rule
-  const response = await fetch(`/api/version/update/${ruleId}/${version}`, {
+  const response = await fetch(`${API.rules.updateVersion}/${ruleId}/${version}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -318,7 +300,7 @@ export const updateSelectedRows = (item, branch) => ({
 
 // -----------------------------------------------------------------------------> BULK ACTIONS
 export const bulkDeactivate = (bulkIds, branch) => async (dispatch) => {
-  const response = await axios.post('/api/bulk/rules/deactivate', { array: [...bulkIds] }); // array in body cannot be posted otherwise
+  const response = await axios.post(API.rules.bulkDeactivate, { array: [...bulkIds] }); // array in body cannot be posted otherwise
   if (response.status !== 200) { // Error handling
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
@@ -336,7 +318,7 @@ export const bulkDeactivate = (bulkIds, branch) => async (dispatch) => {
   }
 };
 export const bulkActivate = (bulkIds, branch) => async (dispatch) => {
-  const response = await axios.post('/api/bulk/rules/activate', { array: [...bulkIds] }); // array in body cannot be posted otherwise
+  const response = await axios.post(API.rules.bulkActivate, { array: [...bulkIds] }); // array in body cannot be posted otherwise
   if (response.status !== 200) { // Error handling
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
@@ -355,7 +337,7 @@ export const bulkActivate = (bulkIds, branch) => async (dispatch) => {
 };
 export const bulkDelete = (bulkIds, branch) => async (dispatch) => {
   // console.log(bulkIds);
-  const response = await axios.post('/api/bulk/rules/delete', { array: [...bulkIds] }); // array in body cannot be posted otherwise
+  const response = await axios.post(API.rules.bulkDelete, { array: [...bulkIds] }); // array in body cannot be posted otherwise
   if (response.status !== 200) { // Error handling
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
@@ -374,7 +356,7 @@ export const bulkDelete = (bulkIds, branch) => async (dispatch) => {
 };
 export const bulkUpdateTags = (bulkIds, tags, branch) => async (dispatch) => {
   // console.log(bulkIds);
-  const response = await axios.post('/api/bulk/rules/update/tags', { array: [...bulkIds], tags }); // array in body cannot be posted otherwise
+  const response = await axios.post(API.rules.bulkUpdateTags, { array: [...bulkIds], tags }); // array in body cannot be posted otherwise
   if (response.status !== 200) { // Error handling
     dispatch({ // dispatch notification only
       branch, // dont forget to always dispatch branch, otherwise the store middleware cannot work
@@ -405,45 +387,3 @@ export const closeNotifAction = branch => ({
   branch,
   type: `${branch}/${types.CLOSE_NOTIF}`,
 });
-
-
-// -------------------------------- v0.5 SYNC ACTIONS
-// Old sync code => v0.1 & v1
-// export const fetchAction = (items, branch) => ({
-//   branch,
-//   type: `${branch}/${types.FETCH_DATA}`,
-//   items
-// });
-// export const addAction = (ruleId, branch) => ({   // NOT USED / clone row was used instead
-//   ruleId,
-//   branch,
-//   type: `${branch}/${types.ADD_EMPTY_ROW}`
-// });
-// export const updateAction = (ruleId, event, item, branch) => ({
-//   ruleId,
-//   branch,
-//   type: `${branch}/${types.UPDATE_ROW}`,
-//   event,
-//   item
-// });
-// export const updateRuleStatus = (ruleId, oldValue, branch) =>
-// ({
-//   ruleId,
-//   oldValue,
-//   branch,
-//   type: `${branch}/UPDATE_RULE_STATUS`,
-// });
-// SAVE version: Sync version
-// export const saveAction = (ruleId, item, branch, content) => ({
-//   ruleId,
-//   branch,
-//   type: `${branch}/${types.SAVE_ROW}`, // SAVE TO MONGO
-//   item,
-//   content
-// });
-// export const updateExpandedRows = (item, branch) => ({
-//   branch,
-//   type: `${branch}/UPDATE_EXPANDED`,
-//   item
-// });
-

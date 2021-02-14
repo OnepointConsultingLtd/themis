@@ -21,7 +21,7 @@ const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer();
 app.all('/api/*', (req, res) => {
   console.log('Proxying Request', req.method, req.url);
-  proxy.web(req, res, { target: isDev ? 'http://localhost:5000' : 'https://rules-ms-server.herokuapp.com' });
+  proxy.web(req, res, { target: isDev ? 'http://localhost:5000' : 'https://rules-ms-server.herokuapp.com', changeOrigin: true });
 });
 
 app.use('/', express.static('public', { etag: false }));

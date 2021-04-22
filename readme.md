@@ -7,11 +7,12 @@ For a live demo check-out [here](https://rules-ms.herokuapp.com/)
 **Boss Starter**, an admin dashboard template<sup>1</sup>, and **React Boilerplate**, the second official react boilerplate<sup>2</sup>, a highly scalable, offline-first foundation with the best developer experience and a focus on performance and best practices.
 
 ## Extended!
-The above boilerplate setup has been extended with:
+The above boilerplate setup has been enhanced with:
 
 -   async state functionality, at the frontEnd, by using **Redux-Thunk** 
 -   a proxy reaching to a dedicated service API  
 -   connecting backend API with **MongoDB Atlas**
+-   a lightweight webpack solution: a **webpack 4!** dev-webserver decoupled from the prod-webserver
 
 Thus, RulesMS is a fullstack **MERN** app! 
 
@@ -31,8 +32,6 @@ Thus, RulesMS is a fullstack **MERN** app!
  - Clone this project
  - Install module dependencies by run this script in terminal
     `npm install`
- - After finish downloading, then build Build Webpack DLL dependencies(If necessary).
-	 `npm run build:dll`
  - Finally run the app.
 	 `npm start`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
@@ -42,7 +41,7 @@ Backend API is a seperate project as of #37. Please check out [here](https://git
 
 ### Deployment
 
- - First you need to build the production assets first
+ - First you need to build the production assets
     `npm run build`
  - Then start the app
     `npm run start:prod`

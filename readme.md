@@ -10,8 +10,7 @@ For a live demo check-out [here](https://rules-ms.herokuapp.com/)
 The above boilerplate setup has been extended with:
 
 -   async state functionality, at the frontEnd, by using **Redux-Thunk** 
--   a backend API which is connected directly with the frontend state and written in **node.js** and **Express.js**
--   the backend setup serves both the static and the API under the same server instance 
+-   a proxy reaching to a dedicated service API  
 -   connecting backend API with **MongoDB Atlas**
 
 Thus, RulesMS is a fullstack **MERN** app! 
@@ -37,6 +36,9 @@ Thus, RulesMS is a fullstack **MERN** app!
  - Finally run the app.
 	 `npm start`
  - Navigate to  [http://localhost:8081](http://localhost:8081)
+
+### Service API
+Backend API is a seperate project as of #37. Please check out [here](https://github.com/OnepointConsultingLtd/themis-server)
 
 ### Deployment
 

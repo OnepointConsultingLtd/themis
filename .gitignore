@@ -12,8 +12,12 @@ stats.json
 npm-debug.log
 .idea
 
-
+# Make sure no specific dsl files get committed
 *.dsl
 *.dslr
 ALanguage.dsl
+
+# no need to deploy any builds
+/public/*.js
+/public/*.html
 

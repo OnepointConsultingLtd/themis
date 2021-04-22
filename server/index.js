@@ -1,3 +1,8 @@
+/**
+ * PRODUCTION WEBSERVER
+ * (OPTIONAL DEVSERVER INCL.) 
+ */
+
 /* eslint consistent-return:0 */
 const express = require('express');
 const favicon = require('serve-favicon');
@@ -5,16 +10,11 @@ const path = require('path');
 const logger = require('./logger');
 const argv = require('./argv');
 const port = require('./port');
-const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
-const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
-  ? require('ngrok')
-  : false;
-const { resolve } = require('path');
 const app = express();
+const compression = require('compression');
 
-
-// CRA: If you need a backend, e.g. an API, add your custom backend-specific middleware here
+// CRA: If you need an integrated service-API backend, pls do mount your custom backend-specific middleware here [OPTIONAL]
 
 // Proxying all /api/* calls to Themis API service
 const httpProxy = require('http-proxy');
@@ -24,19 +24,33 @@ app.all('/api/*', (req, res) => {
   proxy.web(req, res, { target: isDev ? 'http://localhost:5000' : 'https://rules-ms-server.herokuapp.com', changeOrigin: true });
 });
 
+app.use(compression());
+
+/** 
+ * Production Static webserver
+*/
 app.use('/', express.static('public', { etag: false }));
 app.use(favicon(path.join('public', 'favicons', 'favicon.ico')));
+app.get('*', (req, res) =>
+    res.sendFile(path.resolve('public', 'index.html')),
+);
 
-// In production we need to pass these values in instead of relying on webpack
-setup(app, {
-  outputPath: resolve(process.cwd(), 'build'),
-  publicPath: '/',
-});
+// #### DEDICATED EXPRESS DEV-SERVER [OPTIONAL]
+// const webpack = require('webpack');
+// const webpackDevMiddleware = require('webpack-dev-middleware');
+// const config = require('../webpack.config.js');
+// const compiler = webpack(config);
+// Tell express to use the webpack-dev-middleware and use the webpack.config.js
+// configuration file as a base.
+// app.use(
+//   webpackDevMiddleware(compiler, {
+//     publicPath: config.output.publicPath,
+//   })
+// );
 
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = argv.host || process.env.HOST;
 const host = customHost || null; // Let http.Server use its default IPv6/4 host
-const prettyHost = customHost || 'localhost';
 
 // use the gzipped bundle
 app.get('*.js', (req, res, next) => {
@@ -50,17 +64,5 @@ app.listen(port, host, async err => {
   if (err) {
     return logger.error(err.message);
   }
-
-  // Connect to ngrok in dev mode
-  if (ngrok) {
-    let url;
-    try {
-      url = await ngrok.connect(port);
-    } catch (e) {
-      return logger.error(e);
-    }
-    logger.appStarted(port, prettyHost, url);
-  } else {
-    logger.appStarted(port, prettyHost);
-  }
+  console.log('node webserver is running at PORT: ', port)
 });

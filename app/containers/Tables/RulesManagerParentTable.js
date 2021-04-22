@@ -290,6 +290,8 @@ class RulesManagerParentTable extends React.Component {
     this.lockedRows = lockedRows;
     this.deactivatedRows = deactivatedRows;
 
+    console.log('>>> THESE ARE THE DATA:', dataTable);
+
     const columns = [
       {
         name: '_id',

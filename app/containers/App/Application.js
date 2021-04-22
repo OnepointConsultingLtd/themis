@@ -8,9 +8,16 @@ import { fetchAction } from 'ba-actions/RulesTableActions';
 import { fetchAction as fetchConfig } from 'ba-actions/CrudTbActions';
 import Dashboard from '../Templates/Dashboard';
 import {
-  DashboardV1, DSLGeneratorParentTable, RulesManagerParentTable,
+  /*DashboardV1,*/ DSLGeneratorParentTable, RulesManagerParentTable,
   NotFound, Configuration
 } from '../pageListAsync';
+
+// import DSLGeneratorParentTable from '../Tables/DSLGeneratorParentTable';
+// import RulesManagerParentTable from '../Tables/RulesManagerParentTable';
+
+// import Configuration from '../Configuration';
+// import NotFound from '../NotFound/NotFound';
+
 
 // Reducer Data Branches
 const rulesStateBranch = 'RulesManagerParentTable';
@@ -43,7 +50,7 @@ class Application extends React.Component {
             )
           }
           <Route component={NotFound} />
-          <Route path="/app/dashboard" component={DashboardV1} />
+          {/* <Route path="/app/dashboard" component={DashboardV1} /> */}
         </Switch>
       </Dashboard>
     );

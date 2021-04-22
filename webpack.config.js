@@ -11,8 +11,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = (env) => {
 
-  const isDev = env === 'development';
-  const isProd = env === 'production';
+  const isDev = process.env.NODE_ENV === 'development';
+  const isProd = process.env.NODE_ENV === 'production';
 
   // start building the config
   const config = {};

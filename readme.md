@@ -60,7 +60,7 @@ Backend API is a seperate project as of #37. Please check out [here](https://git
  - **Jar generator:** The system should be able to directly generate a jar on deployment.
 
 ## Main Sponsor
-[![Onepoint Ltd.](public/images/Onepoint logotype.png)](https://onepointltd.com)
+[![Onepoint Ltd.](https://github.com/OnepointConsultingLtd/themis/blob/master/public/images/Onepoint%20logotype.png)](https://onepointltd.com)
 
 #### References
 - <sup>1</sup> : https://github.com/ilhammeidi/boss-starter

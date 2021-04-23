@@ -1,4 +1,4 @@
-# RulesMS
+# Themis
 ----------
 **RulesMS** is a Business rules versioning and deployment manager. A **MERN** fullstack web app.
 For a live demo check-out [here](https://rules-ms.herokuapp.com/)

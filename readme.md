@@ -59,6 +59,9 @@ Backend API is a seperate project as of #37. Please check out [here](https://git
  - **Favorite searches:** In the rules manager it should be possible to pin a search/filter as favourite so the user has quick an easy access to a preselected set of rules.
  - **Jar generator:** The system should be able to directly generate a jar on deployment.
 
+## Main Sponsor
+[![Onepoint Ltd.](public/images/Onepoint logotype.png)](https://onepointltd.com)
+
 #### References
 - <sup>1</sup> : https://github.com/ilhammeidi/boss-starter
 - <sup>2</sup> : https://github.com/react-boilerplate/react-boilerplate

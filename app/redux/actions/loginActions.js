@@ -1,4 +1,4 @@
-import history from '../utils/history';
+import history from 'ba-utils/history';
 
 /* eslint-disable arrow-body-style */
 export const loginAction = (userData) => { // <-------- TODO: wire server AUTH up here

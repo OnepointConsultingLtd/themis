@@ -10,7 +10,7 @@ import {
   EDIT_ROW,
   SAVE_ROW,
   CLOSE_NOTIF
-} from '../../actions/actionTypes';
+} from 'ba-actions/actionTypes';
 // import { matchRulePattern } from '../../containers/Tables/demos/importRules';
 
 const initialState = {

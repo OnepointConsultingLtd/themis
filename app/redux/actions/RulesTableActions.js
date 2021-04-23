@@ -5,7 +5,7 @@ import timestamp from 'time-stamp';
 import axios from 'axios';
 import API from 'ba-actions/api';
 import * as types from './actionTypes';
-import { matchRulePattern } from '../containers/Tables/demos/parseRules';
+import { matchRulePattern } from 'ba-containers/Tables/demos/parseRules';
 
 
 /** Async inject data */

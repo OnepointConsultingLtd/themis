@@ -8,7 +8,7 @@ import {
   EDIT_ROW,
   SAVE_ROW,
   CLOSE_NOTIF
-} from '../../actions/actionTypes';
+} from 'ba-actions/actionTypes';
 
 const initialState = {
   dataTable: List([]),

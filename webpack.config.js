@@ -146,9 +146,8 @@ module.exports = (env) => {
     alias: {
       'ba-components': path.resolve(__dirname, 'app/components/'),
       'ba-containers': path.resolve(__dirname, 'app/containers/'),
-      'ba-actions': path.resolve(__dirname, 'app/actions/'),
+      'ba-actions': path.resolve(__dirname, 'app/redux/actions/'),
       'ba-styles': path.resolve(__dirname, 'app/styles/components/'),
-      'ba-helpers': path.resolve(__dirname, 'app/styles/helpers/'),
       'ba-api': path.resolve(__dirname, 'app/api/'),
       'ba-images': path.resolve(__dirname, 'public/images/'),
       'ba-vendor': path.resolve(__dirname, 'node_modules/'),

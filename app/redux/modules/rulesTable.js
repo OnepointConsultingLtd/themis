@@ -1,6 +1,6 @@
 import { fromJS, List, /* , OrderedSet Map */ } from 'immutable';
 // import timestamp from 'time-stamp';
-import notif from 'ba-utils/notifMessage';
+import notif from './notifMessage';
 import {
   FETCH_DATA,
   // ADD_EMPTY_ROW,

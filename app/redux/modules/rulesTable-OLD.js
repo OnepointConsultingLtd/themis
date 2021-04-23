@@ -1,5 +1,5 @@
 import { fromJS, List, Map } from 'immutable';
-import notif from 'ba-utils/notifMessage';
+import notif from './notifMessage';
 import {
   FETCH_DATA,
   ADD_EMPTY_ROW,

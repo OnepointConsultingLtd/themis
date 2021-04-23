@@ -1,7 +1,6 @@
 export Header from './Header/Header';
 export Sidebar from './Sidebar/Sidebar';
 export BreadCrumb from './BreadCrumb/BreadCrumb';
-export SourceReader from './SourceReader/SourceReader';
 export PapperBlock from './PapperBlock/PapperBlock';
 // Form
 export Notification from './Notification/Notification';

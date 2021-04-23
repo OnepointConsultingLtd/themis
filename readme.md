@@ -1,4 +1,4 @@
-# RulesMS
+# Themis
 ----------
 **RulesMS** is a Business rules versioning and deployment manager. A **MERN** fullstack web app.
 For a live demo check-out [here](https://rules-ms.herokuapp.com/)
@@ -58,6 +58,9 @@ Backend API is a seperate project as of #37. Please check out [here](https://git
  - **Projects:** The system should allow for rules that belong to separate project to be separated. In the future a use should have explicit permissions to access rules that belong to a specific project.
  - **Favorite searches:** In the rules manager it should be possible to pin a search/filter as favourite so the user has quick an easy access to a preselected set of rules.
  - **Jar generator:** The system should be able to directly generate a jar on deployment.
+
+## Main Sponsor
+<a href ="https://onepointltd.com"><img src="https://github.com/OnepointConsultingLtd/themis/blob/master/public/images/Onepoint%20logotype.png" width="300"></a>
 
 #### References
 - <sup>1</sup> : https://github.com/ilhammeidi/boss-starter

@@ -13,7 +13,6 @@ import Collapse from '@material-ui/core/Collapse';
 // import SyntaxHighlighter, { github } from 'react-syntax-highlighter';
 // import { docco } from 'react-syntax-highlighter';
 // import FormControl from "@material-ui/core/FormControl";
-// import CodeEditor from './codeEditor';
 import AceEditor from 'react-ace'; // https://www.npmjs.com/package/react-ace   https://securingsincity.github.io/react-ace/
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-github';

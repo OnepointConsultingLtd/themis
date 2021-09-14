@@ -8,7 +8,7 @@ import { fetchAction } from 'ba-actions/RulesTableActions';
 import { fetchAction as fetchConfig } from 'ba-actions/CrudTbActions';
 import Dashboard from '../Templates/Dashboard';
 import {
-  /*DashboardV1,*/ DSLGeneratorParentTable, RulesManagerParentTable,
+  DashboardV1, DSLGeneratorParentTable, RulesManagerParentTable,
   NotFound, Configuration
 } from '../pageListAsync';
 
@@ -37,6 +37,7 @@ class Application extends React.Component {
     return (
       <Dashboard history={this.props.history}>
         <Switch>
+          <Route path="/app/dashboard" component={DashboardV1} />
           <Route path="/app/configuration" component={Configuration} />
           <Route path="/app/tables/rules-manager" component={RulesManagerParentTable} />
           {
@@ -50,7 +51,6 @@ class Application extends React.Component {
             )
           }
           <Route component={NotFound} />
-          {/* <Route path="/app/dashboard" component={DashboardV1} /> */}
         </Switch>
       </Dashboard>
     );
@@ -70,7 +70,7 @@ Application.propTypes = {
  */
 const mapStateToProps = state => ({
   force: state, // force state from reducer
-  generatorsMenu: state.getIn(['ui', 'menu', 1, 'child']), // injecting ONLY generators sub-branch // !!!! ATTENTION TODO mind the '1' hardcoding
+  generatorsMenu: state.getIn(['ui', 'menu', 2, 'child']), // injecting ONLY generators sub-branch // !!!! ATTENTION TODO mind the '1' hardcoding
 });
 
 /**

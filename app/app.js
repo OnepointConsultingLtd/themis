@@ -31,8 +31,6 @@ const initialState = {};
 const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 
-console.log('Im here!');
-
   ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>

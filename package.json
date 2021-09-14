@@ -10,7 +10,6 @@
   "author": "sotiriosalpha",
   "license": "MIT",
   "scripts": {
-    "npmcheckversion": "node ./internals/scripts/npmcheckversion.js",
     "## WEBPACK DEV SERVER": "------------------------------------------",
     "start": "cross-env NODE_ENV=development webpack serve --open",
     "## PRODUCTION SERVER": "---------------------------------------------",

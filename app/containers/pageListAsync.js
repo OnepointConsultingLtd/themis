@@ -2,10 +2,10 @@ import Loadable from 'react-loadable';
 import Loading from 'ba-components/Loading';
 
 // Dashboard
-// export const DashboardV1 = Loadable({
-//   loader: () => import('./Dashboard/Dashboard'),
-//   loading: Loading,
-// });
+export const DashboardV1 = Loadable({
+  loader: () => import('./Dashboard/Dashboard'),
+  loading: Loading,
+});
 
 // Simple-Table
 // export const SimpleTable = Loadable({

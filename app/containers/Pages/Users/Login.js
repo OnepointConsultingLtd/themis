@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Type from 'ba-styles/Typography.scss';
 import ArrowForward from '@material-ui/icons/ArrowForward';
-import logo from 'ba-images/logo.svg';
+import logo from 'ba-images/theta-logo.png';
 import LoginForm from 'ba-components/Forms/LoginForm';
 import styles from 'ba-components/Forms/user-jss';
 import { connect } from 'react-redux';
@@ -48,22 +48,22 @@ class Login extends React.Component {
               <Hidden smDown>
                 <Grid item md={6} className={classes.welcomeWrap}>
                   {/* Welcome Login */}
-                  <div className={classes.welcome}>
+                  <div className={classes.welcome} style={{ backgroundColor: '#b196df' }}>
                     <div className={classes.welcomeContent}>
                       <div className={classes.brand}>
-                        <img src={logo} alt={brand.name} />
-                        <h3>{brand.name}</h3>
+                        <img src={logo} alt={brand.name} style={{ width: '250px', marginTop: '170px', marginLeft: '20px' }} />
+                        {/* <h3>{brand.name}</h3> */}
                       </div>
-                      <Typography variant="h3">
+                      {/* <Typography variant="h3">
                         <span className={Type.light}>Hello there,</span>
-                      </Typography>
-                      <Typography variant="h6" className={classes.brandText}>
+                      </Typography>*/}
+                      <Typography variant="h6" className={classes.brandText} style={{ marginTop: '170px', marginLeft: '90px', color: 'white'}}>
                         <span className={Type.regular}>
-                          welcome to
-                          {' '}
-                          {brand.name}
+                          Taking Rules forward
+                          {/* {' '}
+                          {brand.name} */}
                         </span>
-                      </Typography>
+                      </Typography> 
                     </div>
                     <ArrowForward className={classes.decoBottom} />
                   </div>

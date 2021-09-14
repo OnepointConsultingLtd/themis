@@ -10,11 +10,11 @@ const generateSideMenu = (generatorsConfig) => { // dynamic injection of generat
     //   label: 'Rules',
     //   icon: 'library_books',
     //   child: [
-        // {
-        //   key: 'dashboard_v1',
-        //   label: 'Dashboard',
-        //   link: '/app/dashboard'
-        // },
+        {
+          key: 'dashboard_v1',
+          label: 'Dashboard',
+          link: '/app/dashboard'
+        },
         // {
         //   key: 'basic_table',
         //   label: 'Basic Table',
@@ -28,13 +28,13 @@ const generateSideMenu = (generatorsConfig) => { // dynamic injection of generat
         {
           // keyParent: 'rules',
           key: 'rules_manager',
-          label: 'Rules Manager',
+          label: 'Rules',
           link: '/app/tables/rules-manager'
         },
         {
           // keyParent: 'rules',
           key: 'dslr_generators',
-          label: 'DSLR Generators',
+          label: 'Deployers',
           // link: '/app/tables/dsl-generator',
           child: [...generatorsConfig]
         },

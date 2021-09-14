@@ -62,20 +62,20 @@ export default function reducer(state = initialImmutableState, action = {}) {
     case 'SAVE_MENU':
       return state.withMutations((mutableState) => {
         const indexToUpdate =
-        state.getIn(['menu', 1, 'child']) // ATTENTION: "1" hardcoded is based on static menu items
+        state.getIn(['menu', 2, 'child']) // ATTENTION: "2" hardcoded is based on static menu items
           .findIndex(item => item.get('_id') === action.item.get('_id'));
-        mutableState.update('menu', menu => menu.setIn([1, 'child', indexToUpdate], action.item));
+        mutableState.update('menu', menu => menu.setIn([2, 'child', indexToUpdate], action.item));
       });
     case 'ADD_MENU':
-      return state.withMutations((mutableState) => { // ATTENTION: "1" hardcoded is based on static menu items
-        mutableState.updateIn(['menu', 1, 'child'], child => child.unshift(action.item));
+      return state.withMutations((mutableState) => { // ATTENTION: "2" hardcoded is based on static menu items
+        mutableState.updateIn(['menu', 2, 'child'], child => child.unshift(action.item));
       });
     case 'REMOVE_MENU':
       return state.withMutations((mutableState) => {
         const indexToRemove =
-        state.getIn(['menu', 1, 'child']) // ATTENTION: "1" hardcoded is based on static menu items
+        state.getIn(['menu', 2, 'child']) // ATTENTION: "2" hardcoded is based on static menu items
           .findIndex(item => item.get('_id') === action.item.get('_id'));
-        mutableState.updateIn(['menu', 1, 'child'], child => child.splice(indexToRemove, 1));
+        mutableState.updateIn(['menu', 2, 'child'], child => child.splice(indexToRemove, 2));
       });
     case TOGGLE_SIDEBAR:
       return state.withMutations((mutableState) => {

@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import brand from 'ba-api/brand';
 import logo from 'ba-images/logoThemis.png';
+import logo2 from 'ba-images/theta-logo.png';
 import {
   Hidden,
   Drawer,
@@ -27,8 +28,8 @@ const MenuContent = props => {
     <div className={classNames(classes.drawerInner, !drawerPaper ? classes.drawerPaperClose : '')}>
       <div className={classes.drawerHeader}>
         <div style={{ justifyContent: 'left' }}className={classNames(classes.brand, classes.brandBar, turnDarker && classes.darker)}>
-          <img src={logo} alt={brand.name} style={{ width: '40px', marginRight: '5px', marginTop: '-6px' }} />
-          <h2 className="logo" style={{ marginTop: '14px' }}>{brand.name}</h2>
+          <img src={logo2} alt={brand.name} style={{ width: '150px', marginRight: '5px', marginTop: '5px' }} />
+          {/* <h2 className="logo" style={{ marginTop: '14px' }}>{brand.name}</h2> */}
         </div>
         <div className={classNames(classes.profile, classes.user)}>
           <ProjectSelector classes={classes} />

@@ -21,7 +21,7 @@ class App extends React.Component {
             // exact // mandatory since /notfound has same root
             path="/app" // NEW: "/" with exact!   OLD: We try to route to "/app" tree
             render={({ location }) =>
-              (Object.keys(this.props.login.toJS()).length !== 0 ? // USER AUTH CHECK
+              (Object.keys(this.props.login.toJS()).length !== 0 || process.env !== 'production' ? // USER AUTH CHECK
                 <Application history={history} />
                 :
                 <Redirect to={{ // FAILED AUTH, REDIRECTING USER TO LOGIN SCREENS

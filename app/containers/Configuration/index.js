@@ -70,7 +70,7 @@ export function SimpleTabs() {
           <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
             {/* <Tab label="Rule ID" {...a11yProps(0)} /> */}
             <Tab label="Tags" {...a11yProps(0)} />
-            <Tab label="Generators" {...a11yProps(1)} />
+            <Tab label="Deployers" {...a11yProps(1)} />
             <Tab label="Target Servers" {...a11yProps(2)} />
           </Tabs>
         </AppBar>

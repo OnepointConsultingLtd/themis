@@ -11,6 +11,8 @@ import TableRow from '@material-ui/core/TableRow';
 import tableStyles from 'ba-styles/Table.scss';
 import pink from '@material-ui/core/colors/pink';
 import { PapperBlock } from 'ba-components';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import {
   ComposedChart,
   Line,
@@ -22,7 +24,8 @@ import {
   CartesianAxis,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  PieChart,Pie
 } from 'recharts';
 
 const data1 = [
@@ -70,6 +73,59 @@ const data1 = [
   },
 ];
 
+const data01 = [
+  {
+    "name": "Group A",
+    "value": 400
+  },
+  {
+    "name": "Group B",
+    "value": 300
+  },
+  {
+    "name": "Group C",
+    "value": 300
+  },
+  {
+    "name": "Group D",
+    "value": 200
+  },
+  {
+    "name": "Group E",
+    "value": 278
+  },
+  {
+    "name": "Group F",
+    "value": 189
+  }
+];
+const data02 = [
+  {
+    "name": "Group A",
+    "value": 2400
+  },
+  {
+    "name": "Group B",
+    "value": 4567
+  },
+  {
+    "name": "Group C",
+    "value": 1398
+  },
+  {
+    "name": "Group D",
+    "value": 9800
+  },
+  {
+    "name": "Group E",
+    "value": 3908
+  },
+  {
+    "name": "Group F",
+    "value": 4800
+  }
+];
+
 const chartTheme = createMuiTheme(themePallete.orangeTheme);
 const color = ({
   main: chartTheme.palette.primary.main,
@@ -94,32 +150,72 @@ const styles = theme => ({
   }
 });
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return {
-    id,
-    name,
-    calories,
-    fat,
-    carbs,
-    protein
-  };
-}
+// let id = 0;
+// function createData(name, calories, fat, carbs, protein) {
+//   id += 1;
+//   return {
+//     id,
+//     name,
+//     calories,
+//     fat,
+//     carbs,
+//     protein
+//   };
+// }
 
-const data = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+// const data = [
+//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//   createData('Eclair', 262, 16.0, 24, 6.0),
+//   createData('Cupcake', 305, 3.7, 67, 4.3),
+//   createData('Gingerbread', 356, 16.0, 49, 3.9),
+// ];
 
 function StrippedTable(props) {
   const { classes } = props;
 
   return (
     <div>
+      <PapperBlock title="Chart Analytics" desc="">
+        <Grid container spacing={3}>
+          <Grid item xs={4}>
+          <Paper>
+          <div style={{ width: "100%", height: '250px' }}>
+              <ResponsiveContainer>
+                <PieChart >
+                  <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
+                  <Pie data={data02} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#82ca9d" label />
+                </PieChart>
+              </ResponsiveContainer>
+              </div>
+              </Paper>
+          </Grid>
+          <Grid item xs={4}>
+          <Paper>
+          <div style={{ width: "100%", height: '250px' }}>
+              <ResponsiveContainer>
+                <PieChart >
+                  <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
+                  <Pie data={data02} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#82ca9d" label />
+                </PieChart>
+              </ResponsiveContainer>
+              </div>
+              </Paper>
+          </Grid>
+          <Grid item xs={4}>
+          <Paper>
+          <div style={{ width: "100%", height: '250px' }}>
+              <ResponsiveContainer>
+                <PieChart >
+                  <Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
+                  <Pie data={data02} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#82ca9d" label />
+                </PieChart>
+              </ResponsiveContainer>
+              </div>
+              </Paper>
+          </Grid>          
+        </Grid>
+      </PapperBlock>
       <PapperBlock title="Chart Analytics" desc="">
         <div className={props.classes.chartFluid}>
           <ResponsiveContainer>
@@ -147,7 +243,7 @@ function StrippedTable(props) {
           </ResponsiveContainer>
         </div>
       </PapperBlock>
-      <PapperBlock title="Table Analytics" desc="">
+      {/* <PapperBlock title="Table Analytics" desc="">
         <Table className={classNames(classes.table, tableStyles.stripped)}>
           <TableHead>
             <TableRow>
@@ -172,7 +268,7 @@ function StrippedTable(props) {
             )}
           </TableBody>
         </Table>
-      </PapperBlock>
+      </PapperBlock> */}
     </div>
   );
 }

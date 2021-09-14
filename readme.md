@@ -14,7 +14,7 @@ The above boilerplate setup has been enhanced with:
 -   connecting backend API with **MongoDB Atlas**
 -   a lightweight webpack solution: a **webpack 4!** dev-webserver decoupled from the prod-webserver
 
-Thus, RulesMS is a fullstack **MERN** app! 
+Thus, Themis is a fullstack **MERN** app! 
 
 ### Template & Boilerplate Features
 
@@ -27,14 +27,14 @@ Thus, RulesMS is a fullstack **MERN** app!
 -   JSS (CSS in JS)
 -   Clean code maintained by eslint
 
-### Installation
+### Installing and running locally
 
  - Clone this project
  - Install module dependencies by run this script in terminal
     `npm install`
  - Finally run the app.
 	 `npm start`
- - Navigate to  [http://localhost:8081](http://localhost:8081)
+ - Navigate to  [http://localhost:3000](http://localhost:3000)
 
 ### Service API
 Backend API is a seperate project as of #37. Please check out [here](https://github.com/OnepointConsultingLtd/themis-server)
@@ -45,9 +45,6 @@ Backend API is a seperate project as of #37. Please check out [here](https://git
     `npm run build`
  - Then start the app
     `npm run start:prod`
- - If you want run it in background you may try PM2 [https://www.npmjs.com/package/pm2]( https://www.npmjs.com/package/pm2) Then run this command:
-    `node node_modules/.bin/cross-env NODE_ENV=production pm2 start server`
- - Navigate to  [http://localhost:8081](http://localhost:8081)
 
  ### Planned features
  - **Azure storage:** Integrate Azure storage at the end of deployment. Generated DSL files should land into an azure bucket to be later picked up for the rest of the compilation process.

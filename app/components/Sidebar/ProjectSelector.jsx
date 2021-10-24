@@ -31,23 +31,23 @@ const styles = () => ({
   }
 });
 
-const projectList = [
+const projectList = [ // TODO: pull projects-list from database. Currently hardcoded
   {
     _id: '1',
-    name: 'PRJ1',
+    name: 'PRJ1'
   },
   {
     _id: '2',
-    name: 'PRJ2',
+    name: 'PRJ2'
   },
   {
     _id: '3',
-    name: 'PRJ3',
+    name: 'PRJ3'
   }
 ];
 
 const ProjectSelector = ({ classes }) => {
-  const [project, setProject] = useState('1');
+  const [project, setProject] = useState('1'); // TODO: current selected project should be pulled from Redux store
 
   return (
     <FormControl variant="outlined" style={{ width: '100%', marginTop: '25px' }}>

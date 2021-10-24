@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable import/no-duplicates */
-// eslint-disable-next-line spaced-comment
+
+
+
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -37,7 +37,7 @@ import {
   discardAction,
   saveAction
 } from 'ba-actions/RulesTableActions';
-// eslint-disable-next-line no-unused-vars
+
 import { /* fromJS, List, */ OrderedSet /* Map */ } from 'immutable';
 import flatten from 'immutable';
 import PopUp from './PopUp';

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 import React from 'react';
 import {
   FormControl,
@@ -40,7 +40,7 @@ const filterOptions = (multiSelectOptions, Label, type = true) => {
         * index: index of the current column
         * column: filter-column data object
         */
-        // eslint-disable-next-line arrow-body-style
+
         display: (filterList, onChange, index, column) => {
           // console.log('Some useful filter logistics : ', filterList, index, column);
           return (
@@ -69,7 +69,7 @@ const filterOptions = (multiSelectOptions, Label, type = true) => {
           //       value={filterList[index]}
           //       renderValue={selected => selected.map(id => idsToLabels(multiSelectOptions)[id]).join(', ')} // render selected values not as array of id's but array of labels. We need the id2label conversion
           //       onChange={event => {
-          //         // eslint-disable-next-line no-param-reassign
+
           //         // filterList[index] = event.target.value;
           //         onChange(event.target.value, index, column);
           //       }}
@@ -111,7 +111,7 @@ const filterOptions = (multiSelectOptions, Label, type = true) => {
                 value={filterList[index]}
                 renderValue={selected => idsToLabels(multiSelectOptions)[selected]} // render selected values not as array of id's but array of labels. We need the id2label conversion
                 onChange={event => {
-                  // eslint-disable-next-line no-param-reassign
+
                   filterList[index] = [event.target.value]; // selected _id as an array, though (painful DEBUG)
                   onChange(filterList[index], index, column);
                 }}

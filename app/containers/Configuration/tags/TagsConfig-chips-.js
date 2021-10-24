@@ -22,7 +22,7 @@ function TagsConfig() {
     updateTagChips(tagChips.push(chip));
   };
 
-  // eslint-disable-next-line no-unused-vars
+
   const handleDeleteChip = (chip, index) => {
     updateTagChips(tagChips.slice(index, 1));
   };

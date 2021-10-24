@@ -70,7 +70,7 @@ Application.propTypes = {
  */
 const mapStateToProps = state => ({
   force: state, // force state from reducer
-  generatorsMenu: state.getIn(['ui', 'menu', 2, 'child']), // injecting ONLY generators sub-branch // !!!! ATTENTION TODO mind the '1' hardcoding
+  generatorsMenu: state.getIn(['ui', 'menu', 2, 'child']), // injecting ONLY generators sub-branch // !!!! ATTENTION TODO mind the '2' hardcoding
 });
 
 /**

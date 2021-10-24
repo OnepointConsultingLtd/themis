@@ -11,7 +11,7 @@ const Error = () => (
   <Route
     render={({ staticContext }) => {
       if (staticContext) {
-        staticContext.status = 404; // eslint-disable-line
+        staticContext.status = 404;
       }
       return (
         <div>

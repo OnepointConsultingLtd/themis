@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-// import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 // Menu Object
 // import generateSideMenu from 'ba-api/menu'; // transfered mnu generation to reducer actions
@@ -23,11 +22,11 @@ function sortByKey(array, key) {
   });
 }
 
-const LinkBtn = React.forwardRef(function LinkBtn(props, ref) { // eslint-disable-line
-  return <NavLink to={props.to} {...props} innerRef={ref} />; // eslint-disable-line
+const LinkBtn = React.forwardRef(function LinkBtn(props, ref) { 
+  return <NavLink to={props.to} {...props} innerRef={ref} />; 
 });
 
-class MainMenu extends React.Component { // eslint-disable-line
+class MainMenu extends React.Component { 
 
   handleClick = () => {
     this.props.toggleDrawerOpen();

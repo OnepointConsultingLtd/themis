@@ -62,7 +62,7 @@ const createNewRecord = (schema) => {
 };
 
 export const addAction = (schema, branch) => async (dispatch) => {
-  // eslint-disable-next-line prefer-const
+
   let newRecord = createNewRecord(schema);
   console.log('>>> NEW RECORD: ', newRecord);
   const response = await axios.post(`${API.config.create}/${branch}`, JSON.stringify(newRecord));
@@ -75,7 +75,7 @@ export const addAction = (schema, branch) => async (dispatch) => {
     });
   } else {
     console.log(response);
-    // eslint-disable-next-line dot-notation
+
     const newRecordWithID = { ...newRecord, _id: response.data.insertedId }; // receive _id from backend
     dispatch({
       newRecordWithID,

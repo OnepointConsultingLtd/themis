@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-bind */
+
 import React from 'react';
 import { List } from 'immutable';
 import { connect } from 'react-redux';

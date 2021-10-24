@@ -21,7 +21,7 @@ export default function Autocomplete(props) {
     // blurOnSelect="mouse"
     limitTags={4}
     filterSelectedOptions
-    options={options.map(item => item._id)} // options as array of id(s)
+    options={options.filter(item => item.label).map(item => item._id)} // options as array of id(s)
     getOptionLabel={(option) => {
       // console.log(option, options);
       const index = options.findIndex(i => i._id === option);
@@ -42,30 +42,6 @@ export default function Autocomplete(props) {
     )}
   />);
 }
-
-// return (<Autocomplete
-//   // disabled // TODO: connect to lockedRows
-//   autoComplete
-//   autoHighlight
-//   multiple
-//   autoSelect
-//   disableClearable
-//   limitTags={5}
-//   options={options} // all options as labels
-//   filterSelectedOptions
-//   value={value} // value is the array of labels
-//   onChange={onChange}
-//   onOpen={stopPropagation}
-//   onClose={stopPropagation}
-//   renderInput={(params) => (
-//     <TextField
-//       onClick={stopPropagation}
-//       {...params}
-//       InputProps={{ ...params.InputProps, disableUnderline: true }}
-//     />
-//   )}
-// />);
-// }
 
 Autocomplete.defaultProps = {
   noUnderline: true,

@@ -212,7 +212,7 @@ function PopUp({
           // ref={descriptionElementRef}
           tabIndex={-1}
         >
-          <Dropzone onDrop={handleFileDrops} accept=".dslr" maxSize={20971520}>
+          <Dropzone onDrop={handleFileDrops} accept=".dslr" minSize={20} maxSize={20971520}>
             {({ getRootProps, getInputProps }) => (
               <section>
                 <div {...getRootProps()} className="dropzone">
@@ -355,8 +355,8 @@ function PopUp({
           Cancel
         </Button>
         <Button
-          disabled={!ruleCodeContent}
-          onClick={() => onSubmitCreatedRule(selectedServer.length === 0 ? ['NA'] : selectedServer, selectedTag, ruleCodeContent)} // TODO: this is scarry. Pls change emmited values
+          disabled={!ruleCodeContent}                           // TODO: try that instead:  selectedServer || ['NA']
+          onClick={() => onSubmitCreatedRule(selectedServer.length === 0 ? ['NA'] : selectedServer, selectedTag, ruleCodeContent)}
           color="primary"
         >
           Submit new rule

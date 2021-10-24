@@ -1,5 +1,3 @@
-/* eslint-disable no-extend-native */
-/* eslint-disable func-names */
 // import { OrderedSet } from 'immutable';
 import timestamp from 'time-stamp';
 
@@ -33,7 +31,6 @@ export const parseRules = (targetServer, selectedTag, importedText) => {
   const matchedRulesPatternArray = matchRulePattern(importedText);
   // console.log('???  Matched this: ', matchedRulesPatternArray);
 
-  // eslint-disable-next-line prefer-const
   let rulesArray = [];
 
   if (matchedRulesPatternArray.length > 0) {
@@ -56,6 +53,7 @@ export const parseRules = (targetServer, selectedTag, importedText) => {
 
       rulesArray.push({
         // _id: ruleheader, // Mongo will generate id
+        // project: selectedProject // TODO: adding project property to each rule (should get pulled from current-project Redux store)
         name: rulename,
         active: !deactivated,
         locked: false,
@@ -67,7 +65,6 @@ export const parseRules = (targetServer, selectedTag, importedText) => {
             subBy: 'sotirios@alpha', // TODO: make dynamic
             servers: targetServer,
             edited: false,
-            // eslint-disable-next-line radix
             salience: parseInt(salience.trim().split(' ').last()) || 0,
             content
           }]

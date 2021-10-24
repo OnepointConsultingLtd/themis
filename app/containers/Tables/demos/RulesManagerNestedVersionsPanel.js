@@ -1,5 +1,5 @@
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable object-curly-newline */
+
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';

@@ -1,4 +1,4 @@
-/* eslint-disable key-spacing */
+
 const API = {
   config: {
     read:   '/api/config/load', // :branch

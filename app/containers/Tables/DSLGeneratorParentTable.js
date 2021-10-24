@@ -1,27 +1,12 @@
-/* eslint-disable react/sort-comp */
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable object-curly-newline */
 import React from 'react';
-// import axios from 'axios';
 import PropTypes from 'prop-types';
-// import { makeStyles } from '@material-ui/core/styles';
 import MUIDataTable from 'mui-datatables';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-// import IconButton from '@material-ui/core/IconButton';
-// import Tooltip from '@material-ui/core/Tooltip';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-// import ListItemText from '@material-ui/core/ListItemText';
-// import Card from '@material-ui/core/Card';
-// import CardContent from '@material-ui/core/CardContent';
-// import Chip from '@material-ui/core/Chip';
-// import Table from '@material-ui/core/Table';
-// import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-// import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -30,13 +15,11 @@ import AceEditor from 'react-ace'; // https://www.npmjs.com/package/react-ace   
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-github';
 import timestamp from 'time-stamp';
-// import { PapperBlock } from 'ba-components';
 import { closeNotifAction, showNotification } from 'ba-actions/RulesTableActions';
 import { aggregateAllActiveDeployedVersions, aggregateServerReturnContent } from './demos/data';
 import PopUp from './demos/PopUp';
 import { idsToLabels, idsToUrls, idsToArray } from './demos/idsToProperties';
 import { renderServersChips, renderTagsChips } from './demos/renderChipLabelsFromIds';
-// import filterOptions from './demos/filterLogic';
 
 // Reducer Branch
 const branch = 'RulesManagerParentTable';

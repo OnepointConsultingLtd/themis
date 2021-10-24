@@ -1,24 +1,8 @@
-/* eslint-disable react/sort-comp */
-/* eslint-disable no-else-return */
-/* eslint-disable no-return-assign */
-/* eslint-disable no-sequences */
-/* eslint-disable react/no-unused-state */
-/* eslint-disable arrow-body-style */
-/* eslint-disable padded-blocks */
-/* eslint-disable no-unused-vars */
-// eslint-disable arrow-body-style
-// eslint-disable-next-line class-methods-use-this
-// eslint-disable-next-line no-unused-vars
 import React from 'react';
-// import { List } from 'immutable';
-// import { Map } from 'immutable';
 import MUIDataTable, { ExpandButton } from 'mui-datatables';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import LockIcon from '@material-ui/icons/Lock';
-// import BlockIcon from '@material-ui/icons/Block';
-// import Grow from '@material-ui/core/Grow';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import PropTypes from 'prop-types';
@@ -27,25 +11,19 @@ import TableCell from '@material-ui/core/TableCell';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  closeNotifAction,
-  // updateExpandedRows,
-  updateSelectedRows,
-  updateRuleStatus,
-  updateRuleTags,
-  removeAction,
-} from 'ba-actions/RulesTableActions';
+import {  closeNotifAction,  updateSelectedRows, updateRuleStatus, updateRuleTags, removeAction} from 'ba-actions/RulesTableActions';
 import Notification from 'ba-components/Notification/Notification';
 import CustomToolbarSelect from './demos/CustomToolbarSelect';
 import RulesManagerNestedVersionsPanel from './demos/RulesManagerNestedVersionsPanel';
-import { aggregateRules, fetchRuleFullDetails, findLockedAndDeactivatedRules } from './demos/data';
+import { aggregateRules, findLockedAndDeactivatedRules } from './demos/data';
 import CustomToolbar from './demos/CustomToolbar';
 import PopUp from './demos/PopUp';
 import { ImportRules, ImportCreatedRule } from './demos/importRules';
-import { idsToLabels, labelsArrayToIdsArray } from './demos/idsToProperties';
+import { idsToLabels } from './demos/idsToProperties';
 import { renderServersChips } from './demos/renderChipLabelsFromIds';
 import filterOptions from './demos/filterLogic';
 import Autocomplete from './demos/autocomplete';
+import SkeletonLoader from './RulesManagerSkeleton.jsx';
 
 // Reducer Branch
 const branch = 'RulesManagerParentTable';
@@ -71,21 +49,15 @@ class RulesManagerParentTable extends React.Component {
         text: ''
       }
     };
-    console.log('Instansiating Rules MS'); // TODO, call is perfomed twice . Why ?
+    console.log('Instansiating Rules MS');
   }
 
-
-  /**
-   * Action to perform when user clicks CANCEL in the popup
-   */
+  /** Action to perform when user clicks CANCEL in the popup   */
   onPopUpClose = () => {
     this.setState({ popUp: { status: false } });
   };
 
-  /**
-   * Filter top popup was too narrow. needed some space
-   * Overriding default styling
-   */
+  /** Filter top popup was too narrow. needed some space * Overriding default styling  */
   getMuiTheme = () => createMuiTheme({
     overrides: {
       MUIDataTableFilter: {
@@ -113,8 +85,7 @@ class RulesManagerParentTable extends React.Component {
     return true;
   };
 
-  /**
-   * Deleting a Rule and refreshing the expanded rows by renumbering them
+  /** Deleting a Rule and refreshing the expanded rows by renumbering them
    * @param {string} ruleId is the to-be-deleted rule id
    * @param {integer} rowIndex is the absolute DataIndex of the rule (index inside DataArray)
   */
@@ -370,7 +341,7 @@ class RulesManagerParentTable extends React.Component {
       print: false,
       viewColumns: false,
       rowsExpanded: this.state.rowsExpanded, // {array} User provided expanded rows
-      // eslint-disable-next-line object-shorthand
+
       rowsSelected: rowsSelected,
       onFilterChange: () => this.setState({ rowsExpanded: [] }), // DEBUG: reset expanded rows upon filter (displayed data) change; it was messing expansion upon filtering
       renderExpandableRow: this.renderCollapseVersionsPanel,
@@ -411,13 +382,14 @@ class RulesManagerParentTable extends React.Component {
       <div>
         <Notification close={() => closeNotif(branch)} message={messageNotif} severity={severityNotif} /> {/* TODO:NOTIF. TRIGGERS RE-RENDERING */}
         <MuiThemeProvider theme={this.getMuiTheme()}>
-          <MUIDataTable
-            title="Rules Manager"
-            data={data} // Top level data: ID, Version, Title, Servers, Tags ? is it an aggregation?
-            columns={columns}
-            options={options}
-            components={components}
-          />
+          {data.length !== 0  ? 
+            <MUIDataTable
+              title="Rules Manager"
+              data={data}
+              columns={columns}
+              options={options}
+              components={components}
+            /> : <SkeletonLoader/>}
         </MuiThemeProvider>
         {this.state.popUp.status ?
           <PopUp

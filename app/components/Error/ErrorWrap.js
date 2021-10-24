@@ -44,7 +44,7 @@ const ErrorWrap = (props) => (
   <Route
     render={({ staticContext }) => {
       if (staticContext) {
-        staticContext.status = 404; // eslint-disable-line
+        staticContext.status = 404;
       }
       const { classes, title, desc } = props;
       return (

@@ -1,5 +1,5 @@
-/* eslint-disable arrow-body-style */
-/* eslint-disable no-shadow */
+
+
 import { fromJS, OrderedSet, List } from 'immutable';
 import timestamp from 'time-stamp';
 import axios from 'axios';
@@ -194,9 +194,9 @@ export const discardAction = (ruleId, item, branch) => ({ // click-on-discard wi
 /** Update version */
 export const saveAction = (ruleId, version, selectedServers, content, branch, setValErrorPopUp) => async (dispatch, getState) => {
   // Do the parsing here: we parse name, salience, status and content
-  /* eslint-disable-next-line prefer-const */
+
   let { salience, ruleheader } = matchRulePattern(content)[0].groups;
-  // eslint-disable-next-line radix
+
   salience = parseInt(salience.trim().split(' ').last()) || 0;
   let nonEmptyServers;
   if (!selectedServers.length) nonEmptyServers = ['NA'];

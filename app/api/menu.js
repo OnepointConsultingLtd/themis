@@ -1,5 +1,5 @@
-/* eslint-disable arrow-body-style */
-/* eslint-disable indent */
+
+
 // import store from '../app'; // BUG: cyclical dependency --- fetch state from caller
 
 const generateSideMenu = (generatorsConfig) => { // dynamic injection of generators screens

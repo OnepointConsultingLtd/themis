@@ -19,9 +19,6 @@ import 'sanitize.css/sanitize.css';
 import App from 'containers/App';
 
 // Load the favicon and the .htaccess file
-/* eslint-disable import/no-unresolved, import/extensions */
-/* eslint-enable import/no-unresolved, import/extensions */
-
 import configureStore from './redux/configureStore';
 
 import './styles/layout/base.scss';

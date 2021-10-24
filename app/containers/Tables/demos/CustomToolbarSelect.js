@@ -1,6 +1,6 @@
-/* eslint-disable react/sort-comp */
-/* eslint-disable react/style-prop-object */
-/* eslint-disable react/no-unknown-property */
+
+
+
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import IconButton from '@material-ui/core/IconButton';
@@ -65,7 +65,7 @@ class CustomToolbarSelect extends React.Component {
   }
 
   handleClickInverseSelection = () => {
-    // eslint-disable-next-line no-shadow
+
     const nextSelectedRows = this.props.displayData.reduce((nextSelectedRows, _, index) => {
       if (!this.props.selectedRows.data.find(selectedRow => selectedRow.index === index)) {
         nextSelectedRows.push(index);

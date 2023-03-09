@@ -34,7 +34,7 @@
     "@material-ui/pickers": "3.2.8",
     "@react-dnd/asap": "4.0.0",
     "autoprefixer": "9.7.3",
-    "axios": "0.21.1",
+    "axios": ">=0.21.2",
     "body-parser": "1.19.0",
     "bourbon": "5.1.0",
     "bourbon-neat": "3.0.0",
